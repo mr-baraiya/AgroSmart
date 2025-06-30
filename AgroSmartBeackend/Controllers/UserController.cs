@@ -9,17 +9,20 @@ namespace AgroSmartBeackend.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly AgroSmartContext context;
+        private readonly AgroSmartContext _context;
+
+        #region Constructor
         public UserController(AgroSmartContext context)
         {
-            this.context = context;
+            this._context = context;
         }
+        #endregion
 
         #region GetAllUsers
-        [HttpGet]
+        [HttpGet("All")]
         public async Task<ActionResult<List<User>>> GetAllUsers()
         {
-            var data = await context.Users.ToListAsync();
+            var data = await _context.Users.ToListAsync();
             return Ok(data);
         }
         #endregion
@@ -28,7 +31,7 @@ namespace AgroSmartBeackend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserById(int id)
         {
-            var user = await context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -37,12 +40,12 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
-        #region CreateUser
+        #region AddUser
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User u)
+        public async Task<ActionResult<User>> AddUser(User u)
         {
-            await context.Users.AddAsync(u);
-            await context.SaveChangesAsync();
+            await _context.Users.AddAsync(u);
+            await _context.SaveChangesAsync();
             return Ok(u);
         }
         #endregion
@@ -56,7 +59,7 @@ namespace AgroSmartBeackend.Controllers
                 return BadRequest("User ID mismatch");
             }
 
-            var existingUser = await context.Users.FindAsync(id);
+            var existingUser = await _context.Users.FindAsync(id);
             if (existingUser == null)
             {
                 return NotFound();
@@ -72,7 +75,7 @@ namespace AgroSmartBeackend.Controllers
             existingUser.IsActive = u.IsActive;
             existingUser.UpdatedAt = DateTime.UtcNow; // Optional: Track update time
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return Ok(existingUser);
         }
@@ -82,13 +85,13 @@ namespace AgroSmartBeackend.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            context.Users.Remove(user);
-            await context.SaveChangesAsync();
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
             return Ok(user);
         }
         #endregion
