@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+//using Newtonsoft.Json;
 
 namespace AgroSmartBeackend.Models;
 
@@ -24,8 +26,8 @@ public partial class User
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
-
+    [JsonIgnore]
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }

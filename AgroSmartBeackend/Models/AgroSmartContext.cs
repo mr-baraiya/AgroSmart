@@ -33,6 +33,7 @@ public partial class AgroSmartContext : DbContext
             entity.HasIndex(e => e.CropName, "UQ_Crops_CropName").IsUnique();
             entity.Property(e => e.AvgWaterReqmm).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.CropName).HasMaxLength(100);
             entity.Property(e => e.HarvestSeason).HasMaxLength(20);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
@@ -206,6 +207,7 @@ public partial class AgroSmartContext : DbContext
 
 //            entity.Property(e => e.AvgWaterReqmm).HasColumnType("decimal(10, 2)");
 //            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+//            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 //            entity.Property(e => e.CropName).HasMaxLength(100);
 //            entity.Property(e => e.HarvestSeason).HasMaxLength(20);
 //            entity.Property(e => e.IsActive).HasDefaultValue(true);

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+//using Newtonsoft.Json;
 
 namespace AgroSmartBeackend.Models;
 
@@ -31,5 +33,8 @@ public partial class Crop
 
     public DateTime CreatedAt { get; set; }
 
+    public DateTime UpdatedAt { get; set; }
+
+    [JsonIgnore]
     public virtual ICollection<FieldWiseCrop> FieldWiseCrops { get; set; } = new List<FieldWiseCrop>();
 }

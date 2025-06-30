@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+//using Newtonsoft.Json;
 
 namespace AgroSmartBeackend.Models;
 
@@ -35,5 +37,6 @@ public partial class Sensor
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual Field Field { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Field? Field { get; set; }
 }

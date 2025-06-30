@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+//using Newtonsoft.Json;
 
 namespace AgroSmartBeackend.Models;
 
@@ -33,7 +35,9 @@ public partial class Schedule
 
     public DateTime UpdatedAt { get; set; }
 
-    public virtual User CreatedByNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual User? CreatedByNavigation { get; set; }
 
-    public virtual Field Field { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Field? Field { get; set; }
 }
