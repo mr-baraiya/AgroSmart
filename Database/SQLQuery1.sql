@@ -195,7 +195,11 @@ CREATE TABLE WeatherData (
     WeatherDescription	NVARCHAR(200) NULL,
     ForecastDate		DATETIME2 NOT NULL,
     DataType			NVARCHAR(20) NOT NULL,
-    RetrievedAt			DATETIME2 NOT NULL DEFAULT GETDATE()
+    RetrievedAt			DATETIME2 NOT NULL DEFAULT GETDATE(),
+	FarmId				INT NOT NULL,
+
+	-- Foreign Key Constraints
+    CONSTRAINT FK_WeatherData_Farm FOREIGN KEY (FarmId) REFERENCES Farms(FarmId)
 );
 
 -- =============================================
@@ -324,17 +328,16 @@ INSERT INTO Schedules (FieldId, ScheduleType, Title, Description, ScheduledDate,
 
 select * from Schedules;
 
--- Insert Sample Schedules
-INSERT INTO WeatherData (Location, Latitude, Longitude, Temperature, Humidity, Pressure, WindSpeed, WeatherDescription, ForecastDate, DataType) VALUES
-('Agro Farm A', 26.8467, 80.9462, 32.5, 60.0, 1012.5, 5.5, 'Partly Cloudy', '2025-07-02 09:00:00', 'Current'),
-('Agro Farm B', 26.8467, 80.9462, 31.2, 65.0, 1010.8, 4.8, 'Sunny', '2025-07-02 12:00:00', 'Hourly'),
-('Agro Farm A', 26.8467, 80.9462, 30.0, 68.0, 1009.2, 3.7, 'Humid', '2025-07-03 06:00:00', 'Daily'),
-('Agro Farm B', 26.8467, 80.9462, 33.5, 55.0, 1011.3, 6.2, 'Hot', '2025-07-03 09:00:00', 'Current'),
-('Agro Farm A', 26.8467, 80.9462, 29.8, 70.0, 1008.5, 2.0, 'Cloudy', '2025-07-04 09:00:00', 'Daily'),
-('Agro Farm C', 26.7890, 80.9950, 34.0, 52.0, 1014.0, 7.0, 'Clear Skies', '2025-07-02 18:00:00', 'Hourly'),
-('Agro Farm D', 26.7600, 80.9200, 28.5, 75.0, 1005.0, 3.5, 'Light Rain', '2025-07-03 15:00:00', 'Current'),
-('Agro Farm E', 26.8800, 80.9800, 27.2, 80.0, 1003.2, 2.5, 'Heavy Rain', '2025-07-04 08:00:00', 'Daily'),
-('Agro Farm B', 26.8467, 80.9462, 32.0, 62.0, 1013.3, 5.2, 'Sunny Intervals', '2025-07-05 12:00:00', 'Hourly'),
-('Agro Farm C', 26.7890, 80.9950, 30.5, 69.0, 1007.7, 4.0, 'Overcast', '2025-07-06 07:00:00', 'Daily');
+INSERT INTO WeatherData ( Location, Latitude, Longitude, Temperature, Humidity, Pressure, WindSpeed,WeatherDescription, ForecastDate, DataType, FarmId) VALUES
+('Agro Farm A', 26.8467, 80.9462, 32.5, 60.0, 1012.5, 5.5, 'Partly Cloudy', '2025-07-02 09:00:00', 'Current', 1),
+('Agro Farm B', 26.8467, 80.9462, 31.2, 65.0, 1010.8, 4.8, 'Sunny', '2025-07-02 12:00:00', 'Hourly', 1),
+('Agro Farm A', 26.8467, 80.9462, 30.0, 68.0, 1009.2, 3.7, 'Humid', '2025-07-03 06:00:00', 'Daily', 1),
+('Agro Farm B', 26.8467, 80.9462, 33.5, 55.0, 1011.3, 6.2, 'Hot', '2025-07-03 09:00:00', 'Current', 1),
+('Agro Farm A', 26.8467, 80.9462, 29.8, 70.0, 1008.5, 2.0, 'Cloudy', '2025-07-04 09:00:00', 'Daily', 1),
+('Agro Farm C', 26.7890, 80.9950, 34.0, 52.0, 1014.0, 7.0, 'Clear Skies', '2025-07-02 18:00:00', 'Hourly', 1),
+('Agro Farm D', 26.7600, 80.9200, 28.5, 75.0, 1005.0, 3.5, 'Light Rain', '2025-07-03 15:00:00', 'Current', 1),
+('Agro Farm E', 26.8800, 80.9800, 27.2, 80.0, 1003.2, 2.5, 'Heavy Rain', '2025-07-04 08:00:00', 'Daily', 1),
+('Agro Farm B', 26.8467, 80.9462, 32.0, 62.0, 1013.3, 5.2, 'Sunny Intervals', '2025-07-05 12:00:00', 'Hourly', 1),
+('Agro Farm C', 26.7890, 80.9950, 30.5, 69.0, 1007.7, 4.0, 'Overcast', '2025-07-06 07:00:00', 'Daily', 1);
 
 select * from WeatherData;
