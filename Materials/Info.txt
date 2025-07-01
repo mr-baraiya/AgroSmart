@@ -1,0 +1,5 @@
+->First time create DbContext
+Scaffold-DbContext "Server=DESKTOP-VISHAL\SQLEXPRESS;Database=AgroSmart;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+
+->Update your DbContext
+Scaffold-DbContext "Server=DESKTOP-VISHAL\SQLEXPRESS;Database=AgroSmart;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context AgroSmartContext -Force
