@@ -39,33 +39,14 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
-        #region GetWeatherByLocation
-        [HttpGet("ByLocation/{location}")]
-        public async Task<ActionResult<List<WeatherDatum>>> GetWeatherByLocation(string location)
+        #region GetWeatherDataByFarmId
+        [HttpGet("ByFarm/{farmId}")]
+        public async Task<ActionResult<List<WeatherDatum>>> GetWeatherDataByFarmId(int farmId)
         {
-            var data = await _context.WeatherData
-                .Where(w => w.Location.ToLower().Contains(location.ToLower()))
-                .OrderByDescending(w => w.ForecastDate)
+            var weatherdata = await _context.WeatherData
+                .Where(s => s.FarmId == farmId)
                 .ToListAsync();
-
-            return Ok(data);
-        }
-        #endregion
-
-        #region GetWeatherByDate
-        [HttpGet("ByDate/{date}")]
-        public async Task<ActionResult<List<WeatherDatum>>> GetWeatherByDate(string date)
-        {
-            if (!DateTime.TryParse(date, out DateTime parsedDate))
-            {
-                return BadRequest("Invalid date format. Use YYYY-MM-DD.");
-            }
-
-            var data = await _context.WeatherData
-                .Where(w => w.ForecastDate.Date == parsedDate.Date)
-                .ToListAsync();
-
-            return Ok(data);
+            return Ok(weatherdata);
         }
         #endregion
 
@@ -119,6 +100,78 @@ namespace AgroSmartBeackend.Controllers
             _context.WeatherData.Remove(data);
             await _context.SaveChangesAsync();
             return Ok(data);
+        }
+        #endregion
+
+        #region GetTopTemperatures
+        [HttpGet("TopTemperatures")]
+        public async Task<ActionResult<IEnumerable<WeatherDatum>>> GetTopTemperatures()
+        {
+            var topRecords = await _context.WeatherData
+                .Where(w => w.Temperature != null)
+                .OrderByDescending(w => w.Temperature)
+                .Take(10)
+                .ToListAsync();
+
+            return Ok(topRecords);
+        }
+        #endregion
+
+        #region FilterWeather
+        [HttpGet("Filter")]
+        public async Task<ActionResult<List<WeatherDatum>>> FilterWeather(
+            [FromQuery] string? location,
+            [FromQuery] string? date,
+            [FromQuery] decimal? minTemp,
+            [FromQuery] decimal? maxTemp,
+            [FromQuery] decimal? minHumidity,
+            [FromQuery] decimal? maxHumidity,
+            [FromQuery] decimal? minPressure,
+            [FromQuery] decimal? maxPressure,
+            [FromQuery] decimal? minWind,
+            [FromQuery] decimal? maxWind)
+        {
+            var query = _context.WeatherData.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                query = query.Where(w => w.Location.ToLower().Contains(location.ToLower()));
+            }
+
+            if (DateTime.TryParse(date, out DateTime parsedDate))
+            {
+                query = query.Where(w => w.ForecastDate.Date == parsedDate.Date);
+            }
+
+            if (minTemp.HasValue)
+                query = query.Where(w => w.Temperature >= minTemp.Value);
+
+            if (maxTemp.HasValue)
+                query = query.Where(w => w.Temperature <= maxTemp.Value);
+
+            if (minHumidity.HasValue)
+                query = query.Where(w => w.Humidity >= minHumidity.Value);
+
+            if (maxHumidity.HasValue)
+                query = query.Where(w => w.Humidity <= maxHumidity.Value);
+
+            if (minPressure.HasValue)
+                query = query.Where(w => w.Pressure >= minPressure.Value);
+
+            if (maxPressure.HasValue)
+                query = query.Where(w => w.Pressure <= maxPressure.Value);
+
+            if (minWind.HasValue)
+                query = query.Where(w => w.WindSpeed >= minWind.Value);
+
+            if (maxWind.HasValue)
+                query = query.Where(w => w.WindSpeed <= maxWind.Value);
+
+            var result = await query
+                .OrderByDescending(w => w.ForecastDate)
+                .ToListAsync();
+
+            return Ok(result);
         }
         #endregion
 
