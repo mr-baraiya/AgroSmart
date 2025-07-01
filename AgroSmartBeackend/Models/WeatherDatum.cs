@@ -30,4 +30,9 @@ public partial class WeatherDatum
     public string DataType { get; set; } = null!;
 
     public DateTime RetrievedAt { get; set; }
+
+    public int FarmId { get; set; }
+
+    [JsonIgnore]
+    public virtual Farm? Farm { get; set; }
 }
