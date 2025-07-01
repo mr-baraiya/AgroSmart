@@ -26,8 +26,10 @@ public partial class User
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
+
     [JsonIgnore]
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }
