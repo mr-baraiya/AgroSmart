@@ -27,7 +27,7 @@ public partial class AgroSmartContext : DbContext
 
     public virtual DbSet<Schedule> Schedules { get; set; }
 
-    public virtual DbSet<Sensor> Sensors { get; set; }
+    //public virtual DbSet<Sensor> Sensors { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -163,25 +163,25 @@ public partial class AgroSmartContext : DbContext
                 .HasConstraintName("FK_Schedules_Fields");
         });
 
-        modelBuilder.Entity<Sensor>(entity =>
-        {
-            entity.HasKey(e => e.SensorId).HasName("PK__Sensors__D8099BFAB56C1AF3");
+        //modelBuilder.Entity<Sensor>(entity =>
+        //{
+        //    entity.HasKey(e => e.SensorId).HasName("PK__Sensors__D8099BFAB56C1AF3");
 
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.LatestQualityScore).HasColumnType("decimal(3, 2)");
-            entity.Property(e => e.LatestUnit).HasMaxLength(20);
-            entity.Property(e => e.LatestValue).HasColumnType("decimal(15, 4)");
-            entity.Property(e => e.Manufacturer).HasMaxLength(100);
-            entity.Property(e => e.Model).HasMaxLength(100);
-            entity.Property(e => e.SensorType).HasMaxLength(50);
-            entity.Property(e => e.SerialNumber).HasMaxLength(100);
+        //    entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+        //    entity.Property(e => e.IsActive).HasDefaultValue(true);
+        //    entity.Property(e => e.LatestQualityScore).HasColumnType("decimal(3, 2)");
+        //    entity.Property(e => e.LatestUnit).HasMaxLength(20);
+        //    entity.Property(e => e.LatestValue).HasColumnType("decimal(15, 4)");
+        //    entity.Property(e => e.Manufacturer).HasMaxLength(100);
+        //    entity.Property(e => e.Model).HasMaxLength(100);
+        //    entity.Property(e => e.SensorType).HasMaxLength(50);
+        //    entity.Property(e => e.SerialNumber).HasMaxLength(100);
 
-            entity.HasOne(d => d.Field).WithMany(p => p.Sensors)
-                .HasForeignKey(d => d.FieldId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Sensors_Fields");
-        });
+        //    entity.HasOne(d => d.Field).WithMany(p => p.Sensors)
+        //        .HasForeignKey(d => d.FieldId)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("FK_Sensors_Fields");
+        //});
 
         modelBuilder.Entity<User>(entity =>
         {
