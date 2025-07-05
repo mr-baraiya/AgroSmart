@@ -37,6 +37,4 @@ public partial class Field
     [JsonIgnore]
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
-    [JsonIgnore]
-    public virtual ICollection<Sensor> Sensors { get; set; } = new List<Sensor>();
 }
