@@ -15,7 +15,7 @@ CREATE TABLE Users (
     Address			NVARCHAR(255) NULL,
     IsActive		BIT NOT NULL DEFAULT 1,
     CreatedAt		DATETIME2 NOT NULL DEFAULT GETDATE(),
-    UpdatedAt		DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt		DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
 select * from Users;
@@ -43,7 +43,7 @@ CREATE TABLE Farms (
 -- =============================================
 -- 3. CROPS TABLE
 -- =============================================
-drop table Crops
+
 CREATE TABLE Crops (
     CropId              INT PRIMARY KEY IDENTITY(1,1),
     CropName            NVARCHAR(100) NOT NULL,
@@ -86,27 +86,27 @@ CREATE TABLE Fields (
 -- 5. SENSORS TABLE
 -- =============================================
 
-CREATE TABLE Sensors (
-    SensorId			INT PRIMARY KEY IDENTITY(1,1),
-    SensorType			NVARCHAR(50) NOT NULL,
-    Manufacturer		NVARCHAR(100) NULL,
-    Model				NVARCHAR(100) NULL,
-    SerialNumber		NVARCHAR(100) NULL,
-    FieldId				INT NOT NULL,
-    InstallationDate	DATETIME2 NULL,
-    LastCalibrated		DATETIME2 NULL,
-    CalibrationInterval INT NULL,
-    LatestValue			DECIMAL(15,4) NULL,
-    LatestUnit			NVARCHAR(20) NULL,
-    LatestQualityScore	DECIMAL(3,2) NULL,
-    LastReadingTime		DATETIME2 NULL,
-    IsActive			BIT NOT NULL DEFAULT 1,
-    CreatedAt			DATETIME2 NOT NULL DEFAULT GETDATE(),
+--CREATE TABLE Sensors (
+--    SensorId			INT PRIMARY KEY IDENTITY(1,1),
+--    SensorType			NVARCHAR(50) NOT NULL,
+--    Manufacturer		NVARCHAR(100) NULL,
+--    Model				NVARCHAR(100) NULL,
+--    SerialNumber		NVARCHAR(100) NULL,
+--    FieldId				INT NOT NULL,
+--    InstallationDate	DATETIME2 NULL,
+--    LastCalibrated		DATETIME2 NULL,
+--    CalibrationInterval INT NULL,
+--    LatestValue			DECIMAL(15,4) NULL,
+--    LatestUnit			NVARCHAR(20) NULL,
+--    LatestQualityScore	DECIMAL(3,2) NULL,
+--    LastReadingTime		DATETIME2 NULL,
+--    IsActive			BIT NOT NULL DEFAULT 1,
+--    CreatedAt			DATETIME2 NOT NULL DEFAULT GETDATE(),
     
-    -- Foreign Key Constraints
-    CONSTRAINT FK_Sensors_Fields FOREIGN KEY (FieldId) REFERENCES Fields(FieldId),
+--    -- Foreign Key Constraints
+--    CONSTRAINT FK_Sensors_Fields FOREIGN KEY (FieldId) REFERENCES Fields(FieldId),
     
-);
+--);
 
 -- =============================================
 -- 6. FIELDWISECROPS TABLE
@@ -268,20 +268,20 @@ INSERT INTO Fields (FieldName, SizeAcres, SoilType, IrrigationType, FarmId) VALU
 select * from Fields;
 
 -- Insert Sample Sensors
-INSERT INTO Sensors (SensorType, Manufacturer, Model, SerialNumber, FieldId, InstallationDate, LastCalibrated, CalibrationInterval, LatestValue, LatestUnit, LatestQualityScore, LastReadingTime) VALUES
-('Temperature', 'AgriSense', 'T-101', 'SN-TEMP-001', 1, '2025-04-01', '2025-05-01', 30, 25.45, 'Celsius', 0.95, '2025-06-01'),
-('Humidity', 'FarmTech', 'H-201', 'SN-HUM-002', 1, '2025-04-05', '2025-05-05', 60, 60.20, '%', 0.92, '2025-06-01'),
-('Soil_Moisture', 'SoilPro', 'SM-301', 'SN-SM-003', 1, '2025-04-10', '2025-05-10', 45, 40.00, '%', 0.91, '2025-06-01'),
-('pH', 'AgroLab', 'PH-151', 'SN-PH-004', 1, '2025-04-15', '2025-05-15', 90, 6.50, 'pH', 0.94, '2025-06-01'),
-('Light', 'Photonics', 'LUX-801', 'SN-LUX-005', 1, '2025-04-20', '2025-05-20', 30, 14000, 'Lux', 0.90, '2025-06-01'),
+--INSERT INTO Sensors (SensorType, Manufacturer, Model, SerialNumber, FieldId, InstallationDate, LastCalibrated, CalibrationInterval, LatestValue, LatestUnit, LatestQualityScore, LastReadingTime) VALUES
+--('Temperature', 'AgriSense', 'T-101', 'SN-TEMP-001', 1, '2025-04-01', '2025-05-01', 30, 25.45, 'Celsius', 0.95, '2025-06-01'),
+--('Humidity', 'FarmTech', 'H-201', 'SN-HUM-002', 1, '2025-04-05', '2025-05-05', 60, 60.20, '%', 0.92, '2025-06-01'),
+--('Soil_Moisture', 'SoilPro', 'SM-301', 'SN-SM-003', 1, '2025-04-10', '2025-05-10', 45, 40.00, '%', 0.91, '2025-06-01'),
+--('pH', 'AgroLab', 'PH-151', 'SN-PH-004', 1, '2025-04-15', '2025-05-15', 90, 6.50, 'pH', 0.94, '2025-06-01'),
+--('Light', 'Photonics', 'LUX-801', 'SN-LUX-005', 1, '2025-04-20', '2025-05-20', 30, 14000, 'Lux', 0.90, '2025-06-01'),
 
-('Temperature', 'AgriSense', 'T-102', 'SN-TEMP-006', 2, '2025-04-01', '2025-05-01', 30, 26.10, 'Celsius', 0.94, '2025-06-01'),
-('Humidity', 'FarmTech', 'H-202', 'SN-HUM-007', 2, '2025-04-05', '2025-05-05', 60, 55.80, '%', 0.91, '2025-06-01'),
-('Soil_Moisture', 'SoilPro', 'SM-302', 'SN-SM-008', 2, '2025-04-10', '2025-05-10', 45, 35.60, '%', 0.90, '2025-06-01'),
-('pH', 'AgroLab', 'PH-152', 'SN-PH-009', 2, '2025-04-15', '2025-05-15', 90, 6.90, 'pH', 0.93, '2025-06-01'),
-('Light', 'Photonics', 'LUX-802', 'SN-LUX-010', 2, '2025-04-20', '2025-05-20', 30, 13500, 'Lux', 0.89, '2025-06-01');
+--('Temperature', 'AgriSense', 'T-102', 'SN-TEMP-006', 2, '2025-04-01', '2025-05-01', 30, 26.10, 'Celsius', 0.94, '2025-06-01'),
+--('Humidity', 'FarmTech', 'H-202', 'SN-HUM-007', 2, '2025-04-05', '2025-05-05', 60, 55.80, '%', 0.91, '2025-06-01'),
+--('Soil_Moisture', 'SoilPro', 'SM-302', 'SN-SM-008', 2, '2025-04-10', '2025-05-10', 45, 35.60, '%', 0.90, '2025-06-01'),
+--('pH', 'AgroLab', 'PH-152', 'SN-PH-009', 2, '2025-04-15', '2025-05-15', 90, 6.90, 'pH', 0.93, '2025-06-01'),
+--('Light', 'Photonics', 'LUX-802', 'SN-LUX-010', 2, '2025-04-20', '2025-05-20', 30, 13500, 'Lux', 0.89, '2025-06-01');
 
-select * from Sensors;
+--select * from Sensors;
 
 -- Insert Sample FieldWiseCrops
 INSERT INTO FieldWiseCrops (FieldId, CropId, PlantedDate, ExpectedHarvestDate, ActualHarvestDate, CurrentGrowthStage, PlantedArea, Status, Notes) VALUES
