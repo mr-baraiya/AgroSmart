@@ -22,8 +22,16 @@ namespace AgroSmartBeackend.Controllers
         [HttpGet("All")]
         public async Task<ActionResult<List<Recommendation>>> GetAllRecommendations()
         {
-            var data = await _context.Recommendations.ToListAsync();
-            return Ok(data);
+            try
+            {
+                var data = await _context.Recommendations.ToListAsync();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Optional: log the exception
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         #endregion
 
@@ -31,24 +39,19 @@ namespace AgroSmartBeackend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Recommendation>> GetRecommendationById(int id)
         {
-            var rec = await _context.Recommendations.FindAsync(id);
-            if (rec == null)
+            try
             {
-                return NotFound();
+                var rec = await _context.Recommendations.FindAsync(id);
+                if (rec == null)
+                    return NotFound();
+
+                return Ok(rec);
             }
-            return Ok(rec);
-        }
-        #endregion
-
-        #region GetRecommendationsByFieldId
-        [HttpGet("ByField/{fieldId}")]
-        public async Task<ActionResult<List<Recommendation>>> GetRecommendationsByFieldId(int fieldId)
-        {
-            var data = await _context.Recommendations
-                .Where(r => r.FieldId == fieldId)
-                .ToListAsync();
-
-            return Ok(data);
+            catch (Exception ex)
+            {
+                // Log the exception here if needed
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         #endregion
 
@@ -56,12 +59,18 @@ namespace AgroSmartBeackend.Controllers
         [HttpPost]
         public async Task<ActionResult<Recommendation>> AddRecommendation(Recommendation r)
         {
-            r.GeneratedAt = DateTime.UtcNow;
+            try
+            {
+                r.GeneratedAt = DateTime.UtcNow;
+                await _context.Recommendations.AddAsync(r);
+                await _context.SaveChangesAsync();
 
-            await _context.Recommendations.AddAsync(r);
-            await _context.SaveChangesAsync();
-
-            return Ok(r);
+                return Ok(r);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         #endregion
 
@@ -70,28 +79,31 @@ namespace AgroSmartBeackend.Controllers
         public async Task<ActionResult<Recommendation>> UpdateRecommendation(int id, Recommendation r)
         {
             if (id != r.RecommendationId)
-            {
                 return BadRequest("Recommendation ID mismatch");
-            }
 
-            var existing = await _context.Recommendations.FindAsync(id);
-            if (existing == null)
+            try
             {
-                return NotFound();
+                var existing = await _context.Recommendations.FindAsync(id);
+                if (existing == null)
+                    return NotFound();
+
+                existing.FieldId = r.FieldId;
+                existing.RecommendationType = r.RecommendationType;
+                existing.Title = r.Title;
+                existing.Description = r.Description;
+                existing.Priority = r.Priority;
+                existing.EstimatedCost = r.EstimatedCost;
+                existing.EstimatedBenefit = r.EstimatedBenefit;
+                existing.ValidUntil = r.ValidUntil;
+                existing.GeneratedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+                return Ok(existing);
             }
-
-            existing.FieldId = r.FieldId;
-            existing.RecommendationType = r.RecommendationType;
-            existing.Title = r.Title;
-            existing.Description = r.Description;
-            existing.Priority = r.Priority;
-            existing.EstimatedCost = r.EstimatedCost;
-            existing.EstimatedBenefit = r.EstimatedBenefit;
-            existing.ValidUntil = r.ValidUntil;
-            existing.GeneratedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-            return Ok(existing);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         #endregion
 
@@ -99,16 +111,79 @@ namespace AgroSmartBeackend.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Recommendation>> DeleteRecommendation(int id)
         {
-            var r = await _context.Recommendations.FindAsync(id);
-            if (r == null)
+            try
             {
-                return NotFound();
+                var r = await _context.Recommendations.FindAsync(id);
+                if (r == null)
+                    return NotFound();
+
+                _context.Recommendations.Remove(r);
+                await _context.SaveChangesAsync();
+
+                return Ok(r);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        #endregion
 
-            _context.Recommendations.Remove(r);
-            await _context.SaveChangesAsync();
+        #region FilterRecommendations
+        [HttpGet("Filter")]
+        public async Task<ActionResult<List<Recommendation>>> FilterRecommendations(
+            [FromQuery] int? fieldId,
+            [FromQuery] string? type,
+            [FromQuery] string? title,
+            [FromQuery] string? priority,
+            [FromQuery] decimal? minCost,
+            [FromQuery] decimal? maxCost,
+            [FromQuery] decimal? minBenefit,
+            [FromQuery] decimal? maxBenefit,
+            [FromQuery] DateTime? validUntilBefore,
+            [FromQuery] DateTime? validUntilAfter)
+        {
+            try
+            {
+                var query = _context.Recommendations.AsQueryable();
 
-            return Ok(r);
+                if (fieldId.HasValue)
+                    query = query.Where(r => r.FieldId == fieldId.Value);
+
+                if (!string.IsNullOrWhiteSpace(type))
+                    query = query.Where(r => r.RecommendationType.ToLower().Contains(type.ToLower()));
+
+                if (!string.IsNullOrWhiteSpace(title))
+                    query = query.Where(r => r.Title.ToLower().Contains(title.ToLower()));
+
+                if (!string.IsNullOrWhiteSpace(priority))
+                    query = query.Where(r => r.Priority.ToLower().Contains(priority.ToLower()));
+
+                if (minCost.HasValue)
+                    query = query.Where(r => r.EstimatedCost >= minCost.Value);
+
+                if (maxCost.HasValue)
+                    query = query.Where(r => r.EstimatedCost <= maxCost.Value);
+
+                if (minBenefit.HasValue)
+                    query = query.Where(r => r.EstimatedBenefit >= minBenefit.Value);
+
+                if (maxBenefit.HasValue)
+                    query = query.Where(r => r.EstimatedBenefit <= maxBenefit.Value);
+
+                if (validUntilBefore.HasValue)
+                    query = query.Where(r => r.ValidUntil.HasValue && r.ValidUntil.Value <= validUntilBefore.Value);
+
+                if (validUntilAfter.HasValue)
+                    query = query.Where(r => r.ValidUntil.HasValue && r.ValidUntil.Value >= validUntilAfter.Value);
+
+                var data = await query.ToListAsync();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         #endregion
 
