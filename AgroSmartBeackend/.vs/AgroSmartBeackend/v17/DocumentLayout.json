@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\weatherdatum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\weatherdatum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\controllers\\weatherdatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:controllers\\weatherdatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -19,6 +23,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "WeatherDatum.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\WeatherDatum.cs",
+              "RelativeDocumentMoniker": "Models\\WeatherDatum.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\WeatherDatum.cs",
+              "RelativeToolTip": "Models\\WeatherDatum.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-05T18:02:52.475Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "WeatherDataController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\WeatherDataController.cs",
               "RelativeDocumentMoniker": "Controllers\\WeatherDataController.cs",
