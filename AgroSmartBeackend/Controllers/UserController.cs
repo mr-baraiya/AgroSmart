@@ -1,7 +1,9 @@
 ﻿using AgroSmartBeackend.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 namespace AgroSmartBeackend.Controllers
 {
@@ -53,27 +55,6 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
-        #region AddUser
-        [HttpPost]
-        public async Task<ActionResult<User>> AddUser(User u)
-        {
-            try
-            {
-                u.CreatedAt = DateTime.UtcNow;
-                u.UpdatedAt = DateTime.UtcNow;
-
-                await _context.Users.AddAsync(u);
-                await _context.SaveChangesAsync();
-
-                return Ok(u);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Error adding user", Error = ex.Message });
-            }
-        }
-        #endregion
-
         #region UpdateUser
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> UpdateUser(int id, User u)
@@ -87,10 +68,8 @@ namespace AgroSmartBeackend.Controllers
                 if (existingUser == null)
                     return NotFound(new { Message = $"User with ID {id} not found." });
 
-                // Update allowed fields only
                 existingUser.FullName = u.FullName;
                 existingUser.Email = u.Email;
-                existingUser.PasswordHash = u.PasswordHash;
                 existingUser.Role = u.Role;
                 existingUser.Phone = u.Phone;
                 existingUser.Address = u.Address;
@@ -180,6 +159,78 @@ namespace AgroSmartBeackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "Error filtering users", Error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region LoginUser
+        [HttpPost("Login")]
+        public async Task<ActionResult> Login(Models.LoginRequest request)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == request.Identifier || u.Phone == request.Identifier);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                return Unauthorized(new { Message = "Invalid email/phone or password." });
+
+            return Ok(new { Message = "Login successful", User = user });
+        }
+        #endregion
+
+        #region RegisterUser
+        [HttpPost("Register")]
+        public async Task<ActionResult> RegisterUser(User u)
+        {
+            try
+            {
+                // Check if email or phone already exists
+                if (await _context.Users.AnyAsync(x => x.Email == u.Email || x.Phone == u.Phone))
+                    return BadRequest(new { Message = "Email or phone already in use." });
+
+                // Hash the password securely before saving
+                u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(u.PasswordHash);
+
+                u.CreatedAt = DateTime.UtcNow;
+                u.UpdatedAt = DateTime.UtcNow;
+
+                await _context.Users.AddAsync(u);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "User registered successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error registering user", Error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region ChangePassword
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] Models.ChangePasswordRequest request)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(request.UserId);
+                if (user == null)
+                    return NotFound(new { Message = "User not found." });
+
+                // Verify current password
+                bool isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash);
+                if (!isCurrentPasswordValid)
+                    return Unauthorized(new { Message = "Current password is incorrect." });
+
+                // Hash and update new password
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "Password changed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error changing password", Error = ex.Message });
             }
         }
         #endregion
