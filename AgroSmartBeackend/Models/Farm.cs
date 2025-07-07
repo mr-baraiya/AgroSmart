@@ -31,9 +31,6 @@ public partial class Farm
     public virtual ICollection<Field> Fields { get; set; } = new List<Field>();
 
     [JsonIgnore]
-    public virtual ICollection<WeatherDatum> WeatherData { get; set; } = new List<WeatherDatum>();
-
-    [JsonIgnore]
     public virtual User? User { get; set; }
 
 }
