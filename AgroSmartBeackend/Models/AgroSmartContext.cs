@@ -23,11 +23,13 @@ public partial class AgroSmartContext : DbContext
 
     public virtual DbSet<FieldWiseCrop> FieldWiseCrops { get; set; }
 
-    public virtual DbSet<Recommendation> Recommendations { get; set; }
-
     public virtual DbSet<Schedule> Schedules { get; set; }
 
-    //public virtual DbSet<Sensor> Sensors { get; set; }
+    public virtual DbSet<Sensor> Sensors { get; set; }
+
+    public virtual DbSet<SensorReading> SensorReadings { get; set; }
+
+    public virtual DbSet<SmartInsight> SmartInsights { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -116,25 +118,6 @@ public partial class AgroSmartContext : DbContext
                 .HasConstraintName("FK_FieldWiseCrops_Fields");
         });
 
-        modelBuilder.Entity<Recommendation>(entity =>
-        {
-            entity.HasKey(e => e.RecommendationId).HasName("PK__Recommen__AA15BEE4ADEEF177");
-
-            entity.Property(e => e.EstimatedBenefit).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.EstimatedCost).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.GeneratedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Priority)
-                .HasMaxLength(20)
-                .HasDefaultValue("Medium");
-            entity.Property(e => e.RecommendationType).HasMaxLength(50);
-            entity.Property(e => e.Title).HasMaxLength(200);
-
-            entity.HasOne(d => d.Field).WithMany(p => p.Recommendations)
-                .HasForeignKey(d => d.FieldId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Recommendations_Fields");
-        });
-
         modelBuilder.Entity<Schedule>(entity =>
         {
             entity.HasKey(e => e.ScheduleId).HasName("PK__Schedule__9C8A5B49C7A53B7E");
@@ -163,25 +146,61 @@ public partial class AgroSmartContext : DbContext
                 .HasConstraintName("FK_Schedules_Fields");
         });
 
-        //modelBuilder.Entity<Sensor>(entity =>
-        //{
-        //    entity.HasKey(e => e.SensorId).HasName("PK__Sensors__D8099BFAB56C1AF3");
+        modelBuilder.Entity<Sensor>(entity =>
+        {
+            entity.HasKey(e => e.SensorId).HasName("PK__Sensors__D8099BFAD2BF442E");
 
-        //    entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-        //    entity.Property(e => e.IsActive).HasDefaultValue(true);
-        //    entity.Property(e => e.LatestQualityScore).HasColumnType("decimal(3, 2)");
-        //    entity.Property(e => e.LatestUnit).HasMaxLength(20);
-        //    entity.Property(e => e.LatestValue).HasColumnType("decimal(15, 4)");
-        //    entity.Property(e => e.Manufacturer).HasMaxLength(100);
-        //    entity.Property(e => e.Model).HasMaxLength(100);
-        //    entity.Property(e => e.SensorType).HasMaxLength(50);
-        //    entity.Property(e => e.SerialNumber).HasMaxLength(100);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.LatestQualityScore).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.LatestUnit).HasMaxLength(20);
+            entity.Property(e => e.LatestValue).HasColumnType("decimal(15, 4)");
+            entity.Property(e => e.Manufacturer).HasMaxLength(100);
+            entity.Property(e => e.Model).HasMaxLength(100);
+            entity.Property(e => e.SensorType).HasMaxLength(50);
+            entity.Property(e => e.SerialNumber).HasMaxLength(100);
 
-        //    entity.HasOne(d => d.Field).WithMany(p => p.Sensors)
-        //        .HasForeignKey(d => d.FieldId)
-        //        .OnDelete(DeleteBehavior.ClientSetNull)
-        //        .HasConstraintName("FK_Sensors_Fields");
-        //});
+            entity.HasOne(d => d.Field).WithMany(p => p.Sensors)
+                .HasForeignKey(d => d.FieldId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Sensors_Fields");
+        });
+
+        modelBuilder.Entity<SensorReading>(entity =>
+        {
+            entity.HasKey(e => e.ReadingId).HasName("PK__SensorRe__C80F9C4EC5969228");
+
+            entity.Property(e => e.QualityScore).HasColumnType("decimal(3, 2)");
+            entity.Property(e => e.Unit).HasMaxLength(20);
+            entity.Property(e => e.Value).HasColumnType("decimal(15, 4)");
+
+            entity.HasOne(d => d.Sensor).WithMany(p => p.SensorReadings)
+                .HasForeignKey(d => d.SensorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SensorReadings_Sensors");
+        });
+
+        modelBuilder.Entity<SmartInsight>(entity =>
+        {
+            entity.HasKey(e => e.InsightId).HasName("PK__SmartIns__6A3F54F4B1389C44");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.InsightType).HasMaxLength(50);
+            entity.Property(e => e.IsResolved).HasDefaultValue(false);
+            entity.Property(e => e.Priority)
+                .HasMaxLength(20)
+                .HasDefaultValue("Medium");
+            entity.Property(e => e.SourceType).HasMaxLength(50);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Active");
+            entity.Property(e => e.Title).HasMaxLength(200);
+
+            entity.HasOne(d => d.TargetUser).WithMany(p => p.SmartInsights)
+                .HasForeignKey(d => d.TargetUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SmartInsights_Users");
+        });
 
         modelBuilder.Entity<User>(entity =>
         {
@@ -200,7 +219,7 @@ public partial class AgroSmartContext : DbContext
 
         modelBuilder.Entity<WeatherDatum>(entity =>
         {
-            entity.HasKey(e => e.WeatherId).HasName("PK__WeatherD__0BF97BF5004E414A");
+            entity.HasKey(e => e.WeatherId).HasName("PK__WeatherD__0BF97BF515CDFC69");
 
             entity.Property(e => e.DataType).HasMaxLength(20);
             entity.Property(e => e.Humidity).HasColumnType("decimal(5, 2)");
@@ -212,11 +231,6 @@ public partial class AgroSmartContext : DbContext
             entity.Property(e => e.Temperature).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.WeatherDescription).HasMaxLength(200);
             entity.Property(e => e.WindSpeed).HasColumnType("decimal(5, 2)");
-
-            entity.HasOne(d => d.Farm).WithMany(p => p.WeatherData)
-                .HasForeignKey(d => d.FarmId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WeatherData_Farm");
         });
 
         OnModelCreatingPartial(modelBuilder);
