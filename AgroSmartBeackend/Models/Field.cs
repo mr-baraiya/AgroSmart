@@ -32,9 +32,9 @@ public partial class Field
     public virtual ICollection<FieldWiseCrop> FieldWiseCrops { get; set; } = new List<FieldWiseCrop>();
 
     [JsonIgnore]
-    public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
+    public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
     [JsonIgnore]
-    public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
+    public virtual ICollection<Sensor> Sensors { get; set; } = new List<Sensor>();
 
 }
