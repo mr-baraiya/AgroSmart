@@ -32,4 +32,7 @@ public partial class User
 
     [JsonIgnore]
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
+
+    [JsonIgnore]
+    public virtual ICollection<SmartInsight> SmartInsights { get; set; } = new List<SmartInsight>();
 }
