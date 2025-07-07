@@ -160,8 +160,7 @@ namespace AgroSmartBeackend.Controllers
             [FromQuery] decimal? minPressure,
             [FromQuery] decimal? maxPressure,
             [FromQuery] decimal? minWind,
-            [FromQuery] decimal? maxWind,
-            [FromQuery] int? farmId)
+            [FromQuery] decimal? maxWind)
         {
             try
             {
@@ -196,9 +195,6 @@ namespace AgroSmartBeackend.Controllers
 
                 if (maxWind.HasValue)
                     query = query.Where(w => w.WindSpeed <= maxWind.Value);
-
-                if (farmId.HasValue)
-                    query = query.Where(w => w.FarmId == farmId.Value);
 
                 var result = await query.OrderByDescending(w => w.ForecastDate).ToListAsync();
                 return Ok(result);
