@@ -17,4 +17,4 @@ COPY --from=build /app/out .
 
 # Expose port and run app
 EXPOSE 80
-ENTRYPOINT ["dotnet", "MyApiProject.dll"]
+ENTRYPOINT ["dotnet", "AgroSmartBeackend.dll"]
