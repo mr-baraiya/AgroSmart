@@ -252,6 +252,7 @@ select * from FieldWiseCrops;
 -- =============================================
 -- 8. SmartInsights TABLE
 -- =============================================
+
 CREATE TABLE SmartInsights (
     InsightId            INT PRIMARY KEY IDENTITY(1,1),
     InsightType          NVARCHAR(50) NOT NULL,         -- e.g., 'Alert', 'Tip', 'Schedule', 'Sensor', 'Crop'
@@ -260,7 +261,6 @@ CREATE TABLE SmartInsights (
     Priority             NVARCHAR(20) DEFAULT 'Medium', -- High, Medium, Low
     Status               NVARCHAR(20) DEFAULT 'Active', -- Seen, Resolved, etc.
     SourceType           NVARCHAR(50),                  -- e.g., 'Sensor', 'Schedule', 'Field', 'Farm', 'AI'
-    SourceId             INT NULL,                      -- Reference ID for the source (SensorId, FieldId, etc.)
     TargetUserId         INT NOT NULL,                  -- Who should see this insight
     ValidUntil           DATETIME2 NULL,
     CreatedAt            DATETIME2 DEFAULT GETDATE(),
@@ -270,57 +270,57 @@ CREATE TABLE SmartInsights (
 );
 
 -- Insert Sample SmartInsights
-INSERT INTO SmartInsights (InsightType, Title, Message, Priority, Status, SourceType, SourceId, TargetUserId, ValidUntil)
+INSERT INTO SmartInsights (InsightType, Title, Message, Priority, Status, SourceType, TargetUserId, ValidUntil)
 VALUES 
 -- Sensor Alert
 ('Alert', 'Soil Moisture Low', 
  'Sensor in Field A1 shows critically low soil moisture. Irrigation required immediately.',
- 'High', 'Active', 'Sensor', 3, 1, '2025-07-10'),
+ 'High', 'Active', 'Sensor', 1, '2025-07-10'),
 
 -- Field Recommendation
 ('Recommendation', 'Apply Potassium Fertilizer', 
  'Field A2 crops entering fruiting stage. Recommend potassium-based fertilizer this week.',
- 'Medium', 'Active', 'Field', 2, 1, '2025-07-15'),
+ 'Medium', 'Active', 'Field', 1, '2025-07-15'),
 
 -- Schedule Reminder
 ('Reminder', 'Upcoming Irrigation Task', 
  'Drip irrigation scheduled on Field A1 for 8:00 AM tomorrow. Ensure setup is ready.',
- 'Low', 'Active', 'Schedule', 1, 1, '2025-07-08'),
+ 'Low', 'Active', 'Schedule', 1, '2025-07-08'),
 
 -- General Tip
 ('Tip', 'Use Organic Pest Control', 
  'Using neem-based insecticide can help reduce pests without affecting crop quality.',
- 'Low', 'Active', 'Field', 1, 1, NULL),
+ 'Low', 'Active', 'Field', 1, NULL),
 
 -- Farm-Level Insight
 ('Recommendation', 'Switch to Drip Irrigation System', 
  'Farm-wide water usage can be optimized with a drip system, reducing 40% waste.',
- 'High', 'Active', 'Farm', 1, 1, '2025-08-01'),
+ 'High', 'Active', 'Farm', 1, '2025-08-01'),
 
 -- Weather Alert
 ('Alert', 'Rain Forecasted Tomorrow', 
  'Rainfall expected near Agro Farm A. Consider rescheduling pesticide spray.',
- 'High', 'Active', 'Farm', 1, 1, '2025-07-08'),
+ 'High', 'Active', 'Farm', 1, '2025-07-08'),
 
 -- AI Crop Suggestion
 ('Recommendation', 'Rotate Crop to Legumes', 
  'AI suggests rotating with Soybean after wheat to restore soil nitrogen levels.',
- 'Medium', 'Active', 'Field', 2, 2, '2025-12-31'),
+ 'Medium', 'Active', 'Field', 2, '2025-12-31'),
 
 -- Harvest Reminder
 ('Reminder', 'Tomato Harvest Approaching', 
  'Field A3 tomatoes are nearing full maturity. Begin harvest planning now.',
- 'Medium', 'Active', 'Schedule', 5, 1, '2025-07-09'),
+ 'Medium', 'Active', 'Schedule', 1, '2025-07-09'),
 
 -- Sensor Alert - pH too acidic
 ('Alert', 'Soil pH Too Low', 
  'Sensor in Field A3 shows pH 4.9. Apply lime to correct acidity.',
- 'High', 'Active', 'Sensor', 4, 1, '2025-07-11'),
+ 'High', 'Active', 'Sensor', 1, '2025-07-11'),
 
 -- Expert Tip
 ('Tip', 'Mulching Benefits', 
  'Mulching helps retain soil moisture and suppress weeds. Consider applying mulch.',
- 'Low', 'Active', 'Farm', 1, 1, NULL);
+ 'Low', 'Active', 'Farm', 1, NULL);
 
  select * from SmartInsights;
 

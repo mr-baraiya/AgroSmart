@@ -91,7 +91,6 @@ namespace AgroSmartBeackend.Controllers
                 existing.Priority = i.Priority;
                 existing.Status = i.Status;
                 existing.SourceType = i.SourceType;
-                existing.SourceId = i.SourceId;
                 existing.TargetUserId = i.TargetUserId;
                 existing.ValidUntil = i.ValidUntil;
                 existing.IsResolved = i.IsResolved;
@@ -169,34 +168,6 @@ namespace AgroSmartBeackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "Error filtering insights", Error = ex.Message });
-            }
-        }
-        #endregion
-
-        #region GetUniqueSourceIds
-        [HttpGet("UniqueSourceIds")]
-        public async Task<ActionResult<List<object>>> GetUniqueSourceIds()
-        {
-            try
-            {
-                var uniqueSources = await _context.SmartInsights
-                    .Where(s => s.SourceId != null)
-                    .GroupBy(s => s.SourceId)
-                    .Select(g => g
-                        .OrderByDescending(x => x.CreatedAt) // or InsightId
-                        .FirstOrDefault())
-                    .Select(s => new
-                    {
-                        s.SourceId,
-                        s.SourceType
-                    })
-                    .ToListAsync();
-
-                return Ok(uniqueSources);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Error fetching unique SourceIds", Error = ex.Message });
             }
         }
         #endregion
