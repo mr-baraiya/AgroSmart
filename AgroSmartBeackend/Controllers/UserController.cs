@@ -1,9 +1,10 @@
 ﻿using AgroSmartBeackend.Models;
+using BCrypt.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
+using System.Text.RegularExpressions;
 
 namespace AgroSmartBeackend.Controllers
 {
@@ -170,7 +171,21 @@ namespace AgroSmartBeackend.Controllers
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == request.Identifier || u.Phone == request.Identifier);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            if (user == null)
+                return Unauthorized(new { Message = "User not found." });
+
+            bool isPasswordValid = false;
+
+            try
+            {
+                isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+                return BadRequest(new { Message = "Invalid password format stored in database." });
+            }
+
+            if (!isPasswordValid)
                 return Unauthorized(new { Message = "Invalid email/phone or password." });
 
             return Ok(new { Message = "Login successful", User = user });
@@ -184,8 +199,13 @@ namespace AgroSmartBeackend.Controllers
             try
             {
                 // Check if email or phone already exists
-                if (await _context.Users.AnyAsync(x => x.Email == u.Email || x.Phone == u.Phone))
+                bool exists = await _context.Users.AnyAsync(x => x.Email == u.Email || x.Phone == u.Phone);
+                if (exists)
                     return BadRequest(new { Message = "Email or phone already in use." });
+
+                // Validate password strength (optional but recommended)
+                if (string.IsNullOrWhiteSpace(u.PasswordHash) || u.PasswordHash.Length < 6)
+                    return BadRequest(new { Message = "Password must be at least 6 characters long." });
 
                 // Hash the password securely before saving
                 u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(u.PasswordHash);
@@ -206,6 +226,7 @@ namespace AgroSmartBeackend.Controllers
         #endregion
 
         #region ChangePassword
+
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] Models.ChangePasswordRequest request)
         {
@@ -216,11 +237,32 @@ namespace AgroSmartBeackend.Controllers
                     return NotFound(new { Message = "User not found." });
 
                 // Verify current password
-                bool isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash);
+                bool isCurrentPasswordValid = false;
+                try
+                {
+                    isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash);
+                }
+                catch (BCrypt.Net.SaltParseException)
+                {
+                    return BadRequest(new { Message = "Stored password format is invalid." });
+                }
+
                 if (!isCurrentPasswordValid)
                     return Unauthorized(new { Message = "Current password is incorrect." });
 
-                // Hash and update new password
+                // Prevent same password reuse
+                if (BCrypt.Net.BCrypt.Verify(request.NewPassword, user.PasswordHash))
+                    return BadRequest(new { Message = "New password cannot be the same as the current password." });
+
+                // Strong password pattern check
+                var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&^])[A-Za-z\d@$!%*?#&^]{8,}$";
+                if (!Regex.IsMatch(request.NewPassword, passwordPattern))
+                    return BadRequest(new
+                    {
+                        Message = "Password must be at least 8 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character."
+                    });
+
+                // Hash and update password
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
                 user.UpdatedAt = DateTime.UtcNow;
 
