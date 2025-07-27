@@ -4,7 +4,7 @@ using FluentValidation;
 public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
 {
     public ChangePasswordRequestValidator()
-    {
+    {  
         RuleFor(x => x.UserId)
             .GreaterThan(0).WithMessage("Invalid User ID.");
 

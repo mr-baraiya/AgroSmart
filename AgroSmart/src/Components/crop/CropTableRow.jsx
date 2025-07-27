@@ -11,7 +11,7 @@ const CropTableRow = ({
   const [showActions, setShowActions] = useState(false);
 
   const toggleActions = () => {
-    setShowActions(!showActions);
+    setShowActions(prev => !prev);
   };
 
   const hideActions = () => {
@@ -61,9 +61,9 @@ const CropTableRow = ({
         </button>
         {showActions && (
           <CropActionsDropdown
-            onEdit={() => onEdit(crop)}
-            onDelete={() => onDelete(crop)}
-            onInfo={() => onInfo(crop)}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onInfo={onInfo}
             onClose={hideActions}
           />
         )}

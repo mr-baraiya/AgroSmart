@@ -10,7 +10,7 @@ public partial class Crop
     public int CropId { get; set; }
 
     public string CropName { get; set; } = null!;
-
+     
     public decimal? OptimalSoilpHmin { get; set; }
 
     public decimal? OptimalSoilpHmax { get; set; }

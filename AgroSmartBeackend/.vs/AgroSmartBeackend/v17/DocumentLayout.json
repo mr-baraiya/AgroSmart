@@ -3,6 +3,42 @@
   "WorkspaceRootPath": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\smartinsight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\smartinsight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\sensorreading.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\sensorreading.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\field.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\field.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\fieldwisecrop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\fieldwisecrop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\farm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\farm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\models\\crop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:models\\crop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\validators\\weatherdatumvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:validators\\weatherdatumvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\validators\\changepasswordrequestvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:validators\\changepasswordrequestvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -23,19 +59,127 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
-              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\UserController.cs",
-              "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAwwBYBAAAAAAAAAAAAAA==",
+              "Title": "SmartInsight.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\SmartInsight.cs",
+              "RelativeDocumentMoniker": "Models\\SmartInsight.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\SmartInsight.cs",
+              "RelativeToolTip": "Models\\SmartInsight.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-21T18:15:51.281Z",
+              "WhenOpened": "2025-07-22T08:11:57.581Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "SensorReading.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\SensorReading.cs",
+              "RelativeDocumentMoniker": "Models\\SensorReading.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\SensorReading.cs",
+              "RelativeToolTip": "Models\\SensorReading.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:52.598Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Schedule.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Schedule.cs",
+              "RelativeDocumentMoniker": "Models\\Schedule.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Schedule.cs",
+              "RelativeToolTip": "Models\\Schedule.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:49.138Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Field.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Field.cs",
+              "RelativeDocumentMoniker": "Models\\Field.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Field.cs",
+              "RelativeToolTip": "Models\\Field.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:45.912Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FieldWiseCrop.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\FieldWiseCrop.cs",
+              "RelativeDocumentMoniker": "Models\\FieldWiseCrop.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\FieldWiseCrop.cs",
+              "RelativeToolTip": "Models\\FieldWiseCrop.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:42.191Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Farm.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Farm.cs",
+              "RelativeDocumentMoniker": "Models\\Farm.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Farm.cs",
+              "RelativeToolTip": "Models\\Farm.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:38.026Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Crop.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Crop.cs",
+              "RelativeDocumentMoniker": "Models\\Crop.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Crop.cs",
+              "RelativeToolTip": "Models\\Crop.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:32.525Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "WeatherDatumValidator.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\WeatherDatumValidator.cs",
+              "RelativeDocumentMoniker": "Validators\\WeatherDatumValidator.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\WeatherDatumValidator.cs",
+              "RelativeToolTip": "Validators\\WeatherDatumValidator.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAQwDoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:20.645Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ChangePasswordRequestValidator.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\ChangePasswordRequestValidator.cs",
+              "RelativeDocumentMoniker": "Validators\\ChangePasswordRequestValidator.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\ChangePasswordRequestValidator.cs",
+              "RelativeToolTip": "Validators\\ChangePasswordRequestValidator.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwAYAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-22T08:11:03.895Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\UserController.cs",
+              "RelativeToolTip": "Controllers\\UserController.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAQwGkAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T18:15:51.281Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -43,8 +187,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-09T14:14:37.394Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-09T14:14:37.394Z"
             }
           ]
         }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "@/config";
 import CropModal from "./CropModal";
 import CropTable from "./CropTable";
+import CropDetailModal from "./CropDetail";
 
 const API_URL = `${API_BASE_URL}/Crop/All`;
 
@@ -12,14 +12,18 @@ const CropsView = () => {
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showActions, setShowActions] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [editCrop, setEditCrop] = useState(null);
+  
+  // State for the Add/Edit modal
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [cropToEdit, setCropToEdit] = useState(null);
 
-  const navigate = useNavigate();
+  // State for the Info modal
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [cropToShow, setCropToShow] = useState(null);
 
   useEffect(() => {
     const fetchCrops = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(API_URL, {
           headers: { Accept: "application/json" }
@@ -44,17 +48,9 @@ const CropsView = () => {
     }
   };
 
-  const handleMoreClick = (cropId) => {
-    setShowActions((prev) => ({
-      ...prev,
-      [cropId]: !prev[cropId],
-    }));
-  };
-
   const handleEdit = (crop) => {
-    setEditCrop(crop);
-    setShowModal(true);
-    setShowActions({});
+    setCropToEdit(crop);
+    setShowEditModal(true);
   };
 
   const handleDelete = async (crop) => {
@@ -65,26 +61,33 @@ const CropsView = () => {
       } catch {
         alert("Failed to delete crop");
       }
-      setShowActions({});
     }
   };
 
-  // Use React Router navigation for More Info
+  // Show the info modal instead of navigating
   const handleInfo = (crop) => {
-    setShowActions({});
-    navigate(`/crops/${crop.cropId}`);
+    setCropToShow(crop);
+    setShowInfoModal(true);
   };
 
   return (
     <div className="p-6">
+      {/* Add/Edit Modal */}
       <CropModal
-        open={showModal}
+        open={showEditModal}
         onClose={() => {
-          setShowModal(false);
-          setEditCrop(null);
+          setShowEditModal(false);
+          setCropToEdit(null);
         }}
         onSaved={handleSaved}
-        crop={editCrop}
+        crop={cropToEdit}
+      />
+
+      {/* Info Modal */}
+      <CropDetailModal
+        open={showInfoModal}
+        onClose={() => setShowInfoModal(false)}
+        crop={cropToShow}
       />
 
       <div className="flex justify-between items-center mb-6">
@@ -92,8 +95,8 @@ const CropsView = () => {
         <button
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
           onClick={() => {
-            setShowModal(true);
-            setEditCrop(null);
+            setShowEditModal(true);
+            setCropToEdit(null);
           }}
         >
           <Plus className="w-4 h-4" />
@@ -110,8 +113,6 @@ const CropsView = () => {
           ) : (
             <CropTable
               crops={crops}
-              showActions={showActions}
-              onToggleActions={handleMoreClick}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onInfo={handleInfo}

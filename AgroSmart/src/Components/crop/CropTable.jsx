@@ -3,8 +3,6 @@ import CropTableRow from "./CropTableRow";
 
 const CropTable = ({
   crops,
-  showActions,
-  onToggleActions,
   onEdit,
   onDelete,
   onInfo
@@ -43,8 +41,6 @@ const CropTable = ({
         <CropTableRow
           key={crop.cropId}
           crop={crop}
-          showActions={!!showActions[crop.cropId]}
-          onToggleActions={() => onToggleActions(crop.cropId)}
           onEdit={() => onEdit(crop)}
           onDelete={() => onDelete(crop)}
           onInfo={() => onInfo(crop)}
