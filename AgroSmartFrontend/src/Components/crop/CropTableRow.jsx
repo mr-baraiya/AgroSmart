@@ -27,19 +27,27 @@ const CropTableRow = ({
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {crop.description}
+        <div className="max-w-xs truncate" title={crop.description}>
+          {crop.description || 'No description'}
+        </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {crop.optimalSoilpHmin} - {crop.optimalSoilpHmax}
+        {crop.optimalSoilpHmin && crop.optimalSoilpHmax 
+          ? `${crop.optimalSoilpHmin} - ${crop.optimalSoilpHmax}`
+          : 'Not specified'
+        }
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {crop.optimalTempMin} - {crop.optimalTempMax}
+        {crop.optimalTempMin && crop.optimalTempMax 
+          ? `${crop.optimalTempMin}° - ${crop.optimalTempMax}°`
+          : 'Not specified'
+        }
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {crop.avgWaterReqmm}
+        {crop.avgWaterReqmm ? `${crop.avgWaterReqmm} mm` : 'Not specified'}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {crop.harvestSeason}
+        {crop.harvestSeason || 'Not specified'}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         {crop.isActive ? (

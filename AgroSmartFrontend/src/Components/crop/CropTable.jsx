@@ -6,8 +6,11 @@ const CropTable = ({
   onEdit,
   onDelete,
   onInfo
-}) => (
-  <table className="w-full">
+}) => {
+  // Ensure crops is always an array
+  const cropsArray = Array.isArray(crops) ? crops : [];
+  return (
+    <table className="w-full">
     <thead className="bg-gray-50">
       <tr>
         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -37,7 +40,7 @@ const CropTable = ({
       </tr>
     </thead>
     <tbody className="bg-white divide-y divide-gray-200">
-      {crops.map((crop) => (
+      {cropsArray.map((crop) => (
         <CropTableRow
           key={crop.cropId}
           crop={crop}
@@ -46,7 +49,7 @@ const CropTable = ({
           onInfo={() => onInfo(crop)}
         />
       ))}
-      {crops.length === 0 && (
+      {cropsArray.length === 0 && (
         <tr>
           <td colSpan={8} className="px-6 py-4 text-center text-gray-400">
             No crops found.
@@ -54,7 +57,8 @@ const CropTable = ({
         </tr>
       )}
     </tbody>
-  </table>
-);
+    </table>
+  );
+};
 
 export default CropTable;
