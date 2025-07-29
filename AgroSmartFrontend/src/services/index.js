@@ -9,6 +9,7 @@ import scheduleService from './scheduleService';
 import smartInsightService from './smartInsightService';
 import fieldWiseCropService from './fieldWiseCropService';
 import sensorReadingService from './sensorReadingService';
+import realTimeWeatherService from './realTimeWeatherService';
 import api from './api'; // base axios instance
 
 // Export all as named exports
@@ -23,6 +24,7 @@ export {
   smartInsightService,
   fieldWiseCropService,
   sensorReadingService,
+  realTimeWeatherService,
   api
 };
 
@@ -41,7 +43,8 @@ export const farmManagementServices = {
 export const monitoringServices = {
   sensor: sensorService,
   sensorReading: sensorReadingService,
-  weather: weatherService
+  weather: weatherService,
+  realTimeWeather: realTimeWeatherService
 };
 
 export const planningServices = {

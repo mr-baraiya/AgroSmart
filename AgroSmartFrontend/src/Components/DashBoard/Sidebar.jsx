@@ -2,12 +2,13 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Home, Sprout, MapPin, Calendar, TrendingUp,
-  Users, Settings, Activity, Cloud, Leaf
+  Users, Settings, Activity, Cloud, Leaf, Layers
 } from "lucide-react";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
   { id: "farms", label: "Farms", icon: MapPin, path: "/farms" },
+  { id: "fields", label: "Fields", icon: Layers, path: "/fields" },
   { id: "crops", label: "Crops", icon: Sprout, path: "/crops" },
   { id: "sensors", label: "Sensors", icon: Activity, path: "/sensors" },
   { id: "weather", label: "Weather", icon: Cloud, path: "/weather" },

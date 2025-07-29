@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Plus, CheckCircle, XCircle, MapPin } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { farmService } from "../../services";
-import FarmTable from "./FarmTable";
-import FarmFilter from "./FarmFilter";
+import { Plus, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { fieldWiseCropService, fieldService, farmService } from "../../services";
+import FieldWiseCropTable from "./FieldWiseCropTable";
+import FieldWiseCropFilter from "./FieldWiseCropFilter";
 import CustomAlert from "../common/CustomAlert";
 
-const FarmsView = () => {
+const FieldWiseCropsView = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { fieldId, farmId } = useParams(); // Optional field or farm ID from URL
   
-  const [farms, setFarms] = useState([]);
+  const [fieldCrops, setFieldCrops] = useState([]);
+  const [field, setField] = useState(null);
+  const [farm, setFarm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(null);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState(fieldId ? { fieldId } : farmId ? { farmId } : {});
   const [filterLoading, setFilterLoading] = useState(false);
   
   // Custom Alert states
@@ -44,8 +47,14 @@ const FarmsView = () => {
   }, [location.state]);
 
   useEffect(() => {
-    fetchFarms();
-  }, []);
+    fetchFieldCrops();
+    if (fieldId) {
+      fetchField();
+    }
+    if (farmId) {
+      fetchFarm();
+    }
+  }, [fieldId, farmId]);
 
   // Helper functions for alerts
   const showAlert = (type, title, message, onConfirm = null, showCancel = false) => {
@@ -63,13 +72,33 @@ const FarmsView = () => {
     setAlert(prev => ({ ...prev, isOpen: false }));
   };
 
-  const fetchFarms = async (appliedFilters = null) => {
+  const fetchField = async () => {
+    if (!fieldId) return;
+    try {
+      const response = await fieldService.getById(fieldId);
+      setField(response.data);
+    } catch (err) {
+      console.error("Error fetching field:", err);
+    }
+  };
+
+  const fetchFarm = async () => {
+    if (!farmId) return;
+    try {
+      const response = await farmService.getById(farmId);
+      setFarm(response.data);
+    } catch (err) {
+      console.error("Error fetching farm:", err);
+    }
+  };
+
+  const fetchFieldCrops = async (appliedFilters = null) => {
     const filtersToUse = appliedFilters !== null ? appliedFilters : filters;
     const hasFilters = Object.keys(filtersToUse).length > 0;
     
     // Debug: Log filters being sent to API
     if (hasFilters) {
-      console.log('Applying farm filters:', filtersToUse);
+      console.log('Applying field crops filters:', filtersToUse);
     }
     
     // Use filter loading for filter operations, regular loading for initial load
@@ -85,58 +114,58 @@ const FarmsView = () => {
       let response;
       if (hasFilters) {
         // Use the filter API when filters are applied
-        console.log('Calling farmService.getFiltered with:', filtersToUse);
-        response = await farmService.getFiltered(filtersToUse);
+        console.log('Calling fieldWiseCropService.getFiltered with:', filtersToUse);
+        response = await fieldWiseCropService.getFiltered(filtersToUse);
       } else {
         // Use regular API when no filters
-        console.log('Calling farmService.getAll - no filters');
-        response = await farmService.getAll();
+        console.log('Calling fieldWiseCropService.getAll - no filters');
+        response = await fieldWiseCropService.getAll();
       }
       
-      const farmsData = Array.isArray(response.data) ? response.data : [];
-      console.log('Received farms data:', farmsData.length, 'items');
-      setFarms(farmsData);
+      const cropsData = Array.isArray(response.data) ? response.data : [];
+      console.log('Received field crops data:', cropsData.length, 'items');
+      setFieldCrops(cropsData);
     } catch (err) {
-      console.error("Error fetching farms:", err);
-      setError("Failed to fetch farms");
+      console.error("Error fetching field crops:", err);
+      setError("Failed to fetch field crops");
     } finally {
       setLoading(false);
       setFilterLoading(false);
     }
   };
 
-  const handleEdit = (farm) => {
-    console.log('Editing farm:', farm);
-    console.log('Farm ID:', farm.farmId);
-    navigate(`/farms/edit/${farm.farmId}`);
+  const handleEdit = (fieldCrop) => {
+    console.log('Editing field crop:', fieldCrop);
+    navigate(`/field-crops/edit/${fieldCrop.fieldWiseCropId}`);
   };
 
   const handleAdd = () => {
-    navigate('/farms/add');
+    const addUrl = fieldId ? `/field-crops/add?fieldId=${fieldId}` : '/field-crops/add';
+    navigate(addUrl);
   };
 
-  const handleDelete = async (farm) => {
+  const handleDelete = async (fieldCrop) => {
     showAlert(
       'confirm',
-      'Delete Farm',
-      `Are you sure you want to delete "${farm.farmName}"? This action cannot be undone.`,
+      'Remove Crop from Field',
+      `Are you sure you want to remove "${fieldCrop.cropName}" from "${fieldCrop.fieldName}"? This action cannot be undone.`,
       async () => {
         try {
-          await farmService.delete(farm.farmId);
-          setFarms((prev) => prev.filter((f) => f.farmId !== farm.farmId));
+          await fieldWiseCropService.delete(fieldCrop.fieldWiseCropId);
+          setFieldCrops((prev) => prev.filter((fc) => fc.fieldWiseCropId !== fieldCrop.fieldWiseCropId));
           closeAlert();
           setNotification({
-            message: `Farm "${farm.farmName}" deleted successfully!`,
+            message: `Crop "${fieldCrop.cropName}" removed from field successfully!`,
             type: 'success'
           });
           setTimeout(() => setNotification(null), 5000);
         } catch (err) {
-          console.error("Error deleting farm:", err);
+          console.error("Error removing crop from field:", err);
           closeAlert();
           showAlert(
             'error',
-            'Delete Failed',
-            `Failed to delete farm "${farm.farmName}". Please try again.`
+            'Remove Failed',
+            `Failed to remove crop "${fieldCrop.cropName}" from field. Please try again.`
           );
         }
       },
@@ -145,57 +174,35 @@ const FarmsView = () => {
   };
 
   // Navigate to the detail page
-  const handleInfo = (farm) => {
-    navigate(`/farms/${farm.farmId}`);
-  };
-
-  // Navigate to view fields in this farm
-  const handleViewFields = (farm) => {
-    navigate(`/farms/${farm.farmId}/fields`);
+  const handleInfo = (fieldCrop) => {
+    navigate(`/field-crops/${fieldCrop.fieldWiseCropId}`);
   };
 
   // Handle filter changes
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    fetchFarms(newFilters);
+    fetchFieldCrops(newFilters);
   };
 
-  if (loading) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-green-800">Farm Management</h1>
-          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-            <Plus className="w-4 h-4" />
-            Add New Farm
-          </button>
-        </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500">Loading farms...</div>
-        </div>
-      </div>
-    );
-  }
+  const handleBack = () => {
+    if (fieldId && field) {
+      navigate(`/fields/${fieldId}`);
+    } else if (farmId && farm) {
+      navigate(`/farms/${farmId}`);
+    } else {
+      navigate('/fields');
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-green-800">Farm Management</h1>
-          <button 
-            onClick={handleAddFarm}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add New Farm
-          </button>
-        </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-red-500">{error}</div>
-        </div>
-      </div>
-    );
-  }
+  const pageTitle = fieldId && field ? `${field.fieldName} - Crops` 
+    : farmId && farm ? `${farm.farmName} - All Crops`
+    : 'Field Crops Management';
+  
+  const pageDescription = fieldId && field 
+    ? `Manage crops in ${field.fieldName}` 
+    : farmId && farm 
+    ? `All crops planted across ${farm.farmName}`
+    : 'Manage crop assignments to fields';
 
   return (
     <div className="p-6">
@@ -221,29 +228,37 @@ const FarmsView = () => {
         </div>
       )}
 
+      {/* Breadcrumb Navigation */}
+      <div className="mb-4">
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to {fieldId ? 'Field Details' : farmId ? 'Farm Details' : 'Fields'}
+        </button>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
-            <MapPin className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">Farm Management</h2>
-            <p className="text-gray-600">Manage your farms and agricultural properties</p>
-          </div>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">{pageTitle}</h2>
+          <p className="text-gray-600">{pageDescription}</p>
         </div>
         <button
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
           onClick={handleAdd}
         >
           <Plus className="w-4 h-4" />
-          Add Farm
+          Plant Crop
         </button>
       </div>
 
       {/* Filter Component */}
-      <FarmFilter 
+      <FieldWiseCropFilter 
         onFilterChange={handleFilterChange}
         loading={filterLoading}
+        selectedFieldId={fieldId}
+        selectedFarmId={farmId}
       />
 
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -251,7 +266,7 @@ const FarmsView = () => {
         {!loading && !error && (
           <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm text-gray-600">
             <span className="font-medium">
-              {farms.length} farm{farms.length !== 1 ? 's' : ''} found
+              {fieldCrops.length} crop assignment{fieldCrops.length !== 1 ? 's' : ''} found
               {Object.keys(filters).length > 0 && ' (filtered)'}
             </span>
           </div>
@@ -259,16 +274,15 @@ const FarmsView = () => {
         
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="p-6 text-gray-500 text-center">Loading farms...</div>
+            <div className="p-6 text-gray-500 text-center">Loading field crops...</div>
           ) : error ? (
             <div className="p-6 text-red-500 text-center">{error}</div>
           ) : (
-            <FarmTable
-              farms={farms}
+            <FieldWiseCropTable
+              fieldCrops={fieldCrops}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onInfo={handleInfo}
-              onViewFields={handleViewFields}
             />
           )}
         </div>
@@ -283,11 +297,11 @@ const FarmsView = () => {
         message={alert.message}
         type={alert.type}
         showCancel={alert.showCancel}
-        confirmText={alert.type === 'confirm' ? 'Delete' : 'OK'}
+        confirmText={alert.type === 'confirm' ? 'Remove' : 'OK'}
         cancelText="Cancel"
       />
     </div>
   );
 };
 
-export default FarmsView;
+export default FieldWiseCropsView;
