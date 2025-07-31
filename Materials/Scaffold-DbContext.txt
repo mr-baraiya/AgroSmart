@@ -1,3 +1,8 @@
+Server=tcp:mr-baraiya.database.windows.net,1433;Initial Catalog=MyDatabase;Persist Security Info=False;User ID=vishaladmin;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+your_password = Vishal@1014
+
+
 Scaffold-DbContext "server=DESKTOP-AB3E2S4; database=MyDB; trusted_connection=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 
 Scaffold-DbContext "Server=DESKTOP-VISHAL\SQLEXPRESS;Database=MyDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force

@@ -16,6 +16,9 @@ import {
 } from 'lucide-react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { farmService } from "../../services";
+import { useServerStatusContext } from "../../contexts/ServerStatusProvider";
+import OfflineState from "../common/OfflineState";
+import { ApiError } from "../../utils/apiErrorHandler";
 import FarmTable from "./FarmTable";
 import FarmFilter from "./FarmFilter";
 import CustomAlert from "../common/CustomAlert";
@@ -23,10 +26,12 @@ import CustomAlert from "../common/CustomAlert";
 const FarmsView = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isServerOnline, isInitialCheck, handleApiError, retryConnection } = useServerStatusContext();
   
   const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isServerError, setIsServerError] = useState(false);
   const [notification, setNotification] = useState(null);
   const [filters, setFilters] = useState({});
   const [filterLoading, setFilterLoading] = useState(false);
@@ -66,8 +71,12 @@ const FarmsView = () => {
   }, [location.state]);
 
   useEffect(() => {
-    fetchFarms();
-  }, []);
+    // Only fetch farms after initial server status check is complete
+    if (!isInitialCheck) {
+      console.log('🚀 Initial server check complete, fetching farms...');
+      fetchFarms();
+    }
+  }, [isInitialCheck]);
 
   // Helper functions for alerts
   const showAlert = (type, title, message, onConfirm = null, showCancel = false) => {
@@ -123,7 +132,13 @@ const FarmsView = () => {
       calculateAnalytics(farmsData);
     } catch (err) {
       console.error("Error fetching farms:", err);
-      setError("Failed to fetch farms");
+      const apiResponse = handleApiError(err);
+      if (apiResponse.isServerDown) {
+        setIsServerError(true);
+        setError('Backend server is currently offline. Please check your connection and try again.');
+      } else {
+        setError(apiResponse.message);
+      }
     } finally {
       setLoading(false);
       setFilterLoading(false);
@@ -496,7 +511,14 @@ const FarmsView = () => {
           {loading ? (
             <div className="p-6 text-gray-500 text-center">Loading farms...</div>
           ) : error ? (
-            <div className="p-6 text-red-500 text-center">{error}</div>
+            isServerError ? (
+              <OfflineState 
+                message={error}
+                onRetry={retryConnection}
+              />
+            ) : (
+              <div className="p-6 text-red-500 text-center">{error}</div>
+            )
           ) : viewMode === 'table' ? (
             <FarmTable
               farms={farms}

@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fieldService, farmService } from "../../services";
+import { useServerStatusContext } from "../../contexts/ServerStatusProvider";
+import OfflineState from "../common/OfflineState";
 import FieldTable from "./FieldTable";
 import FieldFilter from "./FieldFilter";
 import CustomAlert from "../common/CustomAlert";
@@ -25,11 +27,13 @@ const FieldsView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { farmId } = useParams(); // Optional farm ID from URL
+  const { isServerOnline, isInitialCheck, handleApiError, retryConnection } = useServerStatusContext();
   
   const [fields, setFields] = useState([]);
   const [farm, setFarm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isServerError, setIsServerError] = useState(false);
   const [notification, setNotification] = useState(null);
   const [filters, setFilters] = useState(farmId ? { farmId } : {});
   const [filterLoading, setFilterLoading] = useState(false);
@@ -72,11 +76,15 @@ const FieldsView = () => {
   }, [location.state]);
 
   useEffect(() => {
-    fetchFields();
-    if (farmId) {
-      fetchFarm();
+    // Only fetch fields after initial server status check is complete
+    if (!isInitialCheck) {
+      console.log('🚀 Initial server check complete, fetching fields...');
+      fetchFields();
+      if (farmId) {
+        fetchFarm();
+      }
     }
-  }, [farmId]);
+  }, [isInitialCheck, farmId]);
 
   // Helper functions for alerts
   const showAlert = (type, title, message, onConfirm = null, showCancel = false) => {
@@ -139,7 +147,13 @@ const FieldsView = () => {
       setFields(fieldsData);
     } catch (err) {
       console.error("Error fetching fields:", err);
-      setError("Failed to fetch fields");
+      const apiResponse = handleApiError(err);
+      if (apiResponse.isServerDown) {
+        setIsServerError(true);
+        setError('Backend server is currently offline. Please check your connection and try again.');
+      } else {
+        setError(apiResponse.message);
+      }
     } finally {
       setLoading(false);
       setFilterLoading(false);
@@ -518,7 +532,14 @@ const FieldsView = () => {
           {loading ? (
             <div className="p-6 text-gray-500 text-center">Loading fields...</div>
           ) : error ? (
-            <div className="p-6 text-red-500 text-center">{error}</div>
+            isServerError ? (
+              <OfflineState 
+                message={error}
+                onRetry={retryConnection}
+              />
+            ) : (
+              <div className="p-6 text-red-500 text-center">{error}</div>
+            )
           ) : viewMode === 'table' ? (
             <FieldTable
               fields={fields}

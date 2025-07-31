@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Plus, Calendar, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { scheduleService } from "../../services";
+import { useServerStatusContext } from "../../contexts/ServerStatusProvider";
+import OfflineState from "../common/OfflineState";
 import ScheduleTable from "./ScheduleTable";
 import ScheduleFilter from "./ScheduleFilter";
 import CustomAlert from "../common/CustomAlert";
@@ -9,10 +11,12 @@ import CustomAlert from "../common/CustomAlert";
 const ScheduleView = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isServerOnline, isInitialCheck, handleApiError, retryConnection } = useServerStatusContext();
   
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isServerError, setIsServerError] = useState(false);
   const [notification, setNotification] = useState(null);
   const [filters, setFilters] = useState({});
   const [filterLoading, setFilterLoading] = useState(false);
@@ -44,8 +48,12 @@ const ScheduleView = () => {
   }, [location.state]);
 
   useEffect(() => {
-    fetchSchedules();
-  }, []);
+    // Only fetch schedules after initial server status check is complete
+    if (!isInitialCheck) {
+      console.log('🚀 Initial server check complete, fetching schedules...');
+      fetchSchedules();
+    }
+  }, [isInitialCheck]);
 
   // Helper functions for alerts
   const showAlert = (type, title, message, onConfirm = null, showCancel = false) => {
@@ -98,7 +106,13 @@ const ScheduleView = () => {
       setSchedules(data);
     } catch (err) {
       console.error("Error fetching schedules:", err);
-      setError("Failed to fetch schedules");
+      const apiResponse = handleApiError(err);
+      if (apiResponse.isServerDown) {
+        setIsServerError(true);
+        setError('Backend server is currently offline. Please check your connection and try again.');
+      } else {
+        setError(apiResponse.message);
+      }
     } finally {
       setLoading(false);
       setFilterLoading(false);
@@ -285,12 +299,19 @@ const ScheduleView = () => {
               </div>
             </div>
           ) : error ? (
-            <div className="p-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <AlertTriangle className="w-16 h-16 text-red-400" />
-                <span className="text-red-600 font-medium">{error}</span>
+            isServerError ? (
+              <OfflineState 
+                message={error}
+                onRetry={retryConnection}
+              />
+            ) : (
+              <div className="p-12 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <AlertTriangle className="w-16 h-16 text-red-400" />
+                  <span className="text-red-600 font-medium">{error}</span>
+                </div>
               </div>
-            </div>
+            )
           ) : (
             <ScheduleTable
               schedules={schedules}

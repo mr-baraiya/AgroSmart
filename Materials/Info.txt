@@ -3,3 +3,7 @@ Scaffold-DbContext "Server=DESKTOP-VISHAL\SQLEXPRESS;Database=AgroSmart;Trusted_
 
 ->Update your DbContext
 Scaffold-DbContext "Server=DESKTOP-VISHAL\SQLEXPRESS;Database=AgroSmart;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context AgroSmartContext -Force
+
+Server=tcp:mr-baraiya.database.windows.net,1433;Initial Catalog=MyDatabase;Persist Security Info=False;User ID=vishaladmin;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+your_password = Vishal@1014

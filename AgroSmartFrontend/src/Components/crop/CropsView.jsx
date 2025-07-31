@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Plus, CheckCircle, XCircle, Download, Grid, List, Trash2, BarChart3, Sprout, Calendar, Activity } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cropService } from "../../services";
+import { useServerStatusContext } from "../../contexts/ServerStatusProvider";
+import OfflineState from "../common/OfflineState";
 import CropTable from "./CropTable";
 import CropFilter from "./CropFilter";
 import CustomAlert from "../common/CustomAlert";
@@ -9,10 +11,12 @@ import CustomAlert from "../common/CustomAlert";
 const CropsView = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isServerOnline, isInitialCheck, handleApiError, retryConnection } = useServerStatusContext();
   
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isServerError, setIsServerError] = useState(false);
   const [notification, setNotification] = useState(null);
   const [filters, setFilters] = useState({});
   const [filterLoading, setFilterLoading] = useState(false);
@@ -52,8 +56,12 @@ const CropsView = () => {
   }, [location.state]);
 
   useEffect(() => {
-    fetchCrops();
-  }, []);
+    // Only fetch crops after initial server status check is complete
+    if (!isInitialCheck) {
+      console.log('🚀 Initial server check complete, fetching crops...');
+      fetchCrops();
+    }
+  }, [isInitialCheck]);
 
   // Helper functions for alerts
   const showAlert = (type, title, message, onConfirm = null, showCancel = false) => {
@@ -109,7 +117,13 @@ const CropsView = () => {
       calculateAnalytics(cropsData);
     } catch (err) {
       console.error("Error fetching crops:", err);
-      setError("Failed to fetch crops");
+      const apiResponse = handleApiError(err);
+      if (apiResponse.isServerDown) {
+        setIsServerError(true);
+        setError('Backend server is currently offline. Please check your connection and try again.');
+      } else {
+        setError(apiResponse.message);
+      }
     } finally {
       setLoading(false);
       setFilterLoading(false);
@@ -453,7 +467,14 @@ const CropsView = () => {
           {loading ? (
             <div className="p-6 text-gray-500 text-center">Loading crops...</div>
           ) : error ? (
-            <div className="p-6 text-red-500 text-center">{error}</div>
+            isServerError ? (
+              <OfflineState 
+                message={error}
+                onRetry={retryConnection}
+              />
+            ) : (
+              <div className="p-6 text-red-500 text-center">{error}</div>
+            )
           ) : viewMode === 'table' ? (
             <CropTable
               crops={crops}

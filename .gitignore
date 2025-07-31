@@ -113,5 +113,5 @@ ehthumbs.db
 # Backup files
 *.bak
 Materials/Info.txt
-Materials/Info.txt
 Materials/Scaffold-DbContext.txt
+AgroSmartBeackend/appsettings.json

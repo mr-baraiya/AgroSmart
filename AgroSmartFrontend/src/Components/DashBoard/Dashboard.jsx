@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Sun, CloudRain, Thermometer, Leaf, Droplet } from "lucide-react";
 import { farmService, sensorService, weatherService, cropService } from "../../services";
+import { useServerStatusContext } from "../../contexts/ServerStatusProvider";
+import OfflineState from "../common/OfflineState";
 import StatsCard from "./StatsCard";
 
 const Dashboard = () => {
+  const { isServerOnline, isInitialCheck, handleApiError, retryConnection } = useServerStatusContext();
+  
   const [stats, setStats] = useState({
     totalFarms: 0,
     activeSensors: 0,
@@ -14,10 +18,16 @@ const Dashboard = () => {
   const [weather, setWeather] = useState(null);
   const [topCrops, setTopCrops] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isServerError, setIsServerError] = useState(false);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    // Only fetch dashboard data after initial server status check is complete
+    if (!isInitialCheck) {
+      console.log('🚀 Initial server check complete, fetching dashboard data...');
+      fetchDashboardData();
+    }
+  }, [isInitialCheck]);
 
   const fetchDashboardData = async () => {
     try {
@@ -82,6 +92,13 @@ const Dashboard = () => {
 
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
+      const apiResponse = handleApiError(error);
+      if (apiResponse.isServerDown) {
+        setIsServerError(true);
+        setError('Backend server is currently offline. Dashboard data may not be current.');
+      } else {
+        setError(apiResponse.message);
+      }
       // Set fallback data on error
       setStats({
         totalFarms: 0,
@@ -103,6 +120,20 @@ const Dashboard = () => {
         <div className="flex justify-center items-center h-64">
           <div className="text-gray-500">Loading dashboard data...</div>
         </div>
+      </div>
+    );
+  }
+
+  if (isServerError) {
+    return (
+      <div className="p-6 space-y-6">
+        <h1 className="text-2xl font-bold text-green-800">
+          Welcome to AgroSmart Dashboard 🌿
+        </h1>
+        <OfflineState 
+          message={error}
+          onRetry={retryConnection}
+        />
       </div>
     );
   }
