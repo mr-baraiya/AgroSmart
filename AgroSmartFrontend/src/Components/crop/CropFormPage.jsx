@@ -191,7 +191,7 @@ const CropFormPage = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                    {isEdit ? 'Edit Crop' : 'Add New Crop'}
+                    {isEdit ? `Edit ${form.cropName || 'Crop'}` : 'Add New Crop'}
                   </h1>
                   <p className="text-sm text-gray-500 mt-1">
                     {isEdit ? 'Modify crop information in your agricultural database' : 'Create a new crop entry with detailed specifications'}

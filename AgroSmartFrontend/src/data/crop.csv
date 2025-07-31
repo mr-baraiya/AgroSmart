@@ -1,0 +1,11 @@
+cropName,optimalSoilpHmin,optimalSoilpHmax,optimalTempMin,optimalTempMax,avgWaterReqmm,growthDurationDays,seedingDepthCm,harvestSeason,description,isActive,createdAt,updatedAt
+Lentil,6.0,7.5,18,30,300,90,3.0,Winter,"A pulse crop rich in protein and fiber.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Chickpea,6.0,7.0,21,29,350,100,5.0,Winter,"Also known as gram, a major pulse crop.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Mustard,6.5,7.5,10,25,300,110,2.0,Winter,"Oilseed crop, seeds used for oil and spice.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Cotton,5.8,8.0,21,35,750,160,2.5,Fall,"Fiber crop known as 'white gold'.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Sugarcane,6.0,8.0,20,32,1500,330,7.0,Year-round,"Tall grass used for commercial sugar production.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Bell Pepper,5.5,6.5,21,29,650,80,1.0,Summer,"Capsicum variety, grown for its colorful fruits.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Cauliflower,6.5,7.0,15,20,450,90,1.5,Winter,"Cole crop, grown for its edible white head.",false,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Millet,5.5,7.5,25,35,350,75,2.5,Summer,"Drought-resistant cereal grain.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Carrot,6.0,6.8,15,21,550,70,1.0,Winter,"Root vegetable, typically orange in color.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z
+Garlic,6.0,7.0,13,24,400,150,4.0,Spring,"Grown for its bulb, used widely as a flavoring.",true,2025-07-31T19:21:29.000Z,2025-07-31T19:21:29.000Z

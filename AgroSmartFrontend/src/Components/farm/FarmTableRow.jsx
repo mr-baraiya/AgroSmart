@@ -7,7 +7,9 @@ const FarmTableRow = ({
   onEdit,
   onDelete,
   onInfo,
-  onViewFields
+  onViewFields,
+  selected = false,
+  onSelect
 }) => {
   const [showActions, setShowActions] = useState(false);
 
@@ -20,7 +22,15 @@ const FarmTableRow = ({
   };
 
   return (
-    <tr className="hover:bg-gray-50 relative">
+    <tr className={`hover:bg-gray-50 relative ${selected ? 'bg-blue-50' : ''}`}>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={onSelect}
+          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+      </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <MapPin className="w-5 h-5 text-green-500 mr-3" />

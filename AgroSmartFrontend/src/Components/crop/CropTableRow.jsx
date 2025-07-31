@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Sprout, MoreHorizontal } from "lucide-react";
 import CropActionsDropdown from "./CropActionsDropdown";
 
@@ -6,9 +6,12 @@ const CropTableRow = ({
   crop,
   onEdit,
   onDelete,
-  onInfo
+  onInfo,
+  isSelected = false,
+  onSelect
 }) => {
   const [showActions, setShowActions] = useState(false);
+  const buttonRef = useRef(null);
 
   const toggleActions = () => {
     setShowActions(prev => !prev);
@@ -20,6 +23,16 @@ const CropTableRow = ({
 
   return (
     <tr className="hover:bg-gray-50 relative">
+      {onSelect && (
+        <td className="px-6 py-4 whitespace-nowrap">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={(e) => onSelect(e.target.checked)}
+            className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+          />
+        </td>
+      )}
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <Sprout className="w-5 h-5 text-green-500 mr-3" />
@@ -62,6 +75,7 @@ const CropTableRow = ({
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
         <button
+          ref={buttonRef}
           className="p-1 rounded hover:bg-gray-200 transition-colors"
           onClick={toggleActions}
         >
@@ -73,6 +87,7 @@ const CropTableRow = ({
             onDelete={onDelete}
             onInfo={onInfo}
             onClose={hideActions}
+            buttonRef={buttonRef}
           />
         )}
       </td>

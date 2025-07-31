@@ -25,18 +25,22 @@ builder.Services.AddCors(options =>
 });
 
 // ------------------------------------------------------------
-// Register FluentValidation services
-// ------------------------------------------------------------
-builder.Services.AddFluentValidationAutoValidation();   // Enable automatic model validation
-builder.Services.AddValidatorsFromAssembly(typeof(UserValidator).Assembly); // Register all validators in the same assembly as UserValidator
-//builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
-
-// ------------------------------------------------------------
 // Register Entity Framework DbContext with SQL Server
 // ------------------------------------------------------------
 builder.Services.AddDbContext<AgroSmartContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("myConnectionString"))
 );
+
+// ------------------------------------------------------------
+// Register FluentValidation services
+// ------------------------------------------------------------
+builder.Services.AddFluentValidationAutoValidation(); // Enable automatic model validation
+//Use this when validators are in the same project as your main app
+builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // Register validators from the assembly containing Program.cs
+
+//Use this when validators are in another class library/project
+//builder.Services.AddValidatorsFromAssembly(typeof(UserValidator).Assembly);
+//builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>(); // Register validators from the assembly containing UserValidator
 
 // ------------------------------------------------------------
 // Build the app

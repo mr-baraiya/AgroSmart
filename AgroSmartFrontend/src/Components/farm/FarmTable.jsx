@@ -6,31 +6,53 @@ const FarmTable = ({
   onEdit,
   onDelete,
   onInfo,
-  onViewFields
+  onViewFields,
+  selectedFarms = [],
+  onSelectFarm,
+  onSelectAll
 }) => {
   // Ensure farms is always an array
   const farmsArray = Array.isArray(farms) ? farms : [];
   
+  const isAllSelected = farmsArray.length > 0 && farmsArray.every(farm => 
+    selectedFarms.includes(farm.farmId || farm.id)
+  );
+  
+  const isIndeterminate = farmsArray.some(farm => 
+    selectedFarms.includes(farm.farmId || farm.id)
+  ) && !isAllSelected;
+  
   return (
     <table className="w-full">
-      <thead className="bg-gray-50">
+      <thead className="bg-blue-100">
         <tr>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
+            <input
+              type="checkbox"
+              checked={isAllSelected}
+              ref={checkbox => {
+                if (checkbox) checkbox.indeterminate = isIndeterminate;
+              }}
+              onChange={onSelectAll}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
             Farm Name
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
             Location
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
             Total Acres
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
             Coordinates
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
             Active?
           </th>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
             Actions
           </th>
         </tr>
@@ -44,11 +66,13 @@ const FarmTable = ({
             onDelete={() => onDelete(farm)}
             onInfo={() => onInfo(farm)}
             onViewFields={() => onViewFields(farm)}
+            selected={selectedFarms.includes(farm.farmId || farm.id)}
+            onSelect={() => onSelectFarm(farm.farmId || farm.id)}
           />
         ))}
         {farmsArray.length === 0 && (
           <tr>
-            <td colSpan={6} className="px-6 py-4 text-center text-gray-400">
+            <td colSpan={7} className="px-6 py-4 text-center text-gray-400">
               No farms found.
             </td>
           </tr>

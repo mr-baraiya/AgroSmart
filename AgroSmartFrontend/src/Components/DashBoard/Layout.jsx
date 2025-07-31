@@ -10,6 +10,24 @@ const Layout = () => {
   const getPageTitle = (pathname) => {
     const path = pathname.replace('/', '');
     if (!path || path === 'dashboard') return 'Dashboard';
+    
+    // Handle specific routes
+    if (path.startsWith('crops/edit/') || path.startsWith('crops/add')) {
+      return 'Crops';
+    }
+    if (path.startsWith('farms/edit/') || path.startsWith('farms/add')) {
+      return 'Farms';
+    }
+    if (path.startsWith('fields/edit/') || path.startsWith('fields/add')) {
+      return 'Fields';
+    }
+    if (path.startsWith('weather/edit/') || path.startsWith('weather/add')) {
+      return 'Weather';
+    }
+    if (path.startsWith('schedule/edit/') || path.startsWith('schedule/add')) {
+      return 'Schedule';
+    }
+    
     return path.charAt(0).toUpperCase() + path.slice(1);
   };
 
