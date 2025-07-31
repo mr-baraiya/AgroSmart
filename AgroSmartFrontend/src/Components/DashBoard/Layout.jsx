@@ -1,10 +1,29 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthProvider";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 const Layout = () => {
   const location = useLocation();
+  const { isAuthenticated, loading } = useAuth();
+  
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render layout if not authenticated (ProtectedRoute will handle redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
   
   // Get the current page name from the path
   const getPageTitle = (pathname) => {
@@ -26,6 +45,9 @@ const Layout = () => {
     }
     if (path.startsWith('schedule/edit/') || path.startsWith('schedule/add')) {
       return 'Schedule';
+    }
+    if (path === 'profile') {
+      return 'Profile';
     }
     
     return path.charAt(0).toUpperCase() + path.slice(1);

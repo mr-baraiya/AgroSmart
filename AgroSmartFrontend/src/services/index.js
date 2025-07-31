@@ -10,6 +10,7 @@ import smartInsightService from './smartInsightService';
 import fieldWiseCropService from './fieldWiseCropService';
 import sensorReadingService from './sensorReadingService';
 import realTimeWeatherService from './realTimeWeatherService';
+import { authService } from './authService'; // ✅ Import auth service
 import api from './api'; // base axios instance
 
 // Export all as named exports
@@ -25,12 +26,14 @@ export {
   fieldWiseCropService,
   sensorReadingService,
   realTimeWeatherService,
+  authService, // ✅ Export auth service
   api
 };
 
 // Export grouped services
 export const authServices = {
-  user: userService
+  user: userService,
+  auth: authService // ✅ Add to auth services group
 };
 
 export const farmManagementServices = {

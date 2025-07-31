@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Home, Sprout, MapPin, Calendar, TrendingUp,
-  Users, Settings, Activity, Cloud, Leaf, Layers
+  Users, Settings, Activity, Cloud, Leaf, Layers, User
 } from "lucide-react";
 
 const sidebarItems = [
@@ -14,6 +14,7 @@ const sidebarItems = [
   { id: "weather", label: "Weather", icon: Cloud, path: "/weather" },
   { id: "schedule", label: "Schedule", icon: Calendar, path: "/schedule" },
   { id: "insights", label: "Insights", icon: TrendingUp, path: "/insights" },
+  { id: "profile", label: "Profile", icon: User, path: "/profile" },
   { id: "users", label: "Users", icon: Users, path: "/users" },
   { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
 ];
