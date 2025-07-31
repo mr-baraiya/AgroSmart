@@ -56,6 +56,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();         // Swagger UI endpoint
 }
 
+// ------------------------------------------------------------
+// Required for Render deployment to bind to the correct port
+// ------------------------------------------------------------
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
+
 app.UseHttpsRedirection();      // Redirect HTTP to HTTPS
 app.UseCors("AllowLocalhost");  // Enable CORS for React frontend
 app.UseAuthorization();         // Use authorization middleware
