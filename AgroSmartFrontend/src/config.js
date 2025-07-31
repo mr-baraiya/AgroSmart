@@ -1,5 +1,6 @@
 // src/config.js
-const API_BASE_URL = "https://localhost:7059/api";
+// const API_BASE_URL = "https://localhost:7059/api";
+const API_BASE_URL = "https://agrosmart-backend-7xdp.onrender.com/api";
 
 // OpenWeatherMap API configuration
 export const WEATHER_API_KEY = "21cfd8bd534b47502cde71d232e9ff8d";

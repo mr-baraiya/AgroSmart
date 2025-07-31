@@ -2,6 +2,7 @@ using AgroSmartBeackend.Models;
 using AgroSmartBeackend.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,7 +66,18 @@ if (!string.IsNullOrEmpty(port))
     app.Urls.Add($"http://0.0.0.0:{port}");
 }
 
-app.UseHttpsRedirection();      // Redirect HTTP to HTTPS
+//FORWARD HEADERS FOR RENDER/Docker PROXY SUPPORT
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+});
+
+// ENABLE HTTPS REDIRECTION ONLY IN PRODUCTION
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowLocalhost");  // Enable CORS for React frontend
 app.UseAuthorization();         // Use authorization middleware
 app.MapControllers();           // Map attribute-routed controllers
