@@ -334,41 +334,41 @@ const FarmsView = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 lg:p-6">
       {/* Notification */}
       {notification && (
-        <div className={`mb-6 p-4 rounded-lg border flex items-center gap-3 ${
+        <div className={`mb-4 lg:mb-6 p-3 lg:p-4 rounded-lg border flex items-center gap-3 ${
           notification.type === 'success' 
             ? 'bg-green-50 border-green-200 text-green-800' 
             : 'bg-red-50 border-red-200 text-red-800'
         }`}>
           {notification.type === 'success' ? (
-            <CheckCircle className="w-5 h-5" />
+            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5" />
           ) : (
-            <XCircle className="w-5 h-5" />
+            <XCircle className="w-4 h-4 lg:w-5 lg:h-5" />
           )}
-          <span>{notification.message}</span>
+          <span className="text-sm lg:text-base">{notification.message}</span>
           <button
             onClick={() => setNotification(null)}
-            className="ml-auto text-gray-400 hover:text-gray-600"
+            className="ml-auto text-gray-400 hover:text-gray-600 text-lg lg:text-xl"
           >
             ×
           </button>
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 lg:mb-6 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
-            <MapPin className="w-6 h-6 text-white" />
+            <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Farm Management</h2>
-            <p className="text-gray-600">Manage your farms and agricultural properties</p>
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Farm Management</h2>
+            <p className="text-sm lg:text-base text-gray-600 hidden sm:block">Manage your farms and agricultural properties</p>
           </div>
         </div>
         <button
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          className="bg-green-600 hover:bg-green-700 text-white px-3 lg:px-4 py-2 rounded-lg flex items-center gap-2 text-sm lg:text-base w-full lg:w-auto justify-center"
           onClick={handleAdd}
         >
           <Plus className="w-4 h-4" />
@@ -378,51 +378,51 @@ const FarmsView = () => {
 
       {/* Analytics Cards */}
       {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-4 lg:mb-6">
+          <div className="bg-white rounded-lg p-4 lg:p-6 shadow-sm border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Farms</p>
-                <p className="text-2xl font-bold text-gray-900">{analytics.total}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Total Farms</p>
+                <p className="text-lg lg:text-2xl font-bold text-gray-900">{analytics.total}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-full">
-                <Home className="w-6 h-6 text-blue-600" />
+              <div className="p-2 lg:p-3 bg-blue-100 rounded-full">
+                <Home className="w-4 h-4 lg:w-6 lg:h-6 text-blue-600" />
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg p-4 lg:p-6 shadow-sm border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Farms</p>
-                <p className="text-2xl font-bold text-green-600">{analytics.active}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Active Farms</p>
+                <p className="text-lg lg:text-2xl font-bold text-green-600">{analytics.active}</p>
               </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <Activity className="w-6 h-6 text-green-600" />
+              <div className="p-2 lg:p-3 bg-green-100 rounded-full">
+                <Activity className="w-4 h-4 lg:w-6 lg:h-6 text-green-600" />
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg p-4 lg:p-6 shadow-sm border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Inactive Farms</p>
-                <p className="text-2xl font-bold text-red-600">{analytics.inactive}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Inactive Farms</p>
+                <p className="text-lg lg:text-2xl font-bold text-red-600">{analytics.inactive}</p>
               </div>
-              <div className="p-3 bg-red-100 rounded-full">
-                <Activity className="w-6 h-6 text-red-600" />
+              <div className="p-2 lg:p-3 bg-red-100 rounded-full">
+                <Activity className="w-4 h-4 lg:w-6 lg:h-6 text-red-600" />
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg p-4 lg:p-6 shadow-sm border border-gray-200 col-span-2 lg:col-span-1">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Acres</p>
-                <p className="text-2xl font-bold text-purple-600">{analytics.totalAcres}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Total Acres</p>
+                <p className="text-lg lg:text-2xl font-bold text-purple-600">{analytics.totalAcres}</p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-full">
-                <BarChart3 className="w-6 h-6 text-purple-600" />
+              <div className="p-2 lg:p-3 bg-purple-100 rounded-full">
+                <BarChart3 className="w-4 h-4 lg:w-6 lg:h-6 text-purple-600" />
               </div>
             </div>
           </div>

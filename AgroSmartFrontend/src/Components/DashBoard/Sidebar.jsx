@@ -19,7 +19,7 @@ const sidebarItems = [
   { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
   const location = useLocation();
 
   const isActive = (path) => {
@@ -29,20 +29,46 @@ const Sidebar = () => {
     return location.pathname.startsWith(path);
   };
 
+  const handleNavClick = () => {
+    // Close sidebar on mobile when navigation item is clicked
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed left-0 top-0 w-64 bg-gradient-to-b from-green-800 to-green-900 text-white h-screen p-4 overflow-y-auto z-40">
+    <div className={`
+      fixed left-0 top-0 w-64 bg-gradient-to-b from-green-800 to-green-900 text-white h-screen p-4 overflow-y-auto z-50
+      transform transition-transform duration-300 ease-in-out
+      ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+      lg:translate-x-0
+    `}>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Leaf className="w-8 h-8" />
-          AgroSmart
-        </h1>
-        <p className="text-green-200 text-sm">Farm Management System</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Leaf className="w-8 h-8" />
+            <div>
+              <h1 className="text-2xl font-bold">AgroSmart</h1>
+              <p className="text-green-200 text-sm">Farm Management System</p>
+            </div>
+          </div>
+          {/* Close button for mobile */}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 hover:bg-white hover:bg-opacity-10 rounded-lg"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
       </div>
       <nav className="space-y-2">
         {sidebarItems.map((item) => (
           <NavLink
             key={item.id}
             to={item.path}
+            onClick={handleNavClick}
             className={({ isActive: navIsActive }) =>
               `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 navIsActive || isActive(item.path)
@@ -52,7 +78,7 @@ const Sidebar = () => {
             }
           >
             <item.icon className="w-5 h-5" />
-            {item.label}
+            <span className="truncate">{item.label}</span>
           </NavLink>
         ))}
       </nav>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthProvider";
 import Header from "./Header";
@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 const Layout = () => {
   const location = useLocation();
   const { isAuthenticated, loading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Show loading while checking authentication
   if (loading) {
@@ -53,17 +54,37 @@ const Layout = () => {
     return path.charAt(0).toUpperCase() + path.slice(1);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Fixed Sidebar */}
-      <Sidebar />
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* Sidebar */}
+      <Sidebar 
+        isMobileOpen={isSidebarOpen} 
+        onClose={closeSidebar}
+      />
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1 ml-64 overflow-hidden">
+      <div className="flex flex-col flex-1 lg:ml-64 overflow-hidden">
         {/* Header */}
         <Header
           activeTab={getPageTitle(location.pathname)}
           notifications={3}
+          onMenuClick={toggleSidebar}
         />
 
         {/* Scrollable Content */}
