@@ -1,9 +1,9 @@
 // src/config.js
-// const API_BASE_URL = "https://localhost:7059/api";
-const API_BASE_URL = "https://agrosmart-backend-7xdp.onrender.com/api";
+// Use environment variables from .env file
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7059/api";
 
 // OpenWeatherMap API configuration
-export const WEATHER_API_KEY = "21cfd8bd534b47502cde71d232e9ff8d";
-export const WEATHER_API_BASE_URL = "https://api.openweathermap.org/data/2.5";
+export const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+export const WEATHER_API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL;
 
 export default API_BASE_URL;

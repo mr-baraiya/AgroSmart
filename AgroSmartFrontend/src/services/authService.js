@@ -92,9 +92,13 @@ export const authService = {
   // Change password
   changePassword: async (passwordData) => {
     try {
+      console.log('AuthService: Sending password change request with data:', passwordData);
       const response = await api.put('/User/ChangePassword', passwordData);
+      console.log('AuthService: Password change response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('AuthService: Password change error:', error);
+      console.error('AuthService: Password change error response:', error.response?.data);
       throw error;
     }
   }

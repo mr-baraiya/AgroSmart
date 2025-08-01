@@ -216,10 +216,15 @@ const Profile = () => {
     setError('');
 
     try {
-      await authService.changePassword({
+      const passwordChangeData = {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
-      });
+      };
+      
+      console.log('Sending password change data:', passwordChangeData);
+      console.log('User for password change:', user);
+      
+      await authService.changePassword(passwordChangeData);
 
       setPasswordData({
         currentPassword: '',
@@ -234,8 +239,30 @@ const Profile = () => {
       setTimeout(() => setNotification(null), 5000);
     } catch (err) {
       console.error('Password change error:', err);
+      console.error('Password change error response data:', err.response?.data);
+      console.error('Password change error response status:', err.response?.status);
+      console.error('Full password change error response:', err.response);
+      
       if (err.response?.status === 400) {
-        setError('Current password is incorrect');
+        const errorData = err.response?.data;
+        let errorMessage = 'Current password is incorrect';
+        
+        // Handle different error response formats
+        if (errorData?.message) {
+          errorMessage = errorData.message;
+        } else if (errorData?.title) {
+          errorMessage = errorData.title;
+        } else if (errorData?.errors) {
+          // Handle validation errors object
+          const errorMessages = Object.values(errorData.errors).flat();
+          errorMessage = errorMessages.join(', ');
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData;
+        } else if (typeof errorData === 'object') {
+          errorMessage = JSON.stringify(errorData);
+        }
+        
+        setError(errorMessage);
       } else {
         setError(err.response?.data?.message || 'Failed to change password');
       }
