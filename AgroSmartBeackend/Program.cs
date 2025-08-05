@@ -23,8 +23,9 @@ builder.Services.AddCors(options =>
         policy => policy
             .WithOrigins(
                 "http://localhost:5173",                          // React Vite dev server (local development)
-                "https://myagrosmart.netlify.app",               // Previous Netlify deployment
-                "https://ecoagrosmart.netlify.app"               // New Netlify domain (must include this!)
+                "https://ecoagrosmart.netlify.app",             // New Netlify domain (must include this!)
+                "https://agrosmart.me/",
+                "https://www.agrosmart.me/"
             )
             .AllowAnyHeader()                                    // Allow all request headers
             .AllowAnyMethod()                                    // Allow GET, POST, PUT, DELETE, etc.
