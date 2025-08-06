@@ -1,0 +1,17 @@
+name: Keep Render Backend Awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # Every 10 minutes (UTC)
+  workflow_dispatch: # Optional: allows manual trigger
+
+jobs:
+  ping-render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Render Backend Crop API
+        run: |
+          echo "Pinging https://agrosmart-backend-7xdp.onrender.com/api/Crop/All"
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" https://agrosmart-backend-7xdp.onrender.com/api/health)
+          echo "Response Code: $CODE"
