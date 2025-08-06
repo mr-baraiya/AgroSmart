@@ -2,7 +2,7 @@ name: Keep Render Backend Awake
 
 on:
   schedule:
-    - cron: "*/10 * * * *" # Every 10 minutes (UTC)
+    - cron: "0 */12 * * *" # Every 12 hours (UTC)
   workflow_dispatch: # Optional: allows manual trigger
 
 jobs:
