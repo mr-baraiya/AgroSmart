@@ -1,4 +1,5 @@
 ﻿using AgroSmartBeackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ namespace AgroSmartBeackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SensorReadingController : ControllerBase
     {
         private readonly AgroSmartContext _context;

@@ -1,4 +1,5 @@
 ﻿using AgroSmartBeackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ namespace AgroSmartBeackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CropController : ControllerBase
     {
         private readonly AgroSmartContext _context;
@@ -56,6 +58,7 @@ namespace AgroSmartBeackend.Controllers
 
         #region AddCrop
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Crop>> AddCrop(Crop crop)
         {
             try
@@ -77,6 +80,7 @@ namespace AgroSmartBeackend.Controllers
 
         #region UpdateCrop
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Crop>> UpdateCrop(int id, Crop updatedCrop)
         {
             try
@@ -119,6 +123,7 @@ namespace AgroSmartBeackend.Controllers
 
         #region DeleteCrop
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Crop>> DeleteCrop(int id)
         {
             try

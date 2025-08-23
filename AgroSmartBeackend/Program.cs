@@ -2,18 +2,87 @@ using AgroSmartBeackend.Models;
 using AgroSmartBeackend.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ------------------------------------------------------------
+// Load JWT settings from configuration (appsettings.json)
+// ------------------------------------------------------------
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["Key"];
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+
+// ------------------------------------------------------------
+// Add JWT Authentication
+// ------------------------------------------------------------
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        };
+    });
 
 // ------------------------------------------------------------
 // Register essential ASP.NET Core services
 // ------------------------------------------------------------
 builder.Services.AddControllers();                      // Add controller support
 builder.Services.AddEndpointsApiExplorer();             // Enable minimal API explorer
-builder.Services.AddSwaggerGen();                       // Enable Swagger for API docs
 
+// ------------------------------------------------------------
+// Swagger configuration with JWT Authentication support
+// ------------------------------------------------------------
+builder.Services.AddSwaggerGen(options =>
+{
+    // Register the Swagger document (API metadata)
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "AgroSmart API",
+        Version = "v1",
+        Description = "AgroSmart Backend API with JWT Authentication support"
+    });
+
+    // Define the JWT Bearer scheme for Swagger
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",                         // Header name
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http, // Type: HTTP scheme
+        Scheme = "Bearer",                              // Scheme keyword
+        BearerFormat = "JWT",                           // Token format
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header, // Token passed in headers
+        Description = "Enter 'Bearer {your JWT token}'" // Helper text in Swagger UI
+    });
+
+    // Apply JWT Bearer scheme as a global requirement
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {} // No specific scopes required
+        }
+    });
+});
 // ------------------------------------------------------------
 // Enable CORS for both development and production frontends
 // ------------------------------------------------------------
@@ -22,14 +91,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontendOrigins",
         policy => policy
             .WithOrigins(
-                "http://localhost:5173",                          // React Vite dev server (local development)
-                "https://ecoagrosmart.netlify.app",             // New Netlify domain (must include this!)
+                "http://localhost:5173",
+                "https://ecoagrosmart.netlify.app",
                 "https://agrosmart.me",
                 "https://www.agrosmart.me"
             )
-            .AllowAnyHeader()                                    // Allow all request headers
-            .AllowAnyMethod()                                    // Allow GET, POST, PUT, DELETE, etc.
-            .AllowCredentials());                                // Optional: allow sending credentials (e.g., cookies)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 
 // ------------------------------------------------------------
@@ -42,8 +111,8 @@ builder.Services.AddDbContext<AgroSmartContext>(options =>
 // ------------------------------------------------------------
 // Register FluentValidation services
 // ------------------------------------------------------------
-builder.Services.AddFluentValidationAutoValidation();                 // Enable automatic model validation
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();     // Register validators from this assembly
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // ------------------------------------------------------------
 // Build the app
@@ -55,13 +124,10 @@ var app = builder.Build();
 // ------------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();       // Enable Swagger middleware for API testing (development only)
-    app.UseSwaggerUI();     // Swagger UI endpoint
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-// ------------------------------------------------------------
-// Required for Render deployment to bind to correct port
-// ------------------------------------------------------------
 var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port))
 {
@@ -69,7 +135,7 @@ if (!string.IsNullOrEmpty(port))
 }
 
 // ------------------------------------------------------------
-// Support forwarded headers for Render/Docker reverse proxy
+// Required headers for Render/Docker deployment
 // ------------------------------------------------------------
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -77,27 +143,27 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 // ------------------------------------------------------------
-// Enable HTTPS redirection in production
+// Redirect to HTTPS in production
 // ------------------------------------------------------------
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection(); // Force HTTPS only in production
+    app.UseHttpsRedirection();
 }
 
 // ------------------------------------------------------------
-// Apply CORS policy for frontend clients (local + Netlify)
-// Order matters: must come after UseRouting() and before UseAuthorization()
+// Middleware order is important!
 // ------------------------------------------------------------
-app.UseRouting();                              // Enable endpoint routing
-app.UseCors("AllowFrontendOrigins");           // Apply the correct CORS policy
-app.UseAuthorization();                        // Apply authorization middleware
+app.UseRouting();
 
 // ------------------------------------------------------------
-// Map controller routes (API endpoints)
+// Enable serving of static files (wwwroot or custom path)
 // ------------------------------------------------------------
-app.MapControllers();                          // Route incoming HTTP requests to controllers
+app.UseStaticFiles();
 
-// ------------------------------------------------------------
-// Start the application
-// ------------------------------------------------------------
-app.Run();                                      // Launch the app
+app.UseCors("AllowFrontendOrigins");
+
+app.UseAuthentication(); // Add Authentication before Authorization
+app.UseAuthorization();
+
+app.MapControllers();
+app.Run();

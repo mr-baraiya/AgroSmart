@@ -1,7 +1,5 @@
 ﻿using AgroSmartBeackend.Models;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -10,6 +8,7 @@ namespace AgroSmartBeackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly AgroSmartContext _context;
@@ -71,7 +70,6 @@ namespace AgroSmartBeackend.Controllers
 
                 existingUser.FullName = u.FullName;
                 existingUser.Email = u.Email;
-                existingUser.Role = u.Role;
                 existingUser.Phone = u.Phone;
                 existingUser.Address = u.Address;
                 existingUser.IsActive = u.IsActive;
@@ -88,9 +86,10 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
-        #region DeleteUser
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(int id)
+        #region SoftDeleteUser
+        // Soft Delete: Marks user as inactive instead of removing from DB
+        [HttpDelete("SoftDelete/{id}")]
+        public async Task<ActionResult<User>> SoftDeleteUser(int id)
         {
             try
             {
@@ -98,14 +97,42 @@ namespace AgroSmartBeackend.Controllers
                 if (user == null)
                     return NotFound(new { Message = $"User with ID {id} not found." });
 
-                _context.Users.Remove(user);
+                if (!user.IsActive)
+                    return BadRequest(new { Message = $"User with ID {id} is already inactive." });
+
+                user.IsActive = false;              // Soft delete
+                user.UpdatedAt = DateTime.UtcNow;
+
                 await _context.SaveChangesAsync();
 
-                return Ok(user);
+                return Ok(new { Message = $"User with ID {id} has been deactivated (soft deleted).", User = user });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Error deleting user", Error = ex.Message });
+                return StatusCode(500, new { Message = "Error soft deleting user", Error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region HardDeleteUser
+        // Hard Delete: Permanently removes user from DB
+        [HttpDelete("HardDelete/{id}")]
+        public async Task<ActionResult<User>> HardDeleteUser(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                    return NotFound(new { Message = $"User with ID {id} not found." });
+
+                _context.Users.Remove(user);        // Hard delete
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = $"User with ID {id} has been permanently deleted.", User = user });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error hard deleting user", Error = ex.Message });
             }
         }
         #endregion
@@ -160,119 +187,6 @@ namespace AgroSmartBeackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "Error filtering users", Error = ex.Message });
-            }
-        }
-        #endregion
-
-        #region LoginUser
-        [HttpPost("Login")]
-        public async Task<ActionResult> Login(Models.LoginRequest request)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Identifier || u.Phone == request.Identifier);
-
-            if (user == null)
-                return Unauthorized(new { Message = "User not found." });
-
-            bool isPasswordValid = false;
-
-            try
-            {
-                isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-            }
-            catch (BCrypt.Net.SaltParseException)
-            {
-                return BadRequest(new { Message = "Invalid password format stored in database." });
-            }
-
-            if (!isPasswordValid)
-                return Unauthorized(new { Message = "Invalid email/phone or password." });
-
-            return Ok(new { Message = "Login successful", User = user });
-        }
-        #endregion
-
-        #region RegisterUser
-        [HttpPost("Register")]
-        public async Task<ActionResult> RegisterUser(User u)
-        {
-            try
-            {
-                // Check if email or phone already exists
-                bool exists = await _context.Users.AnyAsync(x => x.Email == u.Email || x.Phone == u.Phone);
-                if (exists)
-                    return BadRequest(new { Message = "Email or phone already in use." });
-
-                // Validate password strength (optional but recommended)
-                if (string.IsNullOrWhiteSpace(u.PasswordHash) || u.PasswordHash.Length < 6)
-                    return BadRequest(new { Message = "Password must be at least 6 characters long." });
-
-                // Hash the password securely before saving
-                u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(u.PasswordHash);
-
-                u.CreatedAt = DateTime.UtcNow;
-                u.UpdatedAt = DateTime.UtcNow;
-
-                await _context.Users.AddAsync(u);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { Message = "User registered successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Error registering user", Error = ex.Message });
-            }
-        }
-        #endregion
-
-        #region ChangePassword
-
-        [HttpPost("ChangePassword")]
-        public async Task<IActionResult> ChangePassword([FromBody] Models.ChangePasswordRequest request)
-        {
-            try
-            {
-                var user = await _context.Users.FindAsync(request.UserId);
-                if (user == null)
-                    return NotFound(new { Message = "User not found." });
-
-                // Verify current password
-                bool isCurrentPasswordValid = false;
-                try
-                {
-                    isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash);
-                }
-                catch (BCrypt.Net.SaltParseException)
-                {
-                    return BadRequest(new { Message = "Stored password format is invalid." });
-                }
-
-                if (!isCurrentPasswordValid)
-                    return Unauthorized(new { Message = "Current password is incorrect." });
-
-                // Prevent same password reuse
-                if (BCrypt.Net.BCrypt.Verify(request.NewPassword, user.PasswordHash))
-                    return BadRequest(new { Message = "New password cannot be the same as the current password." });
-
-                // Strong password pattern check
-                var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&^])[A-Za-z\d@$!%*?#&^]{8,}$";
-                if (!Regex.IsMatch(request.NewPassword, passwordPattern))
-                    return BadRequest(new
-                    {
-                        Message = "Password must be at least 8 characters long and include at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character."
-                    });
-
-                // Hash and update password
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-                user.UpdatedAt = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
-
-                return Ok(new { Message = "Password changed successfully." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Error changing password", Error = ex.Message });
             }
         }
         #endregion
