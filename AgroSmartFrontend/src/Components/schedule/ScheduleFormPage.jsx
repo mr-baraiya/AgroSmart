@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Calendar, Clock, Target, FileText, DollarSign } from "lucide-react";
 import { scheduleService, fieldService } from "../../services";
+import Swal from 'sweetalert2';
 
 const ScheduleFormPage = () => {
   const navigate = useNavigate();
@@ -134,23 +135,52 @@ const ScheduleFormPage = () => {
 
       if (isEdit) {
         await scheduleService.update(id, scheduleData);
-        navigate("/schedules", {
-          state: {
-            message: `Schedule "${formData.title}" updated successfully!`,
-            type: "success"
+        
+        // Show success alert
+        await Swal.fire({
+          icon: 'success',
+          title: 'Schedule Updated!',
+          text: `Schedule "${formData.title}" has been updated successfully.`,
+          confirmButtonText: 'Continue',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
           }
         });
+        
+        navigate("/schedules");
       } else {
         await scheduleService.create(scheduleData);
-        navigate("/schedules", {
-          state: {
-            message: `Schedule "${formData.title}" created successfully!`,
-            type: "success"
+        
+        // Show success alert
+        await Swal.fire({
+          icon: 'success',
+          title: 'Schedule Created!',
+          text: `Schedule "${formData.title}" has been created successfully.`,
+          confirmButtonText: 'Continue',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
           }
         });
+        
+        navigate("/schedules");
       }
     } catch (err) {
       console.error("Error saving schedule:", err);
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: `Failed to ${isEdit ? 'Update' : 'Create'} Schedule`,
+        text: err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} schedule. Please try again.`,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444',
+        customClass: {
+          confirmButton: 'swal2-confirm-button'
+        }
+      });
+      
       setError(`Failed to ${isEdit ? 'update' : 'create'} schedule`);
     } finally {
       setSaving(false);

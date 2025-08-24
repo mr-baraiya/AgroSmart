@@ -3,6 +3,7 @@ import { User, Mail, Phone, MapPin, Edit, Save, X, Eye, EyeOff, Lock } from 'luc
 import { useAuth } from '../../contexts/AuthProvider';
 import { authService } from '../../services/authService';
 import CustomAlert from '../common/CustomAlert';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -168,6 +169,17 @@ const Profile = () => {
       const response = await authService.updateProfile(profileUpdateData);
       updateUser(response.user || { ...user, ...formData });
       setIsEditing(false);
+      
+      // Show success alert
+      Swal.fire({
+        icon: 'success',
+        title: 'Profile Updated!',
+        text: 'Your profile has been updated successfully.',
+        timer: 2000,
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
+      
       setNotification({
         message: 'Profile updated successfully!',
         type: 'success'
@@ -179,9 +191,10 @@ const Profile = () => {
       console.error('Error response status:', err.response?.status);
       console.error('Full error response:', err.response);
       
+      let errorMessage = 'Profile update failed. Please check your information.';
+      
       if (err.response?.status === 400) {
         const errorData = err.response?.data;
-        let errorMessage = 'Profile update failed. Please check your information.';
         
         // Handle different error response formats
         if (errorData?.message) {
@@ -197,11 +210,20 @@ const Profile = () => {
         } else if (typeof errorData === 'object') {
           errorMessage = JSON.stringify(errorData);
         }
-        
-        setError(errorMessage);
       } else {
-        setError(err.response?.data?.message || 'Failed to update profile');
+        errorMessage = err.response?.data?.message || 'Failed to update profile';
       }
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: 'Update Failed',
+        text: errorMessage,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444'
+      });
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -232,6 +254,17 @@ const Profile = () => {
         confirmPassword: ''
       });
       setShowChangePassword(false);
+      
+      // Show success alert
+      Swal.fire({
+        icon: 'success',
+        title: 'Password Changed!',
+        text: 'Your password has been changed successfully.',
+        timer: 2000,
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
+      
       setNotification({
         message: 'Password changed successfully!',
         type: 'success'
@@ -243,9 +276,10 @@ const Profile = () => {
       console.error('Password change error response status:', err.response?.status);
       console.error('Full password change error response:', err.response);
       
+      let errorMessage = 'Current password is incorrect';
+      
       if (err.response?.status === 400) {
         const errorData = err.response?.data;
-        let errorMessage = 'Current password is incorrect';
         
         // Handle different error response formats
         if (errorData?.message) {
@@ -261,11 +295,20 @@ const Profile = () => {
         } else if (typeof errorData === 'object') {
           errorMessage = JSON.stringify(errorData);
         }
-        
-        setError(errorMessage);
       } else {
-        setError(err.response?.data?.message || 'Failed to change password');
+        errorMessage = err.response?.data?.message || 'Failed to change password';
       }
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: 'Password Change Failed',
+        text: errorMessage,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444'
+      });
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

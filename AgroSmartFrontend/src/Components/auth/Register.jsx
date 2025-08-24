@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Phone, MapPin, Eye, EyeOff, UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthProvider';
+import Swal from 'sweetalert2';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Register = () => {
     email: '',
     passwordHash: '',
     confirmPassword: '',
-    role: 'User', // Default role
+    role: 'User', // Always User for registration
     phone: '',
     address: '',
     isActive: true
@@ -23,11 +24,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
-
-  const roles = [
-    { value: 'Admin', label: 'Admin', description: 'Administrative user with full access' },
-    { value: 'User', label: 'User', description: 'General user with standard access' }
-  ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -77,8 +73,10 @@ const Register = () => {
       errors.confirmPassword = 'Passwords do not match';
     }
 
-    // Phone validation (optional but format check if provided)
-    if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
+    // Phone validation (required)
+    if (!formData.phone.trim()) {
+      errors.phone = 'Phone number is required';
+    } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
       errors.phone = 'Phone must be a 10-digit number';
     }
 
@@ -90,6 +88,25 @@ const Register = () => {
     e.preventDefault();
     
     if (!validateForm()) {
+      // Show validation error alert
+      const firstError = Object.values(validationErrors)[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: firstError || 'Please fill in all required fields correctly.',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#ef4444',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCloseButton: false,
+        focusConfirm: true,
+        customClass: {
+          popup: 'swal2-popup',
+          title: 'swal2-title',
+          content: 'swal2-content',
+          confirmButton: 'swal2-confirm'
+        }
+      });
       return;
     }
 
@@ -114,27 +131,61 @@ const Register = () => {
 
       await register(registrationData);
       
-      // Redirect to login with success message
-      navigate('/login', {
-        state: {
-          message: 'Registration successful! Please log in with your credentials.'
+      // Show success alert
+      await Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: 'Your account has been created successfully. Please log in with your credentials.',
+        confirmButtonText: 'Go to Login',
+        confirmButtonColor: '#10b981',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCloseButton: false,
+        focusConfirm: true,
+        customClass: {
+          popup: 'swal2-popup',
+          title: 'swal2-title',
+          content: 'swal2-content',
+          confirmButton: 'swal2-confirm'
         }
       });
+      
+      // Redirect to login
+      navigate('/login');
     } catch (err) {
       console.error('Registration error:', err);
       console.error('Error response data:', err.response?.data);
       
+      let errorMessage = 'Registration failed. Please try again.';
+      
       if (err.response?.status === 409) {
-        setError('An account with this email already exists');
+        errorMessage = 'An account with this email already exists';
       } else if (err.response?.status === 400) {
-        const errorMessage = err.response?.data?.message || 
-                           err.response?.data?.title || 
-                           JSON.stringify(err.response?.data) || 
-                           'Registration failed. Please check your information.';
-        setError(errorMessage);
-      } else {
-        setError('Registration failed. Please try again.');
+        errorMessage = err.response?.data?.message || 
+                      err.response?.data?.title || 
+                      'Registration failed. Please check your information.';
       }
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: errorMessage,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCloseButton: false,
+        focusConfirm: true,
+        customClass: {
+          popup: 'swal2-popup',
+          title: 'swal2-title',
+          content: 'swal2-content',
+          confirmButton: 'swal2-confirm'
+        }
+      });
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -155,7 +206,7 @@ const Register = () => {
         </div>
 
         {/* Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
           <div className="bg-white p-8 rounded-xl shadow-lg space-y-6">
             {/* Error Message */}
             {error && (
@@ -178,7 +229,6 @@ const Register = () => {
                   id="fullName"
                   name="fullName"
                   type="text"
-                  required
                   value={formData.fullName}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
@@ -205,7 +255,6 @@ const Register = () => {
                   id="email"
                   name="email"
                   type="email"
-                  required
                   value={formData.email}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
@@ -232,7 +281,6 @@ const Register = () => {
                   id="passwordHash"
                   name="passwordHash"
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={formData.passwordHash}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
@@ -270,7 +318,6 @@ const Register = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  required
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
@@ -295,33 +342,10 @@ const Register = () => {
               )}
             </div>
 
-            {/* Role */}
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                Role
-              </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              >
-                {roles.map(role => (
-                  <option key={role.value} value={role.value} title={role.description}>
-                    {role.label}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-xs text-gray-500">
-                {roles.find(role => role.value === formData.role)?.description}
-              </p>
-            </div>
-
-            {/* Phone (Optional) */}
+            {/* Phone */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number (Optional)
+                Phone Number
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

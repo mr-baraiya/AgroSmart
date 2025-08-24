@@ -22,6 +22,7 @@ import { ApiError } from "../../utils/apiErrorHandler";
 import FarmTable from "./FarmTable";
 import FarmFilter from "./FarmFilter";
 import CustomAlert from "../common/CustomAlert";
+import Swal from 'sweetalert2';
 
 const FarmsView = () => {
   const navigate = useNavigate();
@@ -156,32 +157,58 @@ const FarmsView = () => {
   };
 
   const handleDelete = async (farm) => {
-    showAlert(
-      'confirm',
-      'Delete Farm',
-      `Are you sure you want to delete "${farm.farmName}"? This action cannot be undone.`,
-      async () => {
-        try {
-          await farmService.delete(farm.farmId);
-          setFarms((prev) => prev.filter((f) => f.farmId !== farm.farmId));
-          closeAlert();
-          setNotification({
-            message: `Farm "${farm.farmName}" deleted successfully!`,
-            type: 'success'
-          });
-          setTimeout(() => setNotification(null), 5000);
-        } catch (err) {
-          console.error("Error deleting farm:", err);
-          closeAlert();
-          showAlert(
-            'error',
-            'Delete Failed',
-            `Failed to delete farm "${farm.farmName}". Please try again.`
-          );
-        }
-      },
-      true
-    );
+    // Show confirmation alert
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Delete Farm',
+      text: `Are you sure you want to delete "${farm.farmName}"? This action cannot be undone.`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      customClass: {
+        confirmButton: 'swal2-confirm-button',
+        cancelButton: 'swal2-cancel-button'
+      }
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await farmService.delete(farm.farmId);
+        setFarms((prev) => prev.filter((f) => f.farmId !== farm.farmId));
+        
+        // Show success alert
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: `Farm "${farm.farmName}" has been deleted successfully.`,
+          timer: 2000,
+          showConfirmButton: false,
+          timerProgressBar: true
+        });
+        
+        setNotification({
+          message: `Farm "${farm.farmName}" deleted successfully!`,
+          type: 'success'
+        });
+        setTimeout(() => setNotification(null), 5000);
+      } catch (err) {
+        console.error("Error deleting farm:", err);
+        
+        // Show error alert
+        Swal.fire({
+          icon: 'error',
+          title: 'Delete Failed',
+          text: `Failed to delete farm "${farm.farmName}". Please try again.`,
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#ef4444',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
+          }
+        });
+      }
+    }
   };
 
   // Navigate to the detail page

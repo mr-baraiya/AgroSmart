@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Save, MapPin, Sprout } from "lucide-react";
 import { fieldService, farmService } from "../../services";
+import Swal from 'sweetalert2';
 
 const FieldFormPage = () => {
   const navigate = useNavigate();
@@ -182,23 +183,52 @@ const FieldFormPage = () => {
 
       if (isEdit) {
         await fieldService.update(id, submitData);
-        navigate("/fields", {
-          state: {
-            message: `Field "${formData.fieldName}" updated successfully!`,
-            type: "success"
+        
+        // Show success alert
+        await Swal.fire({
+          icon: 'success',
+          title: 'Field Updated!',
+          text: `Field "${formData.fieldName}" has been updated successfully.`,
+          confirmButtonText: 'Continue',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
           }
         });
+        
+        navigate("/fields");
       } else {
         await fieldService.create(submitData);
-        navigate("/fields", {
-          state: {
-            message: `Field "${formData.fieldName}" created successfully!`,
-            type: "success"
+        
+        // Show success alert
+        await Swal.fire({
+          icon: 'success',
+          title: 'Field Created!',
+          text: `Field "${formData.fieldName}" has been created successfully.`,
+          confirmButtonText: 'Continue',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
           }
         });
+        
+        navigate("/fields");
       }
     } catch (error) {
       console.error("Error saving field:", error);
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: `Failed to ${isEdit ? 'Update' : 'Create'} Field`,
+        text: error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} field. Please try again.`,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444',
+        customClass: {
+          confirmButton: 'swal2-confirm-button'
+        }
+      });
+      
       setErrors({
         submit: `Failed to ${isEdit ? 'update' : 'create'} field. Please try again.`
       });

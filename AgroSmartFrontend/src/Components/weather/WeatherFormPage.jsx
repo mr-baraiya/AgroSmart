@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Cloud, MapPin, Thermometer, Droplets, Wind, Calendar, RefreshCw, Satellite, Navigation } from "lucide-react";
 import { weatherService, realTimeWeatherService, farmService } from "../../services";
+import Swal from 'sweetalert2';
 
 const WeatherFormPage = () => {
   const navigate = useNavigate();
@@ -116,23 +117,52 @@ const WeatherFormPage = () => {
 
       if (isEdit) {
         await weatherService.update(id, weatherData);
-        navigate("/weather", {
-          state: {
-            message: `Weather data for "${formData.location}" updated successfully!`,
-            type: "success"
+        
+        // Show success alert
+        await Swal.fire({
+          icon: 'success',
+          title: 'Weather Data Updated!',
+          text: `Weather data for "${formData.location}" has been updated successfully.`,
+          confirmButtonText: 'Continue',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
           }
         });
+        
+        navigate("/weather");
       } else {
         await weatherService.create(weatherData);
-        navigate("/weather", {
-          state: {
-            message: `Weather data for "${formData.location}" created successfully!`,
-            type: "success"
+        
+        // Show success alert
+        await Swal.fire({
+          icon: 'success',
+          title: 'Weather Data Created!',
+          text: `Weather data for "${formData.location}" has been created successfully.`,
+          confirmButtonText: 'Continue',
+          confirmButtonColor: '#10b981',
+          customClass: {
+            confirmButton: 'swal2-confirm-button'
           }
         });
+        
+        navigate("/weather");
       }
     } catch (err) {
       console.error("Error saving weather data:", err);
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: `Failed to ${isEdit ? 'Update' : 'Create'} Weather Data`,
+        text: err.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} weather data. Please try again.`,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444',
+        customClass: {
+          confirmButton: 'swal2-confirm-button'
+        }
+      });
+      
       setError(`Failed to ${isEdit ? 'update' : 'create'} weather data`);
     } finally {
       setSaving(false);

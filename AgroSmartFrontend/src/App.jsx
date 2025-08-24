@@ -8,6 +8,10 @@ import Register from "./Components/auth/Register";
 import Profile from "./Components/auth/Profile";
 import Layout from "./Components/DashBoard/Layout";
 import Dashboard from "./Components/DashBoard/Dashboard";
+import HomePage from "./Components/HomePage";
+import PrivacyPolicy from "./Components/legal/PrivacyPolicy";
+import TermsOfService from "./Components/legal/TermsOfService";
+import ContactUs from "./Components/legal/ContactUs";
 import CropsView from "./Components/crop/CropsView";
 import CropDetail from "./Components/crop/CropDetail";
 import CropFormPage from "./Components/crop/CropFormPage";
@@ -31,18 +35,23 @@ function App() {
       <ServerStatusProvider>
         <Router>
           <Routes>
+            {/* Landing Page */}
+            <Route path="/" element={<HomePage />} />
+            
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/contact" element={<ContactUs />} />
             
             {/* Protected Routes */}
-            <Route path="/" element={
+            <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Layout />
               </ProtectedRoute>
             }>
               <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               
               {/* Crops Routes */}

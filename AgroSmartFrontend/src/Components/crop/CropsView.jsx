@@ -7,6 +7,7 @@ import OfflineState from "../common/OfflineState";
 import CropTable from "./CropTable";
 import CropFilter from "./CropFilter";
 import CustomAlert from "../common/CustomAlert";
+import Swal from 'sweetalert2';
 
 const CropsView = () => {
   const navigate = useNavigate();
@@ -141,32 +142,51 @@ const CropsView = () => {
   };
 
   const handleDelete = async (crop) => {
-    showAlert(
-      'confirm',
-      'Delete Crop',
-      `Are you sure you want to delete "${crop.cropName}"? This action cannot be undone.`,
-      async () => {
-        try {
-          await cropService.delete(crop.cropId);
-          setCrops((prev) => prev.filter((c) => c.cropId !== crop.cropId));
-          closeAlert();
-          setNotification({
-            message: `Crop "${crop.cropName}" deleted successfully!`,
-            type: 'success'
-          });
-          setTimeout(() => setNotification(null), 5000);
-        } catch (err) {
-          console.error("Error deleting crop:", err);
-          closeAlert();
-          showAlert(
-            'error',
-            'Delete Failed',
-            `Failed to delete crop "${crop.cropName}". Please try again.`
-          );
-        }
-      },
-      true
-    );
+    // Show confirmation alert
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Delete Crop',
+      text: `Are you sure you want to delete "${crop.cropName}"? This action cannot be undone.`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await cropService.delete(crop.cropId);
+        setCrops((prev) => prev.filter((c) => c.cropId !== crop.cropId));
+        
+        // Show success alert
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: `Crop "${crop.cropName}" has been deleted successfully.`,
+          timer: 2000,
+          showConfirmButton: false,
+          timerProgressBar: true
+        });
+        
+        setNotification({
+          message: `Crop "${crop.cropName}" deleted successfully!`,
+          type: 'success'
+        });
+        setTimeout(() => setNotification(null), 5000);
+      } catch (err) {
+        console.error("Error deleting crop:", err);
+        
+        // Show error alert
+        Swal.fire({
+          icon: 'error',
+          title: 'Delete Failed',
+          text: `Failed to delete crop "${crop.cropName}". Please try again.`,
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#ef4444'
+        });
+      }
+    }
   };
 
   // Navigate to the detail page

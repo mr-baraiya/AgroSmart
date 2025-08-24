@@ -4,12 +4,29 @@ export const authService = {
   // Login user
   login: async (credentials) => {
     try {
-      const response = await api.post('/User/Login', credentials);
+      // Transform credentials to match new API structure
+      const loginData = {
+        identifier: credentials.email || credentials.identifier,
+        password: credentials.password,
+        role: credentials.role || 'User' // Default to User if not specified
+      };
+      
+      const response = await api.post('/Auth/Login', loginData);
       
       // Store token and user info in localStorage
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        // Create user object from response
+        const userInfo = {
+          userId: response.data.userId,
+          name: response.data.name,
+          email: response.data.email,
+          phone: response.data.phone,
+          role: response.data.role
+        };
+        
+        localStorage.setItem('user', JSON.stringify(userInfo));
         
         // Set default authorization header for future requests
         api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
@@ -17,6 +34,7 @@ export const authService = {
       
       return response.data;
     } catch (error) {
+      console.error('Login error:', error);
       throw error;
     }
   },
@@ -24,9 +42,24 @@ export const authService = {
   // Register new user
   register: async (userData) => {
     try {
-      const response = await api.post('/User/Register', userData);
+      // Transform userData to match new API structure
+      const registerData = {
+        userId: 0,
+        fullName: userData.fullName || userData.name,
+        email: userData.email,
+        passwordHash: userData.passwordHash || userData.password, // Handle both field names
+        role: 'User', // Always register as User
+        phone: userData.phone || '', // Phone should be provided from form
+        address: userData.address || '',
+        isActive: userData.isActive !== undefined ? userData.isActive : true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      const response = await api.post('/Auth/Register', registerData);
       return response.data;
     } catch (error) {
+      console.error('Registration error:', error);
       throw error;
     }
   },
@@ -93,7 +126,15 @@ export const authService = {
   changePassword: async (passwordData) => {
     try {
       console.log('AuthService: Sending password change request with data:', passwordData);
-      const response = await api.put('/User/ChangePassword', passwordData);
+      
+      // Transform to match new API structure
+      const changePasswordData = {
+        userId: passwordData.userId,
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      };
+      
+      const response = await api.post('/Auth/ChangePassword', changePasswordData);
       console.log('AuthService: Password change response:', response.data);
       return response.data;
     } catch (error) {

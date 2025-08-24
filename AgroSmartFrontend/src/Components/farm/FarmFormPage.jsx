@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MapPin, X, Loader2 } from "lucide-react";
 import { farmService } from "../../services";
 import CustomAlert from "../common/CustomAlert";
+import Swal from 'sweetalert2';
 
 const FarmFormPage = () => {
   const navigate = useNavigate();
@@ -152,14 +153,28 @@ const FarmFormPage = () => {
         await farmService.create(payload);
       }
       
-      navigate('/farms', { 
-        state: { 
-          message: `Farm ${isEdit ? 'updated' : 'created'} successfully!`,
-          type: 'success'
-        }
+      // Show success alert
+      await Swal.fire({
+        icon: 'success',
+        title: `Farm ${isEdit ? 'Updated' : 'Created'}!`,
+        text: `Farm has been ${isEdit ? 'updated' : 'created'} successfully.`,
+        confirmButtonText: 'Continue',
+        confirmButtonColor: '#10b981'
       });
+      
+      navigate('/farms');
     } catch (error) {
       console.error("API Error:", error);
+      
+      // Show error alert
+      Swal.fire({
+        icon: 'error',
+        title: `Failed to ${isEdit ? 'Update' : 'Create'} Farm`,
+        text: error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} farm. Please try again.`,
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444'
+      });
+      
       setErrors({ 
         general: error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} farm. Please try again.`
       });
