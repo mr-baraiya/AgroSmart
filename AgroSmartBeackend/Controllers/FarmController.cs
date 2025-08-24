@@ -21,6 +21,7 @@ namespace AgroSmartBeackend.Controllers
         #endregion
 
         #region GetAllFarms
+        [AllowAnonymous]
         [HttpGet("All")]
         public async Task<ActionResult<List<Farm>>> GetAllFarms()
         {

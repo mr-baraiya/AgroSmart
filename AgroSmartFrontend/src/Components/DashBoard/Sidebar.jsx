@@ -7,16 +7,16 @@ import {
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
-  { id: "farms", label: "Farms", icon: MapPin, path: "/farms" },
-  { id: "fields", label: "Fields", icon: Layers, path: "/fields" },
-  { id: "crops", label: "Crops", icon: Sprout, path: "/crops" },
-  { id: "sensors", label: "Sensors", icon: Activity, path: "/sensors" },
-  { id: "weather", label: "Weather", icon: Cloud, path: "/weather" },
-  { id: "schedule", label: "Schedule", icon: Calendar, path: "/schedule" },
-  { id: "insights", label: "Insights", icon: TrendingUp, path: "/insights" },
-  { id: "profile", label: "Profile", icon: User, path: "/profile" },
-  { id: "users", label: "Users", icon: Users, path: "/users" },
-  { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
+  { id: "farms", label: "Farms", icon: MapPin, path: "/dashboard/farms" },
+  { id: "fields", label: "Fields", icon: Layers, path: "/dashboard/fields" },
+  { id: "crops", label: "Crops", icon: Sprout, path: "/dashboard/crops" },
+  { id: "sensors", label: "Sensors", icon: Activity, path: "/dashboard/sensors" },
+  { id: "weather", label: "Weather", icon: Cloud, path: "/dashboard/weather" },
+  { id: "schedule", label: "Schedule", icon: Calendar, path: "/dashboard/schedules" },
+  { id: "insights", label: "Insights", icon: TrendingUp, path: "/dashboard/insights" },
+  { id: "profile", label: "Profile", icon: User, path: "/dashboard/profile" },
+  { id: "users", label: "Users", icon: Users, path: "/dashboard/users" },
+  { id: "settings", label: "Settings", icon: Settings, path: "/dashboard/settings" },
 ];
 
 const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
@@ -24,9 +24,9 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
 
   const isActive = (path) => {
     if (path === "/dashboard") {
-      return location.pathname === "/" || location.pathname === "/dashboard";
+      return location.pathname === "/dashboard" || location.pathname === "/dashboard/";
     }
-    return location.pathname.startsWith(path);
+    return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
   const handleNavClick = () => {
