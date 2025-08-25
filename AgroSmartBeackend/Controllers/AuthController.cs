@@ -206,7 +206,8 @@ public class AuthController : ControllerBase
             _context.PasswordResetTokens.Add(resetToken);
             await _context.SaveChangesAsync();
 
-            var resetLink = $"http://localhost:5173/auth/forgot-password?token={token}";
+             var resetLink = $"https://agrosmart.me/auth/forgot-password?token={token}";
+            //var resetLink = $"http://localhost:5173/auth/forgot-password?token={token}";
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Click the link to reset: {resetLink}");
 
             //Return both message and token
