@@ -96,6 +96,31 @@ export const authService = {
     }
   },
 
+  // Request password reset
+  requestPasswordReset: async (email) => {
+    try {
+      const response = await api.post('/Auth/request-password-reset', { email });
+      return response.data;
+    } catch (error) {
+      console.error('Password reset request error:', error);
+      throw error;
+    }
+  },
+
+  // Reset password with token
+  resetPassword: async (token, newPassword) => {
+    try {
+      const response = await api.post('/Auth/reset-password', {
+        token,
+        newPassword
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
+  },
+
   // Get user profile (if you have a profile endpoint)
   getProfile: async () => {
     try {

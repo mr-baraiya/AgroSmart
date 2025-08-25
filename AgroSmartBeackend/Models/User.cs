@@ -36,17 +36,3 @@ public partial class User
     [JsonIgnore]
     public virtual ICollection<SmartInsight> SmartInsights { get; set; } = new List<SmartInsight>();
 }
-
-public class LoginRequest
-{
-    public string Identifier { get; set; } = null!; // email or phone
-    public string Password { get; set; } = null!;
-    public string Role { get; set; } = null!; // Admin or User
-}
-
-public class ChangePasswordRequest
-{
-    public int UserId { get; set; }
-    public string CurrentPassword { get; set; } = null!;
-    public string NewPassword { get; set; } = null!;
-}

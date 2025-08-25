@@ -1,5 +1,8 @@
-﻿using AgroSmartBeackend.Models;
+﻿using AgroSmartBeackend.Dtos;
+using AgroSmartBeackend.Models;
+using AgroSmartBeackend.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +11,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using ForgotPasswordRequest = AgroSmartBeackend.Dtos.ForgotPasswordRequest;
+using ResetPasswordRequest = AgroSmartBeackend.Dtos.ResetPasswordRequest;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,19 +20,21 @@ public class AuthController : ControllerBase
 {
     private readonly AgroSmartContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService;
 
     #region Constructor
-    public AuthController(AgroSmartContext context, IConfiguration configuration)
+    public AuthController(AgroSmartContext context, IConfiguration configuration, IEmailService emailService)
     {
         _context = context;
         _configuration = configuration;
+        _emailService = emailService;
     }
     #endregion
 
     #region Login
     [AllowAnonymous]
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest login)
+    public async Task<IActionResult> Login([FromBody] AgroSmartBeackend.Dtos.LoginRequest login)
     {
         try
         {
@@ -126,7 +133,7 @@ public class AuthController : ControllerBase
     #region ChangePassword
     [Authorize]
     [HttpPost("ChangePassword")]
-    public async Task<IActionResult> ChangePassword([FromBody] AgroSmartBeackend.Models.ChangePasswordRequest request)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         try
         {
@@ -173,6 +180,74 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { Message = "Error changing password", Error = ex.Message });
         }
     }
-    #endregion 
+    #endregion
+
+    #region Password Reset
+    [HttpPost("request-password-reset")]
+    public async Task<IActionResult> RequestPasswordReset([FromBody] ForgotPasswordRequest request)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+                return NotFound(new { message = "Email not found" });
+
+            var token = Guid.NewGuid().ToString();
+            var expiry = DateTime.UtcNow.AddMinutes(15);
+
+            // Create a new PasswordResetToken instance (not from Dtos namespace)
+            var resetToken = new PasswordResetToken
+            {
+                UserId = user.UserId,
+                Token = token,
+                Expiry = expiry
+            };
+
+            _context.PasswordResetTokens.Add(resetToken);
+            await _context.SaveChangesAsync();
+
+            var resetLink = $"http://localhost:5173/auth/forgot-password?token={token}";
+            await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Click the link to reset: {resetLink}");
+
+            //Return both message and token
+            return Ok(new
+            {
+                message = "Password reset link sent",
+                token = token,
+                expiry = expiry
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while processing request", error = ex.Message });
+        }
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        try
+        {
+            var resetToken = await _context.PasswordResetTokens
+                .Include(rt => rt.User)
+                .FirstOrDefaultAsync(rt => rt.Token == request.Token);
+
+            if (resetToken == null || resetToken.Expiry < DateTime.UtcNow)
+                return BadRequest(new { message = "Invalid or expired token" });
+
+            // hash and update password
+            resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+            _context.PasswordResetTokens.Remove(resetToken);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Password has been reset successfully" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while resetting password", error = ex.Message });
+        }
+    }
+    #endregion
 
 }

@@ -33,6 +33,8 @@ public partial class AgroSmartContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+
     public virtual DbSet<WeatherDatum> WeatherData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -233,7 +235,22 @@ public partial class AgroSmartContext : DbContext
             entity.Property(e => e.WindSpeed).HasColumnType("decimal(5, 2)");
         });
 
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Token).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Expiry).IsRequired();
+
+            entity.HasOne(d => d.User)
+                .WithMany() // no collection in User
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_PasswordResetToken_Users");
+        });
+
         OnModelCreatingPartial(modelBuilder);
+
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

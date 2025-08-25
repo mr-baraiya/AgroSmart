@@ -6,6 +6,7 @@ import ProtectedRoute from "./Components/auth/ProtectedRoute";
 import Login from "./Components/auth/Login";
 import Register from "./Components/auth/Register";
 import Profile from "./Components/auth/Profile";
+import ForgotPassword from "./Components/auth/ForgotPassword";
 import Layout from "./Components/DashBoard/Layout";
 import Dashboard from "./Components/DashBoard/Dashboard";
 import HomePage from "./Components/HomePage";
@@ -39,6 +40,9 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/register" element={<Register />} />
+            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/contact" element={<ContactUs />} />

@@ -1,4 +1,5 @@
 using AgroSmartBeackend.Models;
+using AgroSmartBeackend.Services;
 using AgroSmartBeackend.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -113,6 +114,11 @@ builder.Services.AddDbContext<AgroSmartContext>(options =>
 // ------------------------------------------------------------
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+// ------------------------------------------------------------
+// Register EmailService for dependency injection
+// ------------------------------------------------------------
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ------------------------------------------------------------
 // Build the app
