@@ -30,10 +30,6 @@ public partial class User
 
     public string? ProfileImage { get; set; }
 
-    [NotMapped]                // EF will ignore it
-    [JsonIgnore]               // JSON serializer will ignore it
-    public IFormFile? ProfileImg { get; set; }
-
     [JsonIgnore]
     public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
