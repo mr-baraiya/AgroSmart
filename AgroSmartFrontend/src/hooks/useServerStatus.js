@@ -15,7 +15,7 @@ const useServerStatus = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
-      const response = await fetch(`${API_BASE_URL}/farms`, {
+      const response = await fetch(`${API_BASE_URL}/Farm/All`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -57,8 +57,11 @@ const useServerStatus = () => {
     }
     
     setLastChecked(new Date());
-    setIsInitialCheck(false); // Mark that initial check is complete
-  }, []);
+    // Only set initial check to false after we have a definitive result
+    if (isInitialCheck) {
+      setIsInitialCheck(false);
+    }
+  }, [isInitialCheck]);
 
   const handleApiError = useCallback((error) => {
     // Check if error indicates server is down
@@ -107,7 +110,7 @@ const useServerStatus = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       checkServerStatus();
-    }, 1000); // Wait 1 second before first check
+    }, 100); // Reduced delay to 100ms
 
     return () => clearTimeout(timer);
   }, [checkServerStatus]);

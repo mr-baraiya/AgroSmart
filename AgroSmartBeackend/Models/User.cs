@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 //using Newtonsoft.Json;
 
@@ -27,6 +28,12 @@ public partial class User
 
     public DateTime UpdatedAt { get; set; }
 
+    public string? ProfileImage { get; set; }
+
+    [NotMapped]                // EF will ignore it
+    [JsonIgnore]               // JSON serializer will ignore it
+    public IFormFile? ProfileImg { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
@@ -35,4 +42,5 @@ public partial class User
 
     [JsonIgnore]
     public virtual ICollection<SmartInsight> SmartInsights { get; set; } = new List<SmartInsight>();
+
 }

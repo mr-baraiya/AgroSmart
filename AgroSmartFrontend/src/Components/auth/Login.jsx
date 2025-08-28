@@ -19,8 +19,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Get redirect path from location state or default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Get redirect path from location state (don't set default here)
+  const from = location.state?.from?.pathname;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,22 +62,26 @@ const Login = () => {
     setError('');
 
     try {
-      await login(formData);
+      const response = await login(formData);
       
-      // Show success alert
+      // Immediate role-based redirection
+      if (response.role === 'Admin') {
+        navigate('/dashboard', { replace: true });
+      } else if (response.role === 'User') {
+        navigate('/user-dashboard', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+      
+      // Show success alert after redirect
       Swal.fire({
         icon: 'success',
         title: 'Login Successful!',
         text: 'Welcome back to AgroSmart!',
-        timer: 1500,
+        timer: 2000,
         showConfirmButton: false,
         timerProgressBar: true
       });
-      
-      // Redirect to the intended page or dashboard
-      setTimeout(() => {
-        navigate(from, { replace: true });
-      }, 1500);
     } catch (err) {
       console.error('Login error:', err);
       

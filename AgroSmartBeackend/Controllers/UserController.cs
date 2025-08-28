@@ -1,5 +1,7 @@
-﻿using AgroSmartBeackend.Models;
+﻿using AgroSmartBeackend.Helper;
+using AgroSmartBeackend.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -190,6 +192,64 @@ namespace AgroSmartBeackend.Controllers
             }
         }
         #endregion
+
+        //#region Upload Image
+        //[HttpPost]
+        //public async Task<IActionResult> UploadProfileImage([FromForm] int userId, [FromForm] IFormFile profileImg)
+        //{
+        //    var user = await _context.Users.FindAsync(userId);
+        //    if (user == null)
+        //        return NotFound(new { Message = "User not found." });
+
+        //    if (profileImg != null && profileImg.Length > 0)
+        //    {
+        //        // Delete old image if exists and is not default
+        //        if (!string.IsNullOrEmpty(user.ProfileImage) &&
+        //            user.ProfileImage != "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s")
+        //        {
+        //            try
+        //            {
+        //                ImageHelper.DeleteFile(user.ProfileImage);
+        //            }
+        //            catch
+        //            {
+        //                // ignore errors
+        //            }
+        //        }
+
+        //        // Save new profile image
+        //        string savedPath = ImageHelper.SaveImageToFile(profileImg);
+        //        if (string.IsNullOrEmpty(savedPath))
+        //            return BadRequest(new { Message = "Failed to save profile image." });
+
+        //        user.ProfileImage = savedPath;
+        //        await _context.SaveChangesAsync();
+        //    }
+
+        //    return Ok(user);
+        //}
+
+        //// -------------------- Delete Profile Image --------------------
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteProfileImage(int userId)
+        //{
+        //    var user = await _context.Users.FindAsync(userId);
+        //    if (user == null)
+        //        return NotFound(new { Message = "User not found." });
+
+        //    if (!string.IsNullOrEmpty(user.ProfileImage) &&
+        //        user.ProfileImage != "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s")
+        //    {
+        //        ImageHelper.DeleteFile(user.ProfileImage);
+        //    }
+
+        //    // Reset to default image
+        //    user.ProfileImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s";
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok(user);
+        //}
+        //#endregion
 
     }
 }

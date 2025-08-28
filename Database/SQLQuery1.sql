@@ -17,6 +17,27 @@ CREATE TABLE Users (
     CreatedAt		DATETIME2 NOT NULL DEFAULT GETDATE(),
     UpdatedAt		DATETIME2 NOT NULL DEFAULT GETDATE()
 );
+-- add new column ProfileImage
+
+ALTER TABLE Users
+ADD ProfileImage NVARCHAR(500) NULL;
+
+UPDATE Users
+SET ProfileImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s'
+WHERE ProfileImage IS NULL;
+
+-- add new table PasswordResetTokens
+
+CREATE TABLE PasswordResetTokens (
+    Id			INT IDENTITY(1,1) PRIMARY KEY,
+    UserId		INT NOT NULL,
+    Token		NVARCHAR(255) NOT NULL,
+    Expiry		DATETIME NOT NULL,
+    CONSTRAINT FK_PasswordResetTokens_Users FOREIGN KEY (UserId)
+        REFERENCES Users(UserId) ON DELETE CASCADE
+);
+
+select * from PasswordResetTokens;
 
 -- Insert sample users
 INSERT INTO Users (FullName, Email, PasswordHash, Role, Phone, Address) VALUES

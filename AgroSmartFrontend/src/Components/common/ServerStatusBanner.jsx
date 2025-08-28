@@ -8,8 +8,8 @@ const ServerStatusBanner = ({
   retryCount, 
   onRetry 
 }) => {
-  // Don't show banner during initial check or when server is online
-  if (isInitialCheck || isServerOnline) {
+  // Don't show banner during initial check, when server is online, or when server status is null/undefined
+  if (isInitialCheck || isServerOnline || isServerOnline === null || isServerOnline === undefined) {
     return null;
   }
 

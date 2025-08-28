@@ -43,8 +43,19 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await authService.login(credentials);
-      setUser(response.user);
+      
+      // Create user object from response - the response IS the user data
+      const userData = {
+        userId: response.userId,
+        name: response.name,
+        email: response.email,
+        phone: response.phone,
+        role: response.role
+      };
+      
+      setUser(userData);
       setIsAuthenticated(true);
+      
       return response;
     } catch (error) {
       throw error;

@@ -217,7 +217,11 @@ public partial class AgroSmartContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(15);
             entity.Property(e => e.Role).HasMaxLength(20);
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ProfileImage)
+                  .HasMaxLength(500)
+                  .HasDefaultValue("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s");
         });
+
 
         modelBuilder.Entity<WeatherDatum>(entity =>
         {

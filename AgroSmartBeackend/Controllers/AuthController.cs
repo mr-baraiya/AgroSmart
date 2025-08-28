@@ -111,10 +111,17 @@ public class AuthController : ControllerBase
                 return BadRequest(new { Message = "Password must be at least 6 characters long." });
 
             // Set role as "User" (prevent override)
-            //u.Role = "User";
+            // u.Role = "User";
 
             // Hash password before saving
             u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(u.PasswordHash);
+
+            // Set default profile image if not provided
+            if (string.IsNullOrWhiteSpace(u.ProfileImage))
+            {
+                u.ProfileImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s";
+            }
+
             u.CreatedAt = DateTime.UtcNow;
             u.UpdatedAt = DateTime.UtcNow;
 
@@ -206,8 +213,8 @@ public class AuthController : ControllerBase
             _context.PasswordResetTokens.Add(resetToken);
             await _context.SaveChangesAsync();
 
-             var resetLink = $"https://agrosmart.me/auth/forgot-password?token={token}";
-            //var resetLink = $"http://localhost:5173/auth/forgot-password?token={token}";
+            // var resetLink = $"https://agrosmart.me/auth/forgot-password?token={token}";
+            var resetLink = $"http://localhost:5173/auth/forgot-password?token={token}";
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $"Click the link to reset: {resetLink}");
 
             //Return both message and token
