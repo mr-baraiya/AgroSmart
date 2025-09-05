@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Sprout, Save, X } from "lucide-react";
 import { cropService } from "../../services";
 import CustomAlert from "../common/CustomAlert";
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const CropFormPage = () => {
   const navigate = useNavigate();
@@ -136,27 +136,15 @@ const CropFormPage = () => {
         await cropService.create(payload);
       }
       
-      // Show success alert
-      await Swal.fire({
-        icon: 'success',
-        title: `Crop ${isEdit ? 'Updated' : 'Created'}!`,
-        text: `Crop has been ${isEdit ? 'updated' : 'created'} successfully.`,
-        confirmButtonText: 'Continue',
-        confirmButtonColor: '#10b981'
-      });
+      // Show success toast
+      toast.success(`Crop ${isEdit ? 'updated' : 'created'} successfully!`);
       
       navigate('/crops');
     } catch (error) {
       console.error("API Error:", error);
       
-      // Show error alert
-      Swal.fire({
-        icon: 'error',
-        title: `Failed to ${isEdit ? 'Update' : 'Create'} Crop`,
-        text: error.response?.data?.message || `An error occurred while ${isEdit ? 'updating' : 'creating'} the crop.`,
-        confirmButtonText: 'Try Again',
-        confirmButtonColor: '#ef4444'
-      });
+      // Show error toast
+      toast.error(error.response?.data?.message || `An error occurred while ${isEdit ? 'updating' : 'creating'} the crop.`);
     } finally {
       setLoading(false);
     }

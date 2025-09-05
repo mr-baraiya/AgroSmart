@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Save, MapPin, Sprout } from "lucide-react";
 import { fieldService, farmService } from "../../services";
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const FieldFormPage = () => {
   const navigate = useNavigate();

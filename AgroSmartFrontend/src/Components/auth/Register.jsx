@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Phone, MapPin, Eye, EyeOff, UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthProvider';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -88,25 +88,9 @@ const Register = () => {
     e.preventDefault();
     
     if (!validateForm()) {
-      // Show validation error alert
+      // Show validation error toast
       const firstError = Object.values(validationErrors)[0];
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: firstError || 'Please fill in all required fields correctly.',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#ef4444',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showCloseButton: false,
-        focusConfirm: true,
-        customClass: {
-          popup: 'swal2-popup',
-          title: 'swal2-title',
-          content: 'swal2-content',
-          confirmButton: 'swal2-confirm'
-        }
-      });
+      toast.error(firstError || 'Please fill in all required fields correctly.');
       return;
     }
 
@@ -131,24 +115,8 @@ const Register = () => {
 
       await register(registrationData);
       
-      // Show success alert
-      await Swal.fire({
-        icon: 'success',
-        title: 'Registration Successful!',
-        text: 'Your account has been created successfully. Please log in with your credentials.',
-        confirmButtonText: 'Go to Login',
-        confirmButtonColor: '#10b981',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showCloseButton: false,
-        focusConfirm: true,
-        customClass: {
-          popup: 'swal2-popup',
-          title: 'swal2-title',
-          content: 'swal2-content',
-          confirmButton: 'swal2-confirm'
-        }
-      });
+      // Show success toast
+      toast.success('Registration successful! Please log in with your credentials.');
       
       // Redirect to login
       navigate('/login');
@@ -166,24 +134,8 @@ const Register = () => {
                       'Registration failed. Please check your information.';
       }
       
-      // Show error alert
-      Swal.fire({
-        icon: 'error',
-        title: 'Registration Failed',
-        text: errorMessage,
-        confirmButtonText: 'Try Again',
-        confirmButtonColor: '#ef4444',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showCloseButton: false,
-        focusConfirm: true,
-        customClass: {
-          popup: 'swal2-popup',
-          title: 'swal2-title',
-          content: 'swal2-content',
-          confirmButton: 'swal2-confirm'
-        }
-      });
+      // Show error toast
+      toast.error(errorMessage);
       
       setError(errorMessage);
     } finally {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Mail, ArrowLeft, Send, CheckCircle, Lock, Eye, EyeOff, Key } from 'lucide-react';
 import { authService } from '../../services/authService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const ForgotPassword = () => {
   const [searchParams] = useSearchParams();
@@ -77,19 +77,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     
     if (!email) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Email Required',
-        text: 'Please enter your email address.',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#ef4444',
-        customClass: {
-          confirmButton: 'swal2-confirm-hover'
-        },
-        buttonsStyling: false,
-        allowOutsideClick: false,
-        allowEscapeKey: false
-      });
+      toast.error('Please enter your email address.');
       return;
     }
 

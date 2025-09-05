@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthProvider';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -36,24 +36,8 @@ const Login = () => {
     e.preventDefault();
     
     if (!formData.identifier || !formData.password || !formData.role) {
-      // Show validation error alert
-      Swal.fire({
-        icon: 'error',
-        title: 'Missing Information',
-        text: 'Please fill in all fields (email/username, password, and role).',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#ef4444',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showCloseButton: false,
-        focusConfirm: true,
-        customClass: {
-          popup: 'swal2-popup',
-          title: 'swal2-title',
-          content: 'swal2-content',
-          confirmButton: 'swal2-confirm'
-        }
-      });
+      // Show validation error toast
+      toast.error('Please fill in all fields (email/username, password, and role).');
       setError('Please fill in all fields');
       return;
     }
@@ -93,14 +77,8 @@ const Login = () => {
         errorMessage = err.response.data?.message || 'Invalid login credentials';
       }
       
-      // Show error alert
-      Swal.fire({
-        icon: 'error',
-        title: 'Login Failed',
-        text: errorMessage,
-        confirmButtonText: 'Try Again',
-        confirmButtonColor: '#ef4444'
-      });
+      // Show error toast
+      toast.error(errorMessage);
       
       setError(errorMessage);
     } finally {
