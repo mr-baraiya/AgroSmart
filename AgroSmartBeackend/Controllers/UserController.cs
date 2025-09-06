@@ -1,4 +1,5 @@
-﻿using AgroSmartBeackend.Helper;
+﻿using AgroSmartBeackend.Dtos;
+using AgroSmartBeackend.Helper;
 using AgroSmartBeackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -190,6 +191,64 @@ namespace AgroSmartBeackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "Error filtering users", Error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region UploadProfilePicture
+        [HttpPost("{id}/UploadProfilePicture")]
+        public async Task<IActionResult> UploadProfilePicture(int id, [FromForm] UserProfileImage dto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound(new { Message = $"User with ID {id} not found." });
+
+            if (dto.File == null || dto.File.Length == 0)
+                return BadRequest(new { Message = "No file uploaded." });
+
+            // Delete old
+            if (!string.IsNullOrEmpty(user.ProfileImage))
+                ImageHelper.DeleteFile(user.ProfileImage);
+
+            // Save new
+            var savedPath = ImageHelper.SaveImageToFile(dto.File);
+            user.ProfileImage = savedPath;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Profile picture uploaded successfully", ImageUrl = user.ProfileImage });
+        }
+        #endregion
+
+        #region DeleteProfilePicture
+        [HttpDelete("{id}/DeleteProfilePicture")]
+        public async Task<IActionResult> DeleteProfilePicture(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                    return NotFound(new { Message = $"User with ID {id} not found." });
+
+                if (string.IsNullOrEmpty(user.ProfileImage))
+                    return BadRequest(new { Message = $"User with ID {id} does not have a profile picture." });
+
+                var deleteResult = ImageHelper.DeleteFile(user.ProfileImage);
+
+                // Remove from DB
+                user.ProfileImage = null;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = deleteResult, User = user });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error deleting profile picture", Error = ex.Message });
             }
         }
         #endregion

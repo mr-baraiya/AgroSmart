@@ -2,38 +2,45 @@
 {
     public static class ImageHelper
     {
-        public static string directory = "Images";
+        private static readonly string directory = "Images";  // public URL folder
+        private static readonly string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
         public static string SaveImageToFile(IFormFile imageFile)
         {
             if (imageFile == null || imageFile.Length == 0)
                 return null;
-            if (!Directory.Exists($"wwwroot/{directory}"))
+
+            string folderPath = Path.Combine(rootPath, directory);
+            if (!Directory.Exists(folderPath))
             {
-                Directory.CreateDirectory($"wwwroot/{directory}");
+                Directory.CreateDirectory(folderPath);
             }
 
-            string fullPath = $"{directory}/{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+            string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+            string filePath = Path.Combine(folderPath, fileName);
 
-            using (var stream = new FileStream($"wwwroot/{fullPath}", FileMode.Create))
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 imageFile.CopyTo(stream);
             }
 
-            return fullPath;
+            // return relative path to save in DB
+            return $"{directory}/{fileName}";
         }
 
         public static string DeleteFile(string filePath)
         {
-            var path = $"{Directory.GetCurrentDirectory()}/wwwroot/{filePath}";
+            var fullPath = Path.Combine(rootPath, filePath);
 
-            if (!System.IO.File.Exists(path)) return "File not found.";
+            if (!System.IO.File.Exists(fullPath))
+                return "File not found.";
 
             try
             {
-                System.IO.File.Delete(path);
+                System.IO.File.Delete(fullPath);
                 return "File deleted successfully.";
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }

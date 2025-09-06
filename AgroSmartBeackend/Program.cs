@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -164,6 +165,7 @@ app.UseRouting();
 // ------------------------------------------------------------
 // Enable serving of static files (wwwroot or custom path)
 // ------------------------------------------------------------
+
 app.UseStaticFiles();
 
 app.UseCors("AllowFrontendOrigins");
