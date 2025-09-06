@@ -9,18 +9,27 @@ import {
   Filter,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  User
 } from 'lucide-react';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import { farmService } from '../../../services/farmService';
 import { useServerStatusContext } from '../../../contexts/ServerStatusProvider';
-import Swal from 'sweetalert2';
+import { useAuth } from '../../../contexts/AuthProvider';
 
 const UserFarmsView = () => {
+  const { user } = useAuth();
   const { isServerOnline, isInitialCheck, handleApiError } = useServerStatusContext();
   const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredFarms, setFilteredFarms] = useState([]);
+
+  // Helper function to check if current user owns the farm
+  const isOwnedByCurrentUser = (farm) => {
+    return farm.createdBy === user?.userId || farm.userId === user?.userId;
+  };
 
   useEffect(() => {
     // Only fetch data after initial server status check is complete and server is online
@@ -35,8 +44,8 @@ const UserFarmsView = () => {
 
   useEffect(() => {
     const filtered = farms.filter(farm =>
-      farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farm.location.toLowerCase().includes(searchTerm.toLowerCase())
+      (farm.name && farm.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (farm.location && farm.location.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFilteredFarms(filtered);
   }, [searchTerm, farms]);
@@ -68,6 +77,12 @@ const UserFarmsView = () => {
   };
 
   const handleDeleteFarm = async (farm) => {
+    // Check if user owns this farm
+    if (!isOwnedByCurrentUser(farm)) {
+      toast.error('You can only delete farms that you created.');
+      return;
+    }
+
     const result = await Swal.fire({
       title: 'Delete Farm',
       text: `Are you sure you want to delete "${farm.name}"? This action cannot be undone.`,
@@ -82,21 +97,11 @@ const UserFarmsView = () => {
     if (result.isConfirmed) {
       try {
         await farmService.delete(farm.id);
-        Swal.fire({
-          icon: 'success',
-          title: 'Farm Deleted',
-          text: 'Your farm has been successfully deleted.',
-          confirmButtonColor: '#16a34a'
-        });
+        toast.success('Farm deleted successfully!');
         fetchUserFarms(); // Refresh the list
       } catch (error) {
         console.error('Error deleting farm:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error Deleting Farm',
-          text: 'Unable to delete the farm. Please try again.',
-          confirmButtonColor: '#16a34a'
-        });
+        toast.error('Unable to delete the farm. Please try again.');
       }
     }
   };
@@ -169,8 +174,8 @@ const UserFarmsView = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFarms.map((farm) => (
-            <div key={farm.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+          {filteredFarms.map((farm, index) => (
+            <div key={farm.id || `farm-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               {/* Farm Image Placeholder */}
               <div className="h-48 bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
                 <Wheat className="w-16 h-16 text-white opacity-50" />
@@ -207,6 +212,21 @@ const UserFarmsView = () => {
                   </div>
                 </div>
 
+                {/* Owner Info */}
+                {farm.createdByName && (
+                  <div className="mb-3 p-2 bg-blue-50 rounded-lg">
+                    <div className="flex items-center text-sm text-blue-700">
+                      <User className="w-4 h-4 mr-2" />
+                      Created by: {farm.createdByName}
+                      {isOwnedByCurrentUser(farm) && (
+                        <span className="ml-2 text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
+                          You
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
@@ -216,20 +236,28 @@ const UserFarmsView = () => {
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </Link>
-                  <Link
-                    to={`/user-dashboard/my-farms/edit/${farm.id}`}
-                    className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
-                  </Link>
-                  <button 
-                    onClick={() => handleDeleteFarm(farm)}
-                    className="flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm"
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
-                  </button>
+                  {isOwnedByCurrentUser(farm) ? (
+                    <>
+                      <Link
+                        to={`/user-dashboard/my-farms/edit/${farm.id}`}
+                        className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Edit
+                      </Link>
+                      <button 
+                        onClick={() => handleDeleteFarm(farm)}
+                        className="flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex-1 text-center py-2 px-3 bg-gray-50 text-gray-500 rounded-lg text-sm">
+                      <span className="text-xs">View only</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Created Date */}

@@ -22,10 +22,6 @@ CREATE TABLE Users (
 ALTER TABLE Users
 ADD ProfileImage NVARCHAR(500) NULL;
 
-UPDATE Users
-SET ProfileImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s'
-WHERE ProfileImage IS NULL;
-
 -- add new table PasswordResetTokens
 
 CREATE TABLE PasswordResetTokens (

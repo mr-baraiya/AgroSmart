@@ -1,11 +1,11 @@
 import api from './api';
 import { authService } from './authService';
 
-// User-specific Farm API endpoints
+// User-specific Farm API endpoints (using standard API with user context)
 export const userFarmService = {
-  // GET user's farms only
-  getMyFarms: async () => {
-    const response = await api.get('/Farm/user/my-farms');
+  // GET /api/Farm/All (all farms - filtered client-side by user)
+  getAll: async () => {
+    const response = await api.get('/Farm/All');
     // Ensure always returns array
     if (Array.isArray(response.data)) return response;
     if (response.data && Array.isArray(response.data.items)) {
@@ -14,45 +14,43 @@ export const userFarmService = {
     return { ...response, data: [] };
   },
   
-  // GET specific farm owned by user
-  getMyFarmById: async (id) => {
+  // GET /api/Farm/{id} (specific farm)
+  getById: async (id) => {
     try {
-      const response = await api.get(`/Farm/user/my-farms/${id}`);
+      const response = await api.get(`/Farm/${id}`);
       return response;
     } catch (error) {
-      console.error(`Error fetching user farm with ID ${id}:`, error);
+      console.error(`Error fetching farm with ID ${id}:`, error);
       throw error;
     }
   },
   
-  // POST create farm for current user
-  createMyFarm: (farmData) => {
+  // POST /api/Farm (create farm)
+  create: (farmData) => {
     const user = authService.getCurrentUser();
     const farmWithUser = {
       ...farmData,
-      userId: user?.userId,
-      ownerId: user?.userId
+      userId: user?.userId
     };
-    return api.post('/Farm/user', farmWithUser);
+    return api.post('/Farm', farmWithUser);
   },
   
-  // PUT update user's farm
-  updateMyFarm: (id, farmData) => {
+  // PUT /api/Farm/{id} (update farm)
+  update: (id, farmData) => {
     const user = authService.getCurrentUser();
     const farmWithUser = {
       ...farmData,
-      userId: user?.userId,
-      ownerId: user?.userId
+      userId: user?.userId
     };
-    return api.put(`/Farm/user/${id}`, farmWithUser);
+    return api.put(`/Farm/${id}`, farmWithUser);
   },
   
-  // DELETE user's farm
-  deleteMyFarm: (id) => api.delete(`/Farm/user/${id}`),
+  // DELETE /api/Farm/{id} (delete farm)
+  delete: (id) => api.delete(`/Farm/${id}`),
   
-  // GET user's farms dropdown
-  getMyFarmsDropdown: async () => {
-    const response = await api.get('/Farm/user/dropdown');
+  // GET /api/Farm/dropdown (farm dropdown)
+  getDropdown: async () => {
+    const response = await api.get('/Farm/dropdown');
     if (Array.isArray(response.data)) return response;
     if (response.data && Array.isArray(response.data.items)) {
       return { ...response, data: response.data.items };
@@ -60,45 +58,25 @@ export const userFarmService = {
     return { ...response, data: [] };
   },
   
-  // GET user's farms with filters
-  getMyFarmsFiltered: async (filters) => {
-    console.log('userFarmService.getMyFarmsFiltered called with filters:', filters);
-    
+  // GET /api/Farm/filter (filter farms)
+  filter: (filterParams) => api.get('/Farm/filter', { params: filterParams }),
+  
+  // GET /api/Farm/dropdown (dropdown options for farms)
+  getFarmDropdown: async () => {
     try {
-      const params = new URLSearchParams();
-      
-      if (filters) {
-        Object.keys(filters).forEach(key => {
-          if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-            params.append(key, filters[key]);
-          }
-        });
-      }
-      
-      const response = await api.get(`/Farm/user/filter?${params.toString()}`);
-      
-      // Ensure always returns array
-      if (Array.isArray(response.data)) return response;
-      if (response.data && Array.isArray(response.data.items)) {
-        return { ...response, data: response.data.items };
-      }
-      return { ...response, data: [] };
-      
+      const response = await api.get('/Farm/dropdown');
+      return response;
     } catch (error) {
-      console.error('Error filtering user farms:', error);
+      console.error('Error fetching farm dropdown:', error);
       throw error;
     }
   },
-
-  // GET user's farm statistics
-  getMyFarmStats: async () => {
-    try {
-      const response = await api.get('/Farm/user/stats');
-      return response;
-    } catch (error) {
-      console.error('Error fetching user farm stats:', error);
-      throw error;
-    }
+  
+  // Helper method to get user's farms only (client-side filtering)
+  getUserFarms: async (userId) => {
+    const response = await userFarmService.getAll();
+    const userFarms = response.data.filter(farm => farm.userId === userId);
+    return { ...response, data: userFarms };
   }
 };
 

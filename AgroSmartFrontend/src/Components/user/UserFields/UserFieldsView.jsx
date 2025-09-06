@@ -10,19 +10,28 @@ import {
   Eye,
   Edit,
   Trash2,
-  BarChart3
+  BarChart3,
+  User
 } from 'lucide-react';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import { fieldService } from '../../../services/fieldService';
 import { farmService } from '../../../services/farmService';
-import Swal from 'sweetalert2';
+import { useAuth } from '../../../contexts/AuthProvider';
 
 const UserFieldsView = () => {
+  const { user } = useAuth();
   const [fields, setFields] = useState([]);
   const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFarm, setSelectedFarm] = useState('');
   const [filteredFields, setFilteredFields] = useState([]);
+
+  // Helper function to check if current user owns the field
+  const isOwnedByCurrentUser = (field) => {
+    return field.createdBy === user?.userId || field.userId === user?.userId;
+  };
 
   useEffect(() => {
     fetchUserData();
@@ -34,9 +43,9 @@ const UserFieldsView = () => {
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(field =>
-        field.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        field.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        field.farmName?.toLowerCase().includes(searchTerm.toLowerCase())
+        (field.name && field.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (field.location && field.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (field.farmName && field.farmName.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -79,6 +88,12 @@ const UserFieldsView = () => {
   };
 
   const handleDeleteField = async (field) => {
+    // Check if user owns this field
+    if (!isOwnedByCurrentUser(field)) {
+      toast.error('You can only delete fields that you created.');
+      return;
+    }
+
     const result = await Swal.fire({
       title: 'Delete Field',
       text: `Are you sure you want to delete "${field.name}"? This action cannot be undone.`,
@@ -93,21 +108,11 @@ const UserFieldsView = () => {
     if (result.isConfirmed) {
       try {
         await fieldService.delete(field.id);
-        Swal.fire({
-          icon: 'success',
-          title: 'Field Deleted',
-          text: 'Your field has been successfully deleted.',
-          confirmButtonColor: '#16a34a'
-        });
+        toast.success('Field deleted successfully!');
         fetchUserData(); // Refresh the list
       } catch (error) {
         console.error('Error deleting field:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error Deleting Field',
-          text: 'Unable to delete the field. Please try again.',
-          confirmButtonColor: '#16a34a'
-        });
+        toast.error('Unable to delete the field. Please try again.');
       }
     }
   };
@@ -161,8 +166,8 @@ const UserFieldsView = () => {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
             <option value="">All Farms</option>
-            {farms.map((farm) => (
-              <option key={farm.id} value={farm.id}>
+            {farms.map((farm, index) => (
+              <option key={farm.id || `farm-${index}`} value={farm.id}>
                 {farm.name}
               </option>
             ))}
@@ -192,8 +197,8 @@ const UserFieldsView = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFields.map((field) => (
-            <div key={field.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+          {filteredFields.map((field, index) => (
+            <div key={field.id || `field-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               {/* Field Image Placeholder */}
               <div className="h-48 bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center">
                 <BarChart3 className="w-16 h-16 text-white opacity-50" />
@@ -233,6 +238,21 @@ const UserFieldsView = () => {
                   </div>
                 </div>
 
+                {/* Owner Info */}
+                {field.createdByName && (
+                  <div className="mb-3 p-2 bg-blue-50 rounded-lg">
+                    <div className="flex items-center text-sm text-blue-700">
+                      <User className="w-4 h-4 mr-2" />
+                      Created by: {field.createdByName}
+                      {isOwnedByCurrentUser(field) && (
+                        <span className="ml-2 text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
+                          You
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
@@ -242,20 +262,28 @@ const UserFieldsView = () => {
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </Link>
-                  <Link
-                    to={`/user-dashboard/my-fields/edit/${field.id}`}
-                    className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
-                  </Link>
-                  <button 
-                    onClick={() => handleDeleteField(field)}
-                    className="flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm"
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
-                  </button>
+                  {isOwnedByCurrentUser(field) ? (
+                    <>
+                      <Link
+                        to={`/user-dashboard/my-fields/edit/${field.id}`}
+                        className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Edit
+                      </Link>
+                      <button 
+                        onClick={() => handleDeleteField(field)}
+                        className="flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex-1 text-center py-2 px-3 bg-gray-50 text-gray-500 rounded-lg text-sm">
+                      <span className="text-xs">View only</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Created Date */}

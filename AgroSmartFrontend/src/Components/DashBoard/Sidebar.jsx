@@ -2,8 +2,11 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Home, Sprout, MapPin, Calendar, TrendingUp,
-  Users, Settings, Activity, Cloud, Leaf, Layers, User
+  Users, Settings, Activity, Cloud, Leaf, Layers, User,
+  Bell, Award
 } from "lucide-react";
+import { useAuth } from "../../contexts/AuthProvider";
+import ProfileImageDisplay from "../common/ProfileImage";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
@@ -14,6 +17,8 @@ const sidebarItems = [
   { id: "weather", label: "Weather", icon: Cloud, path: "/dashboard/weather" },
   { id: "schedule", label: "Schedule", icon: Calendar, path: "/dashboard/schedules" },
   { id: "insights", label: "Insights", icon: TrendingUp, path: "/dashboard/insights" },
+  { id: "notifications", label: "Notifications", icon: Bell, path: "/dashboard/notifications" },
+  { id: "badges", label: "Knowledge Badges", icon: Award, path: "/dashboard/badges" },
   { id: "profile", label: "Profile", icon: User, path: "/dashboard/profile" },
   { id: "users", label: "Users", icon: Users, path: "/dashboard/users" },
   { id: "settings", label: "Settings", icon: Settings, path: "/dashboard/settings" },
@@ -21,6 +26,7 @@ const sidebarItems = [
 
 const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
   const location = useLocation();
+  const { user, updateUser } = useAuth();
 
   const isActive = (path) => {
     if (path === "/dashboard") {
@@ -38,32 +44,33 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
 
   return (
     <div className={`
-      fixed left-0 top-0 w-64 bg-gradient-to-b from-green-800 to-green-900 text-white h-screen p-4 overflow-y-auto z-50
+      fixed left-0 top-0 w-64 bg-gradient-to-b from-green-800 to-green-900 text-white h-screen overflow-y-auto z-50
       transform transition-transform duration-300 ease-in-out
       ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
       lg:translate-x-0
     `}>
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf className="w-8 h-8" />
-            <div>
-              <h1 className="text-2xl font-bold">AgroSmart</h1>
-              <p className="text-green-200 text-sm">Farm Management System</p>
+      <div className="p-4 pb-20">
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Leaf className="w-8 h-8" />
+              <div>
+                <h1 className="text-2xl font-bold">AgroSmart</h1>
+                <p className="text-green-200 text-sm">Farm Management System</p>
+              </div>
             </div>
+            {/* Close button for mobile */}
+            <button
+              onClick={onClose}
+              className="lg:hidden p-2 hover:bg-white hover:bg-opacity-10 rounded-lg"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          {/* Close button for mobile */}
-          <button
-            onClick={onClose}
-            className="lg:hidden p-2 hover:bg-white hover:bg-opacity-10 rounded-lg"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
-      </div>
-      <nav className="space-y-2">
+        <nav className="space-y-2">
         {sidebarItems.map((item) => (
           <NavLink
             key={item.id}
@@ -81,7 +88,28 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
             <span className="truncate">{item.label}</span>
           </NavLink>
         ))}
-      </nav>
+        </nav>
+      </div>
+      
+      {/* User Profile Section at Bottom */}
+      <div className="absolute bottom-4 left-4 right-4">
+        <div className="bg-white bg-opacity-10 rounded-lg p-3 border border-white border-opacity-20">
+          <div className="flex items-center gap-3">
+            <ProfileImageDisplay 
+              user={user} 
+              size="md" 
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">
+                {user?.fullName || user?.name || 'User'}
+              </p>
+              <p className="text-xs text-green-200 truncate">
+                {user?.role || 'Personal Farm Manager'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

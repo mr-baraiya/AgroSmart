@@ -11,11 +11,15 @@ import {
   Bell,
   TrendingUp,
   Cloud,
-  BookOpen
+  BookOpen,
+  Award
 } from 'lucide-react';
+import { useAuth } from '../../../contexts/AuthProvider';
+import ProfileImageDisplay from '../../common/ProfileImage';
 
 const UserSidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
+  const { user, updateUser } = useAuth();
 
   const navigationItems = [
     {
@@ -62,7 +66,7 @@ const UserSidebar = ({ isOpen, onClose }) => {
     {
       name: 'Knowledge Base',
       href: '/user-dashboard/knowledge',
-      icon: BookOpen
+      icon: Award
     }
   ];
 
@@ -192,11 +196,14 @@ const UserSidebar = ({ isOpen, onClose }) => {
           {/* User Info */}
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-green-600" />
-              </div>
+              <ProfileImageDisplay 
+                user={user} 
+                size="md" 
+              />
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">User Dashboard</p>
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.fullName || user?.name || 'User'}
+                </p>
                 <p className="text-xs text-gray-500">Personal Farm Manager</p>
               </div>
             </div>

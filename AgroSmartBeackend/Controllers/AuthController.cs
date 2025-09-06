@@ -54,11 +54,12 @@ public class AuthController : ControllerBase
             {
                 message = "Login successfully",
                 token,
-                phone =user.Phone,
+                phone = user.Phone,
                 email = user.Email,
                 userId = user.UserId,
                 name = user.FullName,
-                role = user.Role
+                role = user.Role,
+                profileImage = user.ProfileImage // just return the path from DB
             });
         }
         catch (Exception ex)
@@ -67,6 +68,7 @@ public class AuthController : ControllerBase
         }
     }
     #endregion
+
 
     #region JWT Token Generation
     private string GenerateJwtToken(User user)
@@ -119,7 +121,7 @@ public class AuthController : ControllerBase
             // Set default profile image if not provided
             if (string.IsNullOrWhiteSpace(u.ProfileImage))
             {
-                u.ProfileImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw1QlKvKrqi3DHMBtYFMA2cg1tKhWgsCs5kg&s";
+                u.ProfileImage = "/Images/abc.jpg";
             }
 
             u.CreatedAt = DateTime.UtcNow;

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Bell, Search, User, LogOut, Settings, Menu } from "lucide-react";
 import { useAuth } from "../../contexts/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import ProfileImageDisplay from "../common/ProfileImage";
 
 const Header = ({ activeTab, notifications, onTabClick, onSearch, onBellClick, onMenuClick }) => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, updateUser, refreshUserProfile } = useAuth();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -81,11 +82,12 @@ const Header = ({ activeTab, notifications, onTabClick, onSearch, onBellClick, o
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-2 p-2 text-gray-600 hover:text-green-600 transition-colors rounded-lg focus:ring-2 focus:ring-green-300"
             >
-              <div className="w-6 h-6 lg:w-8 lg:h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-                <User className="w-3 h-3 lg:w-5 lg:h-5 text-white" />
-              </div>
+              <ProfileImageDisplay 
+                user={user} 
+                size="sm" 
+              />
               <span className="hidden lg:block text-sm font-medium">
-                {user?.fullName?.split(' ')[0] || 'User'}
+                {user?.fullName?.split(' ')[0] || user?.name?.split(' ')[0] || 'User'}
               </span>
             </button>
 
@@ -93,9 +95,17 @@ const Header = ({ activeTab, notifications, onTabClick, onSearch, onBellClick, o
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900 truncate">{user?.fullName}</p>
-                  <p className="text-xs text-gray-600 truncate">{user?.email}</p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
+                  <div className="flex items-center gap-3 mb-2">
+                    <ProfileImageDisplay 
+                      user={user} 
+                      size="md" 
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 truncate">{user?.fullName || user?.name}</p>
+                      <p className="text-xs text-gray-600 truncate">{user?.email}</p>
+                      <p className="text-xs text-gray-500">{user?.role}</p>
+                    </div>
+                  </div>
                 </div>
                 
                 <button
@@ -104,6 +114,18 @@ const Header = ({ activeTab, notifications, onTabClick, onSearch, onBellClick, o
                 >
                   <User className="w-4 h-4" />
                   Profile Settings
+                </button>
+                
+                <button
+                  onClick={async () => {
+                    console.log('Refreshing user profile...');
+                    await refreshUserProfile();
+                    setShowUserMenu(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Refresh Profile
                 </button>
                 
                 <button

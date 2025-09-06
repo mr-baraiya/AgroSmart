@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Edit, Save, X, Eye, EyeOff, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthProvider';
 import { authService } from '../../services/authService';
+import { userService } from '../../services/userService';
 import CustomAlert from '../common/CustomAlert';
-import Swal from 'sweetalert2';
+import ProfileImageUpload from '../common/ProfileImageUpload';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -170,15 +172,8 @@ const Profile = () => {
       updateUser(response.user || { ...user, ...formData });
       setIsEditing(false);
       
-      // Show success alert
-      Swal.fire({
-        icon: 'success',
-        title: 'Profile Updated!',
-        text: 'Your profile has been updated successfully.',
-        timer: 2000,
-        showConfirmButton: false,
-        timerProgressBar: true
-      });
+      // Show success toast
+      toast.success('Profile updated successfully!');
       
       setNotification({
         message: 'Profile updated successfully!',
@@ -215,13 +210,7 @@ const Profile = () => {
       }
       
       // Show error alert
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: errorMessage,
-        confirmButtonText: 'Try Again',
-        confirmButtonColor: '#ef4444'
-      });
+      toast.error(errorMessage);
       
       setError(errorMessage);
     } finally {
@@ -255,15 +244,8 @@ const Profile = () => {
       });
       setShowChangePassword(false);
       
-      // Show success alert
-      Swal.fire({
-        icon: 'success',
-        title: 'Password Changed!',
-        text: 'Your password has been changed successfully.',
-        timer: 2000,
-        showConfirmButton: false,
-        timerProgressBar: true
-      });
+      // Show success toast
+      toast.success('Password changed successfully!');
       
       setNotification({
         message: 'Password changed successfully!',
@@ -299,14 +281,8 @@ const Profile = () => {
         errorMessage = err.response?.data?.message || 'Failed to change password';
       }
       
-      // Show error alert
-      Swal.fire({
-        icon: 'error',
-        title: 'Password Change Failed',
-        text: errorMessage,
-        confirmButtonText: 'Try Again',
-        confirmButtonColor: '#ef4444'
-      });
+      // Show error toast
+      toast.error(errorMessage);
       
       setError(errorMessage);
     } finally {
@@ -358,9 +334,12 @@ const Profile = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
-            </div>
+            {/* Profile Picture */}
+            <ProfileImageUpload 
+              user={user} 
+              size="lg" 
+            />
+            
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{user.fullName}</h1>
               <p className="text-gray-600">{user.role} • {user.email}</p>

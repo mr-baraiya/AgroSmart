@@ -21,9 +21,11 @@ export const authService = {
         const userInfo = {
           userId: response.data.userId,
           name: response.data.name,
+          fullName: response.data.fullName || response.data.name,
           email: response.data.email,
           phone: response.data.phone,
-          role: response.data.role
+          role: response.data.role,
+          profileImage: response.data.profileImage || null
         };
         
         localStorage.setItem('user', JSON.stringify(userInfo));

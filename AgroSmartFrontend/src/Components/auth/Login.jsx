@@ -57,14 +57,14 @@ const Login = () => {
         navigate('/', { replace: true });
       }
       
-      // Show success alert after redirect
-      Swal.fire({
-        icon: 'success',
-        title: 'Login Successful!',
-        text: 'Welcome back to AgroSmart!',
-        timer: 2000,
-        showConfirmButton: false,
-        timerProgressBar: true
+      // Show success toast after redirect
+      toast.success('Welcome back to AgroSmart!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
     } catch (err) {
       console.error('Login error:', err);

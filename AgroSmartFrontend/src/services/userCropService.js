@@ -1,11 +1,12 @@
 import api from './api';
 import { authService } from './authService';
 
-// User-specific Crop API endpoints
+// User-specific Crop API endpoints (using standard API with user context)
 export const userCropService = {
-  // GET user's crops only
-  getMyCrops: async () => {
-    const response = await api.get('/Crop/user/my-crops');
+  // GET /api/Crop/All (all crops - filtered client-side by user)
+  getAll: async () => {
+    const response = await api.get('/Crop/All');
+    // Ensure always returns array
     if (Array.isArray(response.data)) return response;
     if (response.data && Array.isArray(response.data.items)) {
       return { ...response, data: response.data.items };
@@ -13,45 +14,43 @@ export const userCropService = {
     return { ...response, data: [] };
   },
   
-  // GET specific crop owned by user
-  getMyCropById: async (id) => {
+  // GET /api/Crop/{id} (specific crop)
+  getById: async (id) => {
     try {
-      const response = await api.get(`/Crop/user/my-crops/${id}`);
+      const response = await api.get(`/Crop/${id}`);
       return response;
     } catch (error) {
-      console.error(`Error fetching user crop with ID ${id}:`, error);
+      console.error(`Error fetching crop with ID ${id}:`, error);
       throw error;
     }
   },
   
-  // POST create crop for current user
-  createMyCrop: (cropData) => {
+  // POST /api/Crop (create crop)
+  create: (cropData) => {
     const user = authService.getCurrentUser();
     const cropWithUser = {
       ...cropData,
-      userId: user?.userId,
-      ownerId: user?.userId
+      userId: user?.userId
     };
-    return api.post('/Crop/user', cropWithUser);
+    return api.post('/Crop', cropWithUser);
   },
   
-  // PUT update user's crop
-  updateMyCrop: (id, cropData) => {
+  // PUT /api/Crop/{id} (update crop)
+  update: (id, cropData) => {
     const user = authService.getCurrentUser();
     const cropWithUser = {
       ...cropData,
-      userId: user?.userId,
-      ownerId: user?.userId
+      userId: user?.userId
     };
-    return api.put(`/Crop/user/${id}`, cropWithUser);
+    return api.put(`/Crop/${id}`, cropWithUser);
   },
   
-  // DELETE user's crop
-  deleteMyCrop: (id) => api.delete(`/Crop/user/${id}`),
+  // DELETE /api/Crop/{id} (delete crop)
+  delete: (id) => api.delete(`/Crop/${id}`),
   
-  // GET user's crops dropdown
-  getMyCropsDropdown: async () => {
-    const response = await api.get('/Crop/user/dropdown');
+  // GET /api/Crop/dropdown (crop dropdown)
+  getDropdown: async () => {
+    const response = await api.get('/Crop/dropdown');
     if (Array.isArray(response.data)) return response;
     if (response.data && Array.isArray(response.data.items)) {
       return { ...response, data: response.data.items };
@@ -59,75 +58,25 @@ export const userCropService = {
     return { ...response, data: [] };
   },
   
-  // GET crops by user's field
-  getMyCropsByField: async (fieldId) => {
-    const response = await api.get(`/Crop/user/field/${fieldId}`);
-    if (Array.isArray(response.data)) return response;
-    if (response.data && Array.isArray(response.data.items)) {
-      return { ...response, data: response.data.items };
-    }
-    return { ...response, data: [] };
-  },
+  // GET /api/Crop/Filter (filter crops)
+  filter: (filterParams) => api.get('/Crop/Filter', { params: filterParams }),
   
-  // GET crops by user's farm
-  getMyCropsByFarm: async (farmId) => {
-    const response = await api.get(`/Crop/user/farm/${farmId}`);
-    if (Array.isArray(response.data)) return response;
-    if (response.data && Array.isArray(response.data.items)) {
-      return { ...response, data: response.data.items };
-    }
-    return { ...response, data: [] };
-  },
-  
-  // GET user's crops with filters
-  getMyCropsFiltered: async (filters) => {
-    console.log('userCropService.getMyCropsFiltered called with filters:', filters);
-    
+  // GET /api/Crop/dropdown (dropdown options for crops)
+  getCropDropdown: async () => {
     try {
-      const params = new URLSearchParams();
-      
-      if (filters) {
-        Object.keys(filters).forEach(key => {
-          if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-            params.append(key, filters[key]);
-          }
-        });
-      }
-      
-      const response = await api.get(`/Crop/user/filter?${params.toString()}`);
-      
-      if (Array.isArray(response.data)) return response;
-      if (response.data && Array.isArray(response.data.items)) {
-        return { ...response, data: response.data.items };
-      }
-      return { ...response, data: [] };
-      
-    } catch (error) {
-      console.error('Error filtering user crops:', error);
-      throw error;
-    }
-  },
-
-  // GET user's crop statistics
-  getMyCropStats: async () => {
-    try {
-      const response = await api.get('/Crop/user/stats');
+      const response = await api.get('/Crop/dropdown');
       return response;
     } catch (error) {
-      console.error('Error fetching user crop stats:', error);
+      console.error('Error fetching crop dropdown:', error);
       throw error;
     }
   },
-
-  // GET crop growth stages for user's crops
-  getMyCropGrowthStages: async (cropId) => {
-    try {
-      const response = await api.get(`/Crop/user/${cropId}/growth-stages`);
-      return response;
-    } catch (error) {
-      console.error('Error fetching user crop growth stages:', error);
-      throw error;
-    }
+  
+  // Helper method to get user's crops only (client-side filtering)
+  getUserCrops: async (userId) => {
+    const response = await userCropService.getAll();
+    const userCrops = response.data.filter(crop => crop.userId === userId);
+    return { ...response, data: userCrops };
   }
 };
 

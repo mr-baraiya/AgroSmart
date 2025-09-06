@@ -26,6 +26,19 @@ export const userService = {
   // POST /api/User/ChangePassword
   changePassword: (passwordData) => api.post('/User/ChangePassword', passwordData),
 
+  // POST /api/User/{id}/UploadProfilePicture
+  uploadProfilePicture: (id, formData) => api.post(`/User/${id}/UploadProfilePicture`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+
+  // DELETE /api/User/{id}/DeleteProfilePicture
+  deleteProfilePicture: (id) => api.delete(`/User/${id}/DeleteProfilePicture`),
+
+  // GET /api/User/{id}/Profile - Get complete user profile
+  getUserProfile: (id) => api.get(`/User/${id}`),
+
   // Helper methods for authentication
   getCurrentUser: () => {
     const user = localStorage.getItem('currentUser');

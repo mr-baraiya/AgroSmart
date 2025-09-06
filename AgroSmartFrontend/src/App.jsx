@@ -34,8 +34,19 @@ import RoleBasedRedirect from "./Components/auth/RoleBasedRedirect";
 import UserLayout from "./Components/user/UserDashboard/UserLayout";
 import UserDashboard from "./Components/user/UserDashboard/UserDashboard";
 import UserFarmsView from "./Components/user/UserFarms/UserFarmsView";
+import FarmFormComponent from "./Components/user/UserFarms/FarmFormComponent";
+import FarmDetailComponent from "./Components/user/UserFarms/FarmDetailComponent";
 import UserFieldsView from "./Components/user/UserFields/UserFieldsView";
+import FieldFormComponent from "./Components/user/UserFields/FieldFormComponent";
+import FieldDetailComponent from "./Components/user/UserFields/FieldDetailComponent";
 import UserCropsView from "./Components/user/UserCrops/UserCropsView";
+import CropFormComponent from "./Components/user/UserCrops/CropFormComponent";
+import CropDetailComponent from "./Components/user/UserCrops/CropDetailComponent";
+import SchedulePage from "./pages/user/SchedulePage";
+import WeatherPage from "./pages/user/WeatherPage";
+import InsightsPage from "./pages/user/InsightsPage";
+import NotificationsPage from "./pages/user/NotificationsPage";
+import KnowledgeBadgePage from "./pages/user/KnowledgeBadgePage";
 
 function App() {
   return (
@@ -95,20 +106,22 @@ function App() {
               <Route path="farms/:farmId/crops" element={<FieldWiseCropsView />} />
               
               {/* Weather Routes */}
-              <Route path="weather" element={<WeatherView />} />
+              <Route path="weather" element={<WeatherPage />} />
               <Route path="weather/add" element={<WeatherFormPage />} />
               <Route path="weather/edit/:id" element={<WeatherFormPage />} />
               <Route path="weather/:id" element={<WeatherDetail />} />
               
               {/* Schedule Routes */}
-              <Route path="schedules" element={<ScheduleView />} />
+              <Route path="schedules" element={<SchedulePage />} />
               <Route path="schedules/add" element={<ScheduleFormPage />} />
               <Route path="schedules/edit/:id" element={<ScheduleFormPage />} />
               <Route path="schedules/:id" element={<ScheduleDetail />} />
               
               {/* System Management Routes */}
               <Route path="sensors" element={<div className="p-6"><h1 className="text-2xl font-bold">Sensors Management</h1><p>Sensor monitoring and management coming soon...</p></div>} />
-              <Route path="insights" element={<div className="p-6"><h1 className="text-2xl font-bold">Smart Insights</h1><p>AI-powered farming insights coming soon...</p></div>} />
+              <Route path="insights" element={<InsightsPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="badges" element={<KnowledgeBadgePage />} />
               <Route path="users" element={<div className="p-6"><h1 className="text-2xl font-bold">User Management</h1><p>User administration coming soon...</p></div>} />
               <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">System Settings</h1><p>Application settings coming soon...</p></div>} />
             </Route>
@@ -130,28 +143,28 @@ function App() {
               
               {/* User Farm Management Routes */}
               <Route path="my-farms" element={<UserFarmsView />} />
-              <Route path="my-farms/add" element={<div className="p-6"><h1 className="text-2xl font-bold">Add Farm</h1><p>User farm creation form coming soon...</p></div>} />
-              <Route path="my-farms/edit/:id" element={<div className="p-6"><h1 className="text-2xl font-bold">Edit Farm</h1><p>User farm editing form coming soon...</p></div>} />
-              <Route path="my-farms/:id" element={<div className="p-6"><h1 className="text-2xl font-bold">Farm Details</h1><p>User farm details view coming soon...</p></div>} />
+              <Route path="my-farms/add" element={<FarmFormComponent />} />
+              <Route path="my-farms/edit/:id" element={<FarmFormComponent />} />
+              <Route path="my-farms/:id" element={<FarmDetailComponent />} />
               
               {/* User Field Management Routes */}
               <Route path="my-fields" element={<UserFieldsView />} />
-              <Route path="my-fields/add" element={<div className="p-6"><h1 className="text-2xl font-bold">Add Field</h1><p>User field creation form coming soon...</p></div>} />
-              <Route path="my-fields/edit/:id" element={<div className="p-6"><h1 className="text-2xl font-bold">Edit Field</h1><p>User field editing form coming soon...</p></div>} />
-              <Route path="my-fields/:id" element={<div className="p-6"><h1 className="text-2xl font-bold">Field Details</h1><p>User field details view coming soon...</p></div>} />
+              <Route path="my-fields/add" element={<FieldFormComponent />} />
+              <Route path="my-fields/edit/:id" element={<FieldFormComponent />} />
+              <Route path="my-fields/:id" element={<FieldDetailComponent />} />
               
               {/* User Crop Management Routes */}
               <Route path="my-crops" element={<UserCropsView />} />
-              <Route path="my-crops/add" element={<div className="p-6"><h1 className="text-2xl font-bold">Add Crop</h1><p>User crop creation form coming soon...</p></div>} />
-              <Route path="my-crops/edit/:id" element={<div className="p-6"><h1 className="text-2xl font-bold">Edit Crop</h1><p>User crop editing form coming soon...</p></div>} />
-              <Route path="my-crops/:id" element={<div className="p-6"><h1 className="text-2xl font-bold">Crop Details</h1><p>User crop details view coming soon...</p></div>} />
+              <Route path="my-crops/add" element={<CropFormComponent />} />
+              <Route path="my-crops/edit/:id" element={<CropFormComponent />} />
+              <Route path="my-crops/:id" element={<CropDetailComponent />} />
               
               {/* User Weather & Schedule Routes */}
-              <Route path="weather" element={<div className="p-6"><h1 className="text-2xl font-bold">Weather</h1><p>Personal weather tracking coming soon...</p></div>} />
-              <Route path="schedule" element={<div className="p-6"><h1 className="text-2xl font-bold">My Schedule</h1><p>Personal farming schedule coming soon...</p></div>} />
-              <Route path="insights" element={<div className="p-6"><h1 className="text-2xl font-bold">My Insights</h1><p>Personal farming insights coming soon...</p></div>} />
-              <Route path="notifications" element={<div className="p-6"><h1 className="text-2xl font-bold">Notifications</h1><p>Personal notifications coming soon...</p></div>} />
-              <Route path="knowledge" element={<div className="p-6"><h1 className="text-2xl font-bold">Knowledge Base</h1><p>Farming knowledge base coming soon...</p></div>} />
+              <Route path="weather" element={<WeatherPage />} />
+              <Route path="schedule" element={<SchedulePage />} />
+              <Route path="insights" element={<InsightsPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="knowledge" element={<KnowledgeBadgePage />} />
               <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p>Personal settings coming soon...</p></div>} />
             </Route>
 

@@ -1,11 +1,12 @@
 import api from './api';
 import { authService } from './authService';
 
-// User-specific Field API endpoints
+// User-specific Field API endpoints (using standard API with user context)
 export const userFieldService = {
-  // GET user's fields only
-  getMyFields: async () => {
-    const response = await api.get('/Field/user/my-fields');
+  // GET /api/Field/All (all fields - filtered client-side by user)
+  getAll: async () => {
+    const response = await api.get('/Field/All');
+    // Ensure always returns array
     if (Array.isArray(response.data)) return response;
     if (response.data && Array.isArray(response.data.items)) {
       return { ...response, data: response.data.items };
@@ -13,45 +14,43 @@ export const userFieldService = {
     return { ...response, data: [] };
   },
   
-  // GET specific field owned by user
-  getMyFieldById: async (id) => {
+  // GET /api/Field/{id} (specific field)
+  getById: async (id) => {
     try {
-      const response = await api.get(`/Field/user/my-fields/${id}`);
+      const response = await api.get(`/Field/${id}`);
       return response;
     } catch (error) {
-      console.error(`Error fetching user field with ID ${id}:`, error);
+      console.error(`Error fetching field with ID ${id}:`, error);
       throw error;
     }
   },
   
-  // POST create field for current user
-  createMyField: (fieldData) => {
+  // POST /api/Field (create field)
+  create: (fieldData) => {
     const user = authService.getCurrentUser();
     const fieldWithUser = {
       ...fieldData,
-      userId: user?.userId,
-      ownerId: user?.userId
+      userId: user?.userId
     };
-    return api.post('/Field/user', fieldWithUser);
+    return api.post('/Field', fieldWithUser);
   },
   
-  // PUT update user's field
-  updateMyField: (id, fieldData) => {
+  // PUT /api/Field/{id} (update field)
+  update: (id, fieldData) => {
     const user = authService.getCurrentUser();
     const fieldWithUser = {
       ...fieldData,
-      userId: user?.userId,
-      ownerId: user?.userId
+      userId: user?.userId
     };
-    return api.put(`/Field/user/${id}`, fieldWithUser);
+    return api.put(`/Field/${id}`, fieldWithUser);
   },
   
-  // DELETE user's field
-  deleteMyField: (id) => api.delete(`/Field/user/${id}`),
+  // DELETE /api/Field/{id} (delete field)
+  delete: (id) => api.delete(`/Field/${id}`),
   
-  // GET user's fields dropdown
-  getMyFieldsDropdown: async () => {
-    const response = await api.get('/Field/user/dropdown');
+  // GET /api/Field/dropdown (field dropdown)
+  getDropdown: async () => {
+    const response = await api.get('/Field/dropdown');
     if (Array.isArray(response.data)) return response;
     if (response.data && Array.isArray(response.data.items)) {
       return { ...response, data: response.data.items };
@@ -59,54 +58,25 @@ export const userFieldService = {
     return { ...response, data: [] };
   },
   
-  // GET fields by user's farm
-  getMyFieldsByFarm: async (farmId) => {
-    const response = await api.get(`/Field/user/farm/${farmId}`);
-    if (Array.isArray(response.data)) return response;
-    if (response.data && Array.isArray(response.data.items)) {
-      return { ...response, data: response.data.items };
-    }
-    return { ...response, data: [] };
-  },
+  // GET /api/Field/filter (filter fields)
+  filter: (filterParams) => api.get('/Field/filter', { params: filterParams }),
   
-  // GET user's fields with filters
-  getMyFieldsFiltered: async (filters) => {
-    console.log('userFieldService.getMyFieldsFiltered called with filters:', filters);
-    
+  // GET /api/Field/dropdown (dropdown options for fields)
+  getFieldDropdown: async () => {
     try {
-      const params = new URLSearchParams();
-      
-      if (filters) {
-        Object.keys(filters).forEach(key => {
-          if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
-            params.append(key, filters[key]);
-          }
-        });
-      }
-      
-      const response = await api.get(`/Field/user/filter?${params.toString()}`);
-      
-      if (Array.isArray(response.data)) return response;
-      if (response.data && Array.isArray(response.data.items)) {
-        return { ...response, data: response.data.items };
-      }
-      return { ...response, data: [] };
-      
-    } catch (error) {
-      console.error('Error filtering user fields:', error);
-      throw error;
-    }
-  },
-
-  // GET user's field statistics
-  getMyFieldStats: async () => {
-    try {
-      const response = await api.get('/Field/user/stats');
+      const response = await api.get('/Field/dropdown');
       return response;
     } catch (error) {
-      console.error('Error fetching user field stats:', error);
+      console.error('Error fetching field dropdown:', error);
       throw error;
     }
+  },
+  
+  // Helper method to get user's fields only (client-side filtering)
+  getUserFields: async (userId) => {
+    const response = await userFieldService.getAll();
+    const userFields = response.data.filter(field => field.userId === userId || field.farm?.userId === userId);
+    return { ...response, data: userFields };
   }
 };
 

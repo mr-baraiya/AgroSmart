@@ -11,9 +11,10 @@ import {
   Wheat
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthProvider';
+import ProfileImageDisplay from '../../common/ProfileImage';
 
 const UserHeader = ({ onMenuClick }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,12 +88,14 @@ const UserHeader = ({ onMenuClick }) => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
             >
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-2">
-                <User className="w-5 h-5 text-green-600" />
-              </div>
+              <ProfileImageDisplay 
+                user={user} 
+                size="sm" 
+                className="mr-2"
+              />
               <div className="hidden md:block text-left mr-2">
                 <p className="text-sm font-medium text-gray-900">
-                  {user?.name || user?.email || 'User'}
+                  {user?.fullName || user?.name || user?.email || 'User'}
                 </p>
                 <p className="text-xs text-gray-500">Personal Farm Manager</p>
               </div>
@@ -102,13 +105,22 @@ const UserHeader = ({ onMenuClick }) => {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.name || user?.email || 'User'}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {user?.email || 'user@example.com'}
-                  </p>
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-2">
+                    {/* <ProfileImageDisplay 
+                      user={user} 
+                      size="md" 
+                    /> */}
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {user?.fullName || user?.name || 'User'}
+                      </p>
+                      <p className="text-xs text-gray-600 truncate">
+                        {user?.email || 'user@example.com'}
+                      </p>
+                      <p className="text-xs text-gray-500">Personal Farm Manager</p>
+                    </div>
+                  </div>
                 </div>
                 
                 <button

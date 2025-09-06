@@ -11,14 +11,17 @@ import {
   Edit,
   Trash2,
   Sprout,
-  Clock
+  Clock,
+  User
 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { cropService } from '../../../services/cropService';
 import { fieldService } from '../../../services/fieldService';
 import { farmService } from '../../../services/farmService';
-import Swal from 'sweetalert2';
+import { useAuth } from '../../../contexts/AuthProvider';
 
 const UserCropsView = () => {
+  const { user } = useAuth();
   const [crops, setCrops] = useState([]);
   const [fields, setFields] = useState([]);
   const [farms, setFarms] = useState([]);
@@ -28,6 +31,11 @@ const UserCropsView = () => {
   const [selectedFarm, setSelectedFarm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [filteredCrops, setFilteredCrops] = useState([]);
+
+  // Helper function to check if current user owns the crop
+  const isOwnedByCurrentUser = (crop) => {
+    return crop.createdBy === user?.userId || crop.userId === user?.userId;
+  };
 
   useEffect(() => {
     fetchUserData();
@@ -39,10 +47,10 @@ const UserCropsView = () => {
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(crop =>
-        crop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        crop.variety?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        crop.fieldName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        crop.farmName?.toLowerCase().includes(searchTerm.toLowerCase())
+        (crop.name && crop.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (crop.variety && crop.variety.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (crop.fieldName && crop.fieldName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (crop.farmName && crop.farmName.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -83,12 +91,7 @@ const UserCropsView = () => {
       setFilteredCrops(allCrops);
     } catch (error) {
       console.error('Error fetching user data:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error Loading Crops',
-        text: 'Unable to load your crops. Please try again.',
-        confirmButtonColor: '#16a34a'
-      });
+      toast.error('Unable to load your crops. Please try again.');
       setCrops([]);
       setFields([]);
       setFarms([]);
@@ -99,35 +102,22 @@ const UserCropsView = () => {
   };
 
   const handleDeleteCrop = async (crop) => {
-    const result = await Swal.fire({
-      title: 'Delete Crop',
-      text: `Are you sure you want to delete "${crop.name}"? This action cannot be undone.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    });
+    // Check if user owns this crop
+    if (!isOwnedByCurrentUser(crop)) {
+      toast.error('You can only delete crops that you created.');
+      return;
+    }
 
-    if (result.isConfirmed) {
+    const result = window.confirm(`Are you sure you want to delete "${crop.name}"? This action cannot be undone.`);
+
+    if (result) {
       try {
         await cropService.delete(crop.id);
-        Swal.fire({
-          icon: 'success',
-          title: 'Crop Deleted',
-          text: 'Your crop has been successfully deleted.',
-          confirmButtonColor: '#16a34a'
-        });
+        toast.success('Crop deleted successfully!');
         fetchUserData(); // Refresh the list
       } catch (error) {
         console.error('Error deleting crop:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error Deleting Crop',
-          text: 'Unable to delete the crop. Please try again.',
-          confirmButtonColor: '#16a34a'
-        });
+        toast.error('Unable to delete the crop. Please try again.');
       }
     }
   };
@@ -306,6 +296,21 @@ const UserCropsView = () => {
                   </div>
                 )}
 
+                {/* Owner Info */}
+                {crop.createdByName && (
+                  <div className="mb-3 p-2 bg-blue-50 rounded-lg">
+                    <div className="flex items-center text-sm text-blue-700">
+                      <User className="w-4 h-4 mr-2" />
+                      Created by: {crop.createdByName}
+                      {isOwnedByCurrentUser(crop) && (
+                        <span className="ml-2 text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
+                          You
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
@@ -315,20 +320,28 @@ const UserCropsView = () => {
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </Link>
-                  <Link
-                    to={`/user-dashboard/my-crops/edit/${crop.id}`}
-                    className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
-                  </Link>
-                  <button 
-                    onClick={() => handleDeleteCrop(crop)}
-                    className="flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm"
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
-                  </button>
+                  {isOwnedByCurrentUser(crop) ? (
+                    <>
+                      <Link
+                        to={`/user-dashboard/my-crops/edit/${crop.id}`}
+                        className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Edit
+                      </Link>
+                      <button 
+                        onClick={() => handleDeleteCrop(crop)}
+                        className="flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex-1 text-center py-2 px-3 bg-gray-50 text-gray-500 rounded-lg text-sm">
+                      <span className="text-xs">View only</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -22,12 +22,29 @@ namespace AgroSmartBeackend.Controllers
 
         #region GetAllInsights
         [HttpGet("All")]
-        public async Task<ActionResult<List<SmartInsight>>> GetAllInsights()
+        public async Task<ActionResult<object>> GetAllInsights([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var insights = await _context.SmartInsights.ToListAsync();
-                return Ok(insights);
+                if (page <= 0) page = 1;
+                if (pageSize <= 0) pageSize = 10;
+
+                var totalCount = await _context.SmartInsights.CountAsync();
+
+                var insights = await _context.SmartInsights
+                    .OrderByDescending(i => i.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    TotalCount = totalCount,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                    Data = insights
+                });
             }
             catch (Exception ex)
             {
@@ -130,17 +147,22 @@ namespace AgroSmartBeackend.Controllers
 
         #region FilterInsights
         [HttpGet("Filter")]
-        public async Task<ActionResult<List<SmartInsight>>> FilterInsights(
-            [FromQuery] string? type,
-            [FromQuery] string? title,
-            [FromQuery] string? status,
-            [FromQuery] int? targetUserId,
-            [FromQuery] bool? isResolved,
-            [FromQuery] DateTime? createdAfter,
-            [FromQuery] DateTime? validBefore)
+        public async Task<ActionResult<object>> FilterInsights(
+        [FromQuery] string? type,
+        [FromQuery] string? title,
+        [FromQuery] string? status,
+        [FromQuery] int? targetUserId,
+        [FromQuery] bool? isResolved,
+        [FromQuery] DateTime? createdAfter,
+        [FromQuery] DateTime? validBefore,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
         {
             try
             {
+                if (page <= 0) page = 1;
+                if (pageSize <= 0) pageSize = 10;
+
                 var query = _context.SmartInsights.AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(type))
@@ -164,8 +186,22 @@ namespace AgroSmartBeackend.Controllers
                 if (validBefore.HasValue)
                     query = query.Where(i => i.ValidUntil <= validBefore.Value);
 
-                var result = await query.OrderByDescending(i => i.CreatedAt).ToListAsync();
-                return Ok(result);
+                var totalCount = await query.CountAsync();
+
+                var result = await query
+                    .OrderByDescending(i => i.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    TotalCount = totalCount,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                    Data = result
+                });
             }
             catch (Exception ex)
             {
