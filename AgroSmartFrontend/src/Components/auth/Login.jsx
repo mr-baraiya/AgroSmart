@@ -261,6 +261,18 @@ const Login = () => {
               </Link>
             </p>
           </div>
+
+          {/* Back to Landing Page Link */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              <Link
+                to="/"
+                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+              >
+                ← Back to Home
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
