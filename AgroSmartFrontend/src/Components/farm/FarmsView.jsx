@@ -149,11 +149,11 @@ const FarmsView = () => {
   const handleEdit = (farm) => {
     console.log('Editing farm:', farm);
     console.log('Farm ID:', farm.farmId);
-    navigate(`/farms/edit/${farm.farmId}`);
+    navigate(`/dashboard/farms/edit/${farm.farmId}`);
   };
 
   const handleAdd = () => {
-    navigate('/farms/add');
+    navigate('/dashboard/farms/add');
   };
 
   const handleDelete = async (farm) => {
@@ -213,12 +213,12 @@ const FarmsView = () => {
 
   // Navigate to the detail page
   const handleInfo = (farm) => {
-    navigate(`/farms/${farm.farmId}`);
+    navigate(`/dashboard/farms/${farm.farmId}`);
   };
 
   // Navigate to view fields in this farm
   const handleViewFields = (farm) => {
-    navigate(`/farms/${farm.farmId}/fields`);
+    navigate(`/dashboard/farms/${farm.farmId}/fields`);
   };
 
   // Handle filter changes
@@ -562,15 +562,15 @@ const FarmsView = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {farms.map((farm) => (
                   <div
-                    key={farm.id}
+                    key={farm.farmId || farm.id}
                     className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          checked={selectedFarms.includes(farm.id)}
-                          onChange={() => handleSelectFarm(farm.id)}
+                          checked={selectedFarms.includes(farm.farmId || farm.id)}
+                          onChange={() => handleSelectFarm(farm.farmId || farm.id)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
                         <h3 className="font-semibold text-gray-900 truncate">{farm.name}</h3>

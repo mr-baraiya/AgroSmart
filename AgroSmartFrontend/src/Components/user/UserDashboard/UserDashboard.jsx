@@ -322,7 +322,7 @@ const UserDashboard = () => {
           {dashboardData.farms.length > 0 ? (
             <div className="space-y-3">
               {dashboardData.farms.map((farm, index) => (
-                <div key={farm.id || `farm-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={farm.farmId || farm.id || `farm-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
                       <MapPin className="w-5 h-5 text-green-600" />
@@ -358,7 +358,7 @@ const UserDashboard = () => {
           {dashboardData.crops.length > 0 ? (
             <div className="space-y-3">
               {dashboardData.crops.map((crop, index) => (
-                <div key={crop.id || `crop-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={crop.cropId || crop.id || `crop-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
                       <Wheat className="w-5 h-5 text-yellow-600" />

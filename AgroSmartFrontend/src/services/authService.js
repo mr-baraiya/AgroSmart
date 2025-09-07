@@ -152,21 +152,14 @@ export const authService = {
   // Change password
   changePassword: async (passwordData) => {
     try {
-      console.log('AuthService: Sending password change request with data:', passwordData);
+      console.log('🔐 Changing password for user ID:', passwordData.userId);
       
-      // Transform to match new API structure
-      const changePasswordData = {
-        userId: passwordData.userId,
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword
-      };
-      
-      const response = await api.post('/Auth/ChangePassword', changePasswordData);
-      console.log('AuthService: Password change response:', response.data);
+      // Use the correct Auth endpoint for password change
+      const response = await api.post('/Auth/ChangePassword', passwordData);
+      console.log('✅ Password changed successfully');
       return response.data;
     } catch (error) {
-      console.error('AuthService: Password change error:', error);
-      console.error('AuthService: Password change error response:', error.response?.data);
+      console.error('❌ Password change failed:', error.response?.data?.message || error.message);
       throw error;
     }
   }

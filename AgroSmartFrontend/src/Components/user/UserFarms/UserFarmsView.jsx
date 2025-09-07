@@ -96,7 +96,7 @@ const UserFarmsView = () => {
 
     if (result.isConfirmed) {
       try {
-        await farmService.delete(farm.id);
+        await farmService.delete(farm.farmId || farm.id);
         toast.success('Farm deleted successfully!');
         fetchUserFarms(); // Refresh the list
       } catch (error) {
@@ -175,7 +175,7 @@ const UserFarmsView = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFarms.map((farm, index) => (
-            <div key={farm.id || `farm-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div key={farm.farmId || farm.id || `farm-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               {/* Farm Image Placeholder */}
               <div className="h-48 bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
                 <Wheat className="w-16 h-16 text-white opacity-50" />
@@ -230,7 +230,7 @@ const UserFarmsView = () => {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
-                    to={`/user-dashboard/my-farms/${farm.id}`}
+                    to={`/user-dashboard/my-farms/${farm.farmId || farm.id}`}
                     className="flex-1 flex items-center justify-center px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm"
                   >
                     <Eye className="w-4 h-4 mr-1" />
@@ -239,7 +239,7 @@ const UserFarmsView = () => {
                   {isOwnedByCurrentUser(farm) ? (
                     <>
                       <Link
-                        to={`/user-dashboard/my-farms/edit/${farm.id}`}
+                        to={`/user-dashboard/my-farms/edit/${farm.farmId || farm.id}`}
                         className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
                       >
                         <Edit className="w-4 h-4 mr-1" />

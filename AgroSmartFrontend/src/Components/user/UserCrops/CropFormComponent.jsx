@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { userCropService } from '../../../services/userCropService';
+import { authService } from '../../../services/authService';
 import { useAuth } from '../../../contexts/AuthProvider';
 
 const CropFormComponent = () => {
@@ -88,24 +89,95 @@ const CropFormComponent = () => {
   const validateForm = () => {
     const newErrors = {};
 
+    // Crop name validation (matches CropValidator)
     if (!formData.cropName.trim()) {
-      newErrors.cropName = 'Crop name is required';
+      newErrors.cropName = 'Crop name is required.';
+    } else if (formData.cropName.length > 150) {
+      newErrors.cropName = 'Crop name cannot exceed 150 characters.';
     }
 
+    // Optimal soil pH min validation (matches CropValidator)
+    if (formData.optimalSoilpHmin && formData.optimalSoilpHmin.trim()) {
+      const pHMin = parseFloat(formData.optimalSoilpHmin);
+      if (isNaN(pHMin) || pHMin < 0 || pHMin > 14) {
+        newErrors.optimalSoilpHmin = 'Minimum soil pH must be between 0 and 14.';
+      }
+    }
+
+    // Optimal soil pH max validation (matches CropValidator)
+    if (formData.optimalSoilpHmax && formData.optimalSoilpHmax.trim()) {
+      const pHMax = parseFloat(formData.optimalSoilpHmax);
+      if (isNaN(pHMax) || pHMax < 0 || pHMax > 14) {
+        newErrors.optimalSoilpHmax = 'Maximum soil pH must be between 0 and 14.';
+      }
+    }
+
+    // pH range validation (matches CropValidator)
     if (formData.optimalSoilpHmin && formData.optimalSoilpHmax) {
-      if (parseFloat(formData.optimalSoilpHmin) >= parseFloat(formData.optimalSoilpHmax)) {
-        newErrors.optimalSoilpHmax = 'Max pH must be greater than min pH';
+      const pHMin = parseFloat(formData.optimalSoilpHmin);
+      const pHMax = parseFloat(formData.optimalSoilpHmax);
+      if (!isNaN(pHMin) && !isNaN(pHMax) && pHMin > pHMax) {
+        newErrors.optimalSoilpHmax = 'Minimum soil pH cannot be greater than maximum soil pH.';
       }
     }
 
+    // Optimal temperature min validation (matches CropValidator)
+    if (formData.optimalTempMin && formData.optimalTempMin.trim()) {
+      const tempMin = parseFloat(formData.optimalTempMin);
+      if (isNaN(tempMin) || tempMin < -50 || tempMin > 100) {
+        newErrors.optimalTempMin = 'Minimum temperature must be between -50 and 100 °C.';
+      }
+    }
+
+    // Optimal temperature max validation (matches CropValidator)
+    if (formData.optimalTempMax && formData.optimalTempMax.trim()) {
+      const tempMax = parseFloat(formData.optimalTempMax);
+      if (isNaN(tempMax) || tempMax < -50 || tempMax > 100) {
+        newErrors.optimalTempMax = 'Maximum temperature must be between -50 and 100 °C.';
+      }
+    }
+
+    // Temperature range validation (matches CropValidator)
     if (formData.optimalTempMin && formData.optimalTempMax) {
-      if (parseFloat(formData.optimalTempMin) >= parseFloat(formData.optimalTempMax)) {
-        newErrors.optimalTempMax = 'Max temperature must be greater than min temperature';
+      const tempMin = parseFloat(formData.optimalTempMin);
+      const tempMax = parseFloat(formData.optimalTempMax);
+      if (!isNaN(tempMin) && !isNaN(tempMax) && tempMin > tempMax) {
+        newErrors.optimalTempMax = 'Minimum temperature cannot be greater than maximum temperature.';
       }
     }
 
-    if (formData.growthDurationDays && parseInt(formData.growthDurationDays) <= 0) {
-      newErrors.growthDurationDays = 'Growth duration must be positive';
+    // Average water requirement validation (matches CropValidator)
+    if (formData.avgWaterReqmm && formData.avgWaterReqmm.trim()) {
+      const waterReq = parseFloat(formData.avgWaterReqmm);
+      if (isNaN(waterReq) || waterReq <= 0) {
+        newErrors.avgWaterReqmm = 'Average water requirement must be a positive number.';
+      }
+    }
+
+    // Growth duration validation (matches CropValidator)
+    if (formData.growthDurationDays && formData.growthDurationDays.trim()) {
+      const duration = parseInt(formData.growthDurationDays);
+      if (isNaN(duration) || duration <= 0) {
+        newErrors.growthDurationDays = 'Growth duration must be a positive number of days.';
+      }
+    }
+
+    // Seeding depth validation (matches CropValidator)
+    if (formData.seedingDepthCm && formData.seedingDepthCm.trim()) {
+      const depth = parseFloat(formData.seedingDepthCm);
+      if (isNaN(depth) || depth <= 0) {
+        newErrors.seedingDepthCm = 'Seeding depth must be a positive number.';
+      }
+    }
+
+    // Harvest season validation (matches CropValidator)
+    if (formData.harvestSeason && formData.harvestSeason.length > 100) {
+      newErrors.harvestSeason = 'Harvest season cannot exceed 100 characters.';
+    }
+
+    // Description validation (matches CropValidator)
+    if (formData.description && formData.description.length > 1000) {
+      newErrors.description = 'Description cannot exceed 1000 characters.';
     }
 
     setErrors(newErrors);
@@ -136,6 +208,16 @@ const CropFormComponent = () => {
       };
 
       console.log('Submitting crop data:', submitData); // Debug log
+      
+      // Debug auth status
+      const token = localStorage.getItem('authToken');
+      const user = authService.getCurrentUser();
+      console.log('🔍 Auth debug:', {
+        hasToken: !!token,
+        tokenPreview: token ? token.substring(0, 20) + '...' : 'No token',
+        user: user ? user.userId : 'No user',
+        userName: user ? user.fullName : 'No name'
+      });
 
       if (isEditMode) {
         await userCropService.update(id, submitData);
@@ -207,6 +289,7 @@ const CropFormComponent = () => {
                 name="cropName"
                 value={formData.cropName}
                 onChange={handleInputChange}
+                maxLength={150}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.cropName ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -309,6 +392,8 @@ const CropFormComponent = () => {
                 value={formData.optimalTempMin}
                 onChange={handleInputChange}
                 step="0.1"
+                min="-50"
+                max="100"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.optimalTempMin ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -329,6 +414,8 @@ const CropFormComponent = () => {
                 value={formData.optimalTempMax}
                 onChange={handleInputChange}
                 step="0.1"
+                min="-50"
+                max="100"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.optimalTempMax ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -420,9 +507,15 @@ const CropFormComponent = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                maxLength={1000}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  errors.description ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="Enter crop description, notes, or additional information..."
               />
+              {errors.description && (
+                <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+              )}
             </div>
 
             <div className="flex items-center">

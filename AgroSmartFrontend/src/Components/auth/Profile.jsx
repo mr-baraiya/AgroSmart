@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Edit, Save, X, Eye, EyeOff, Lock } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Edit, Save, X, Eye, EyeOff, Lock, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthProvider';
 import { authService } from '../../services/authService';
 import { userService } from '../../services/userService';
 import CustomAlert from '../common/CustomAlert';
 import ProfileImageUpload from '../common/ProfileImageUpload';
 import { toast } from 'react-toastify';
+import API_BASE_URL from '../../config';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   
   const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
+    role: ''
+  });
+
+  const [originalData, setOriginalData] = useState({
     fullName: '',
     email: '',
     phone: '',
@@ -48,16 +58,63 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        fullName: user.fullName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        address: user.address || '',
-        role: user.role || ''
-      });
+    // Load initial user data only once when user ID is available
+    if (user?.userId && !formData.fullName) {
+      loadUserProfile();
     }
-  }, [user]);
+  }, [user?.userId]); // Only depend on userId, not the entire user object
+
+  const loadUserProfile = async () => {
+    if (!user?.userId) return;
+
+    try {
+      setProfileLoading(true);
+      
+      // Fetch complete user profile data by ID
+      const response = await userService.getById(user.userId);
+      const userData = response.data;
+      
+      console.log('✅ User profile loaded successfully');
+      
+      const profileData = {
+        fullName: userData.fullName || '',
+        email: userData.email || '',
+        phone: userData.phone || '',
+        address: userData.address || '',
+        role: userData.role || ''
+      };
+      
+      setFormData(profileData);
+      setOriginalData(profileData);
+      
+      // Only update user context if profile image or other key data has changed
+      if (userData.profileImage !== user.profileImage || 
+          userData.fullName !== user.fullName ||
+          userData.phone !== user.phone ||
+          userData.address !== user.address) {
+        updateUser({ ...user, ...userData });
+      }
+      
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      toast.error('Failed to load profile data');
+      
+      // Fallback to existing user data
+      if (user) {
+        const fallbackData = {
+          fullName: user.fullName || '',
+          email: user.email || '',
+          phone: user.phone || '',
+          address: user.address || '',
+          role: user.role || ''
+        };
+        setFormData(fallbackData);
+        setOriginalData(fallbackData);
+      }
+    } finally {
+      setProfileLoading(false);
+    }
+  };
 
   const showAlert = (type, title, message, onConfirm = null, showCancel = false) => {
     setAlert({
@@ -101,18 +158,39 @@ const Profile = () => {
   const validateProfileForm = () => {
     const errors = {};
 
+    // Full name validation (3-100 characters, required, cannot be "Admin")
     if (!formData.fullName.trim()) {
       errors.fullName = 'Full name is required';
+    } else if (formData.fullName.trim().length < 3) {
+      errors.fullName = 'Full name must be at least 3 characters';
+    } else if (formData.fullName.trim().length > 100) {
+      errors.fullName = 'Full name must be between 3 to 100 characters';
+    } else if (formData.fullName.trim() === 'Admin') {
+      errors.fullName = 'Full name cannot be "Admin"';
     }
 
+    // Email validation (required, valid email format)
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = 'Invalid email format';
     }
 
+    // Phone validation (10 digits if provided)
     if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
       errors.phone = 'Phone must be a 10-digit number';
+    }
+
+    // Address validation (max 200 characters if provided)
+    if (formData.address && formData.address.length > 200) {
+      errors.address = 'Address must be under 200 characters';
+    }
+
+    // Role validation (must be User or Admin)
+    if (!formData.role) {
+      errors.role = 'Role is required';
+    } else if (formData.role !== 'User' && formData.role !== 'Admin') {
+      errors.role = 'Role must be either "User" or "Admin"';
     }
 
     setValidationErrors(errors);
@@ -151,25 +229,70 @@ const Profile = () => {
     setError('');
 
     try {
-      // Prepare complete profile data including required fields
+      // Create a complete user object that matches the backend UserValidator requirements
       const profileUpdateData = {
-        userId: user.userId || user.id, // Include user ID
+        userId: user.userId,
         fullName: formData.fullName.trim(),
         email: formData.email.trim().toLowerCase(),
-        phone: formData.phone.replace(/\D/g, '') || null, // Clean phone number
+        passwordHash: user.passwordHash, // Required by validator - keep existing password
+        role: formData.role || user.role || 'User',
+        phone: formData.phone.replace(/\D/g, '') || null, // Must be 10 digits or null
         address: formData.address.trim() || null,
-        role: formData.role,
         isActive: user.isActive !== undefined ? user.isActive : true,
-        createdAt: user.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        profileImage: user.profileImage || null,
+        createdAt: user.createdAt || new Date().toISOString(), // Required by validator
+        updatedAt: new Date().toISOString() // Required by validator
       };
 
-      console.log('Sending profile update data:', profileUpdateData);
-      console.log('User object for reference:', user);
-      console.log('Form data:', formData);
+      // Validate phone number format (must be exactly 10 digits if provided)
+      if (profileUpdateData.phone && profileUpdateData.phone.length !== 10) {
+        toast.error('Phone number must be exactly 10 digits');
+        setError('Phone number must be exactly 10 digits');
+        return;
+      }
+
+      // Validate full name length (3-100 characters)
+      if (profileUpdateData.fullName.length < 3 || profileUpdateData.fullName.length > 100) {
+        toast.error('Full name must be between 3 to 100 characters');
+        setError('Full name must be between 3 to 100 characters');
+        return;
+      }
+
+      // Validate address length (max 200 characters)
+      if (profileUpdateData.address && profileUpdateData.address.length > 200) {
+        toast.error('Address must be under 200 characters');
+        setError('Address must be under 200 characters');
+        return;
+      }
+
+      // Call the userService update method with user ID
+      const response = await userService.update(user.userId, profileUpdateData);
       
-      const response = await authService.updateProfile(profileUpdateData);
-      updateUser(response.user || { ...user, ...formData });
+      console.log('✅ Profile updated successfully for user ID:', user.userId);
+      console.log('Profile update response:', response);
+      console.log('Updated user data received:', response.data);
+      
+      // Update local state and context with the response data
+      const updatedUserData = response.data || { ...user, ...profileUpdateData };
+      updateUser(updatedUserData);
+      
+      // Update both form data and original data
+      setFormData({
+        fullName: updatedUserData.fullName || '',
+        email: updatedUserData.email || '',
+        phone: updatedUserData.phone || '',
+        address: updatedUserData.address || '',
+        role: updatedUserData.role || ''
+      });
+      
+      setOriginalData({
+        fullName: updatedUserData.fullName || '',
+        email: updatedUserData.email || '',
+        phone: updatedUserData.phone || '',
+        address: updatedUserData.address || '',
+        role: updatedUserData.role || ''
+      });
+      
       setIsEditing(false);
       
       // Show success toast
@@ -180,42 +303,53 @@ const Profile = () => {
         type: 'success'
       });
       setTimeout(() => setNotification(null), 5000);
-    } catch (err) {
-      console.error('Profile update error:', err);
-      console.error('Error response data:', err.response?.data);
-      console.error('Error response status:', err.response?.status);
-      console.error('Full error response:', err.response);
       
-      let errorMessage = 'Profile update failed. Please check your information.';
+    } catch (err) {
+      console.error('Profile update error:', err.response?.data || err.message);
+      
+      let errorMessage = 'Failed to update profile. Please try again.';
       
       if (err.response?.status === 400) {
         const errorData = err.response?.data;
         
-        // Handle different error response formats
         if (errorData?.message) {
           errorMessage = errorData.message;
         } else if (errorData?.title) {
           errorMessage = errorData.title;
         } else if (errorData?.errors) {
-          // Handle validation errors object
+          console.error('Validation errors:', errorData.errors);
           const errorMessages = Object.values(errorData.errors).flat();
           errorMessage = errorMessages.join(', ');
         } else if (typeof errorData === 'string') {
           errorMessage = errorData;
-        } else if (typeof errorData === 'object') {
-          errorMessage = JSON.stringify(errorData);
+        } else if (errorData) {
+          errorMessage = `Server validation error: ${JSON.stringify(errorData)}`;
         }
+      } else if (err.response?.status === 404) {
+        errorMessage = 'User not found. Please login again.';
+      } else if (err.response?.status === 401) {
+        errorMessage = 'You are not authorized to update this profile.';
       } else {
-        errorMessage = err.response?.data?.message || 'Failed to update profile';
+        errorMessage = err.response?.data?.message || errorMessage;
       }
       
-      // Show error alert
       toast.error(errorMessage);
-      
       setError(errorMessage);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    // Reset form data to original values
+    setFormData(originalData);
+    setValidationErrors({});
+    setIsEditing(false);
+    setError('');
+  };
+
+  const handleRefreshProfile = () => {
+    loadUserProfile();
   };
 
   const handleChangePassword = async () => {
@@ -228,13 +362,14 @@ const Profile = () => {
 
     try {
       const passwordChangeData = {
+        userId: user.userId,
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       };
       
-      console.log('Sending password change data:', passwordChangeData);
-      console.log('User for password change:', user);
+      console.log('✅ Password change attempt for user ID:', user.userId);
       
+      // Use authService with the correct Auth endpoint
       await authService.changePassword(passwordChangeData);
 
       setPasswordData({
@@ -253,32 +388,31 @@ const Profile = () => {
       });
       setTimeout(() => setNotification(null), 5000);
     } catch (err) {
-      console.error('Password change error:', err);
-      console.error('Password change error response data:', err.response?.data);
-      console.error('Password change error response status:', err.response?.status);
-      console.error('Full password change error response:', err.response);
+      console.error('Password change error:', err.response?.data || err.message);
       
-      let errorMessage = 'Current password is incorrect';
+      let errorMessage = 'Failed to change password. Please try again.';
       
       if (err.response?.status === 400) {
         const errorData = err.response?.data;
         
-        // Handle different error response formats
         if (errorData?.message) {
           errorMessage = errorData.message;
         } else if (errorData?.title) {
           errorMessage = errorData.title;
         } else if (errorData?.errors) {
-          // Handle validation errors object
           const errorMessages = Object.values(errorData.errors).flat();
           errorMessage = errorMessages.join(', ');
         } else if (typeof errorData === 'string') {
           errorMessage = errorData;
-        } else if (typeof errorData === 'object') {
-          errorMessage = JSON.stringify(errorData);
+        } else {
+          errorMessage = 'Current password is incorrect or new password doesn\'t meet requirements.';
         }
+      } else if (err.response?.status === 404) {
+        errorMessage = 'Password change endpoint not found. Please contact support.';
+      } else if (err.response?.status === 401) {
+        errorMessage = 'Current password is incorrect.';
       } else {
-        errorMessage = err.response?.data?.message || 'Failed to change password';
+        errorMessage = err.response?.data?.message || errorMessage;
       }
       
       // Show error toast
@@ -330,8 +464,21 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Profile Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      {/* Loading State */}
+      {profileLoading && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-center space-x-2">
+            <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
+            <span className="text-gray-600">Loading profile data...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Profile Content - Only show when not loading */}
+      {!profileLoading && (
+        <>
+          {/* Profile Header */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Profile Picture */}
@@ -349,13 +496,23 @@ const Profile = () => {
             </div>
           </div>
           {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Profile
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Edit className="w-4 h-4" />
+                Edit Profile
+              </button>
+              <button
+                onClick={handleRefreshProfile}
+                disabled={profileLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 transition-colors"
+              >
+                <RefreshCw className={`w-4 h-4 ${profileLoading ? 'animate-spin' : ''}`} />
+                {profileLoading ? 'Loading...' : 'Refresh'}
+              </button>
+            </div>
           )}
         </div>
 
@@ -372,6 +529,12 @@ const Profile = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Full Name
+              <span className="text-red-500">*</span>
+              {isEditing && (
+                <span className="text-xs text-gray-500 ml-2">
+                  ({formData.fullName.length}/100 characters)
+                </span>
+              )}
             </label>
             {isEditing ? (
               <input
@@ -379,9 +542,13 @@ const Profile = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
+                maxLength={100}
+                minLength={3}
+                required
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   validationErrors.fullName ? 'border-red-300' : 'border-gray-300'
                 }`}
+                placeholder="Enter full name (3-100 characters)"
               />
             ) : (
               <p className="px-3 py-2 bg-gray-50 rounded-lg">{user.fullName}</p>
@@ -418,6 +585,11 @@ const Profile = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Phone Number
+              {isEditing && formData.phone && (
+                <span className="text-xs text-gray-500 ml-2">
+                  ({formData.phone.replace(/\D/g, '').length}/10 digits)
+                </span>
+              )}
             </label>
             {isEditing ? (
               <input
@@ -425,10 +597,12 @@ const Profile = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+                pattern="[0-9]{10}"
+                maxLength={15}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   validationErrors.phone ? 'border-red-300' : 'border-gray-300'
                 }`}
-                placeholder="Enter phone number"
+                placeholder="Enter 10-digit phone number"
               />
             ) : (
               <p className="px-3 py-2 bg-gray-50 rounded-lg">{user.phone || 'Not provided'}</p>
@@ -450,6 +624,11 @@ const Profile = () => {
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Address
+              {isEditing && (
+                <span className="text-xs text-gray-500 ml-2">
+                  ({formData.address.length}/200 characters)
+                </span>
+              )}
             </label>
             {isEditing ? (
               <textarea
@@ -457,11 +636,17 @@ const Profile = () => {
                 value={formData.address}
                 onChange={handleChange}
                 rows="3"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter address"
+                maxLength={200}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  validationErrors.address ? 'border-red-300' : 'border-gray-300'
+                }`}
+                placeholder="Enter address (max 200 characters)"
               />
             ) : (
               <p className="px-3 py-2 bg-gray-50 rounded-lg">{user.address || 'Not provided'}</p>
+            )}
+            {validationErrors.address && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.address}</p>
             )}
           </div>
         </div>
@@ -478,7 +663,7 @@ const Profile = () => {
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
             <button
-              onClick={handleCancel}
+              onClick={handleCancelEdit}
               className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
             >
               <X className="w-4 h-4" />
@@ -637,6 +822,8 @@ const Profile = () => {
           </div>
         )}
       </div>
+        </>
+      )}
 
       {/* Custom Alert */}
       <CustomAlert

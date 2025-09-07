@@ -107,7 +107,7 @@ const UserFieldsView = () => {
 
     if (result.isConfirmed) {
       try {
-        await fieldService.delete(field.id);
+        await fieldService.delete(field.fieldId || field.id);
         toast.success('Field deleted successfully!');
         fetchUserData(); // Refresh the list
       } catch (error) {
@@ -167,7 +167,7 @@ const UserFieldsView = () => {
           >
             <option value="">All Farms</option>
             {farms.map((farm, index) => (
-              <option key={farm.id || `farm-${index}`} value={farm.id}>
+              <option key={farm.farmId || farm.id || `farm-${index}`} value={farm.farmId || farm.id}>
                 {farm.name}
               </option>
             ))}
@@ -198,7 +198,7 @@ const UserFieldsView = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFields.map((field, index) => (
-            <div key={field.id || `field-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div key={field.fieldId || field.id || `field-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               {/* Field Image Placeholder */}
               <div className="h-48 bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center">
                 <BarChart3 className="w-16 h-16 text-white opacity-50" />
@@ -256,7 +256,7 @@ const UserFieldsView = () => {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
-                    to={`/user-dashboard/my-fields/${field.id}`}
+                    to={`/user-dashboard/my-fields/${field.fieldId || field.id}`}
                     className="flex-1 flex items-center justify-center px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm"
                   >
                     <Eye className="w-4 h-4 mr-1" />
@@ -265,7 +265,7 @@ const UserFieldsView = () => {
                   {isOwnedByCurrentUser(field) ? (
                     <>
                       <Link
-                        to={`/user-dashboard/my-fields/edit/${field.id}`}
+                        to={`/user-dashboard/my-fields/edit/${field.fieldId || field.id}`}
                         className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
                       >
                         <Edit className="w-4 h-4 mr-1" />

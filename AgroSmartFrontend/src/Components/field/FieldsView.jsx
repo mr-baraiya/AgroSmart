@@ -163,11 +163,11 @@ const FieldsView = () => {
   const handleEdit = (field) => {
     console.log('Editing field:', field);
     console.log('Field ID:', field.fieldId);
-    navigate(`/fields/edit/${field.fieldId}`);
+    navigate(`/dashboard/fields/edit/${field.fieldId}`);
   };
 
   const handleAdd = () => {
-    const addUrl = farmId ? `/fields/add?farmId=${farmId}` : '/fields/add';
+    const addUrl = farmId ? `/dashboard/fields/add?farmId=${farmId}` : '/dashboard/fields/add';
     navigate(addUrl);
   };
 
@@ -202,12 +202,12 @@ const FieldsView = () => {
 
   // Navigate to the detail page
   const handleInfo = (field) => {
-    navigate(`/fields/${field.fieldId}`);
+    navigate(`/dashboard/fields/${field.fieldId}`);
   };
 
   // Navigate to view crops in this field
   const handleViewCrops = (field) => {
-    navigate(`/fields/${field.fieldId}/crops`);
+    navigate(`/dashboard/fields/${field.fieldId}/crops`);
   };
 
   // Handle filter changes
@@ -359,14 +359,14 @@ const FieldsView = () => {
         <div className="mb-4">
           <nav className="flex items-center space-x-2 text-sm">
             <button 
-              onClick={() => navigate('/farms')}
+              onClick={() => navigate('/dashboard/farms')}
               className="text-blue-600 hover:text-blue-800 transition-colors"
             >
               Farms
             </button>
             <span className="text-gray-500">/</span>
             <button 
-              onClick={() => navigate(`/farms/${farmId}`)}
+              onClick={() => navigate(`/dashboard/farms/${farmId}`)}
               className="text-blue-600 hover:text-blue-800 transition-colors"
             >
               {farm?.farmName || 'Farm'}

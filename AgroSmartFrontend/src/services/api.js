@@ -17,6 +17,9 @@ api.interceptors.request.use(
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔑 Auth token added to request:', config.url);
+    } else {
+      console.warn('⚠️ No auth token found for request:', config.url);
     }
     return config;
   },
@@ -32,8 +35,17 @@ api.interceptors.response.use(
   },
   (error) => {
     // Handle common errors
+    console.error('🚨 API Error:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    });
+
     if (error.response?.status === 401) {
       // Unauthorized - clear auth data and redirect to login
+      console.warn('🔒 Unauthorized - clearing auth data');
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
       
@@ -41,6 +53,8 @@ api.interceptors.response.use(
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
+    } else if (error.response?.status === 403) {
+      console.warn('🚫 Forbidden - check permissions and auth token');
     }
     return Promise.reject(error);
   }

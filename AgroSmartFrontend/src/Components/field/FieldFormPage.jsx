@@ -184,50 +184,23 @@ const FieldFormPage = () => {
       if (isEdit) {
         await fieldService.update(id, submitData);
         
-        // Show success alert
-        await Swal.fire({
-          icon: 'success',
-          title: 'Field Updated!',
-          text: `Field "${formData.fieldName}" has been updated successfully.`,
-          confirmButtonText: 'Continue',
-          confirmButtonColor: '#10b981',
-          customClass: {
-            confirmButton: 'swal2-confirm-button'
-          }
-        });
+        // Show success toast
+        toast.success(`Field "${formData.fieldName}" has been updated successfully!`);
         
         navigate("/fields");
       } else {
         await fieldService.create(submitData);
         
-        // Show success alert
-        await Swal.fire({
-          icon: 'success',
-          title: 'Field Created!',
-          text: `Field "${formData.fieldName}" has been created successfully.`,
-          confirmButtonText: 'Continue',
-          confirmButtonColor: '#10b981',
-          customClass: {
-            confirmButton: 'swal2-confirm-button'
-          }
-        });
+        // Show success toast  
+        toast.success(`Field "${formData.fieldName}" has been created successfully!`);
         
         navigate("/fields");
       }
     } catch (error) {
       console.error("Error saving field:", error);
       
-      // Show error alert
-      Swal.fire({
-        icon: 'error',
-        title: `Failed to ${isEdit ? 'Update' : 'Create'} Field`,
-        text: error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} field. Please try again.`,
-        confirmButtonText: 'Try Again',
-        confirmButtonColor: '#ef4444',
-        customClass: {
-          confirmButton: 'swal2-confirm-button'
-        }
-      });
+      // Show error toast
+      toast.error(error.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} field. Please try again.`);
       
       setErrors({
         submit: `Failed to ${isEdit ? 'update' : 'create'} field. Please try again.`

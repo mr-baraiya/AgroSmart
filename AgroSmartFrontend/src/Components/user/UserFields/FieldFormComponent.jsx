@@ -15,7 +15,7 @@ const FieldFormComponent = () => {
   const [formData, setFormData] = useState({
     fieldName: '',
     farmId: '',
-    fieldSize: '',
+    sizeAcres: '',
     location: '',
     soilType: '',
     irrigationType: '',
@@ -83,7 +83,7 @@ const FieldFormComponent = () => {
       setFormData({
         fieldName: field.fieldName || '',
         farmId: field.farmId || '',
-        fieldSize: field.fieldSize || '',
+        sizeAcres: field.sizeAcres || '',
         location: field.location || '',
         soilType: field.soilType || '',
         irrigationType: field.irrigationType || '',
@@ -101,34 +101,34 @@ const FieldFormComponent = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Required fields
+    // Field name validation (matches FieldValidator)
     if (!formData.fieldName.trim()) {
-      newErrors.fieldName = 'Field name is required';
-    } else if (formData.fieldName.length < 2) {
-      newErrors.fieldName = 'Field name must be at least 2 characters';
-    } else if (formData.fieldName.length > 100) {
-      newErrors.fieldName = 'Field name must be less than 100 characters';
+      newErrors.fieldName = 'Field name is required.';
+    } else if (formData.fieldName.length > 150) {
+      newErrors.fieldName = 'Field name cannot exceed 150 characters.';
     }
 
+    // Farm ID validation (matches FieldValidator)
     if (!formData.farmId) {
-      newErrors.farmId = 'Please select a farm';
+      newErrors.farmId = 'Farm ID must be a valid positive integer.';
     }
 
-    // Optional but validated fields
-    if (formData.fieldSize && isNaN(parseFloat(formData.fieldSize))) {
-      newErrors.fieldSize = 'Field size must be a valid number';
+    // Size acres validation (matches FieldValidator)
+    if (formData.sizeAcres && formData.sizeAcres.trim()) {
+      const size = parseFloat(formData.sizeAcres);
+      if (isNaN(size) || size <= 0) {
+        newErrors.sizeAcres = 'Size (in acres) must be a positive value.';
+      }
     }
 
-    if (formData.fieldSize && parseFloat(formData.fieldSize) <= 0) {
-      newErrors.fieldSize = 'Field size must be greater than 0';
+    // Soil type validation (matches FieldValidator)
+    if (formData.soilType && formData.soilType.length > 100) {
+      newErrors.soilType = 'Soil type cannot exceed 100 characters.';
     }
 
-    if (formData.fieldSize && parseFloat(formData.fieldSize) > 10000) {
-      newErrors.fieldSize = 'Field size seems unusually large. Please verify.';
-    }
-
-    if (formData.location && formData.location.length > 500) {
-      newErrors.location = 'Location description must be less than 500 characters';
+    // Irrigation type validation (matches FieldValidator)
+    if (formData.irrigationType && formData.irrigationType.length > 100) {
+      newErrors.irrigationType = 'Irrigation type cannot exceed 100 characters.';
     }
 
     setErrors(newErrors);
@@ -171,7 +171,7 @@ const FieldFormComponent = () => {
       
       const fieldData = {
         ...formData,
-        fieldSize: formData.fieldSize ? parseFloat(formData.fieldSize) : null,
+        sizeAcres: formData.sizeAcres ? parseFloat(formData.sizeAcres) : null,
         farmId: parseInt(formData.farmId)
       };
 
@@ -252,6 +252,7 @@ const FieldFormComponent = () => {
                 name="fieldName"
                 value={formData.fieldName}
                 onChange={handleInputChange}
+                maxLength={150}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.fieldName ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -290,20 +291,20 @@ const FieldFormComponent = () => {
             </div>
 
             <div>
-              <label htmlFor="fieldSize" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="sizeAcres" className="block text-sm font-medium text-gray-700 mb-2">
                 Field Size (acres)
               </label>
               <div className="relative">
                 <input
                   type="number"
-                  id="fieldSize"
-                  name="fieldSize"
-                  value={formData.fieldSize}
+                  id="sizeAcres"
+                  name="sizeAcres"
+                  value={formData.sizeAcres}
                   onChange={handleInputChange}
                   step="0.01"
                   min="0"
                   className={`w-full px-3 py-2 pr-12 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.fieldSize ? 'border-red-500' : 'border-gray-300'
+                    errors.sizeAcres ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="e.g., 5.5"
                 />
@@ -311,8 +312,8 @@ const FieldFormComponent = () => {
                   <Ruler className="w-4 h-4 text-gray-400" />
                 </div>
               </div>
-              {errors.fieldSize && (
-                <p className="mt-1 text-sm text-red-600">{errors.fieldSize}</p>
+              {errors.sizeAcres && (
+                <p className="mt-1 text-sm text-red-600">{errors.sizeAcres}</p>
               )}
             </div>
 

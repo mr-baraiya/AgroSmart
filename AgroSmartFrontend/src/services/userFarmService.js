@@ -77,6 +77,23 @@ export const userFarmService = {
     const response = await userFarmService.getAll();
     const userFarms = response.data.filter(farm => farm.userId === userId);
     return { ...response, data: userFarms };
+  },
+
+  // GET all user farms (for FieldFormComponent compatibility)
+  getAllUserFarms: async () => {
+    try {
+      const user = authService.getCurrentUser();
+      if (!user?.userId) {
+        throw new Error('User not authenticated');
+      }
+      
+      const response = await userFarmService.getAll();
+      const userFarms = response.data.filter(farm => farm.userId === user.userId);
+      return { ...response, data: userFarms };
+    } catch (error) {
+      console.error('Error fetching user farms:', error);
+      throw error;
+    }
   }
 };
 

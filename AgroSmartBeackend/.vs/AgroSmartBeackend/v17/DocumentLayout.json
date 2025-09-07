@@ -70,7 +70,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
@@ -83,8 +83,11 @@
               "ViewState": "AgIAAJQAAAAAAAAAAAAAAKYAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-09T14:14:37.394Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Document",
@@ -109,8 +112,7 @@
               "RelativeToolTip": "Models\\Crop.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAA7wCAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T17:19:45.104Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-06T17:19:45.104Z"
             },
             {
               "$type": "Document",
@@ -122,8 +124,7 @@
               "RelativeToolTip": "Models\\Field.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAswCgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T17:20:13.728Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-06T17:20:13.728Z"
             },
             {
               "$type": "Document",
@@ -135,8 +136,7 @@
               "RelativeToolTip": "Models\\Farm.cs",
               "ViewState": "AgIAAAEAAAAAAAAAAAAwwCQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T17:19:59.96Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-06T17:19:59.96Z"
             },
             {
               "$type": "Document",
@@ -148,8 +148,7 @@
               "RelativeToolTip": "Controllers\\SmartInsightController.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAAQwNMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T14:19:41.832Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-06T14:19:41.832Z"
             },
             {
               "$type": "Document",
@@ -161,12 +160,7 @@
               "RelativeToolTip": "Helper\\ImageHelper.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T12:46:12.357Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+              "WhenOpened": "2025-09-06T12:46:12.357Z"
             },
             {
               "$type": "Document",
@@ -178,8 +172,7 @@
               "RelativeToolTip": "Models\\User.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAA3wCUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-26T07:36:04.466Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-26T07:36:04.466Z"
             },
             {
               "$type": "Document",
@@ -191,8 +184,7 @@
               "RelativeToolTip": "Models\\AgroSmartContext.cs",
               "ViewState": "AgIAAI4AAAAAAAAAAAAqwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-26T07:35:51.636Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-26T07:35:51.636Z"
             },
             {
               "$type": "Document",
@@ -204,8 +196,7 @@
               "RelativeToolTip": "Controllers\\AuthController.cs",
               "ViewState": "AgIAAGIAAAAAAAAAAAAQwHsAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-08T03:36:45.95Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-08T03:36:45.95Z"
             },
             {
               "$type": "Document",
@@ -229,8 +220,7 @@
               "RelativeToolTip": "Controllers\\CropController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAPsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-11T07:05:27.934Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-11T07:05:27.934Z"
             },
             {
               "$type": "Document",
@@ -242,8 +232,7 @@
               "RelativeToolTip": "Controllers\\UserController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAN4AAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-01T03:18:56.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-01T03:18:56.42Z"
             },
             {
               "$type": "Document",
@@ -267,8 +256,7 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-31T17:15:31.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-31T17:15:31.277Z"
             }
           ]
         }

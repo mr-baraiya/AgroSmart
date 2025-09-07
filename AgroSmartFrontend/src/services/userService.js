@@ -26,6 +26,9 @@ export const userService = {
   // POST /api/User/ChangePassword
   changePassword: (passwordData) => api.post('/User/ChangePassword', passwordData),
 
+  // Alternative password change with userId in path
+  changePasswordWithUserId: (userId, passwordData) => api.post(`/User/${userId}/ChangePassword`, passwordData),
+
   // POST /api/User/{id}/UploadProfilePicture
   uploadProfilePicture: (id, formData) => api.post(`/User/${id}/UploadProfilePicture`, formData, {
     headers: {

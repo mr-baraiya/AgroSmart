@@ -134,11 +134,11 @@ const CropsView = () => {
   const handleEdit = (crop) => {
     console.log('Editing crop:', crop);
     console.log('Crop ID:', crop.cropId);
-    navigate(`/crops/edit/${crop.cropId}`);
+    navigate(`/dashboard/crops/edit/${crop.cropId}`);
   };
 
   const handleAdd = () => {
-    navigate('/crops/add');
+    navigate('/dashboard/crops/add');
   };
 
   const handleDelete = async (crop) => {
@@ -191,7 +191,7 @@ const CropsView = () => {
 
   // Navigate to the detail page
   const handleInfo = (crop) => {
-    navigate(`/crops/${crop.cropId}`);
+    navigate(`/dashboard/crops/${crop.cropId}`);
   };
 
   // Handle filter changes

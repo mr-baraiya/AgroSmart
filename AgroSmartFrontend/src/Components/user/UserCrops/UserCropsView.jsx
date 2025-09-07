@@ -112,7 +112,7 @@ const UserCropsView = () => {
 
     if (result) {
       try {
-        await cropService.delete(crop.id);
+        await cropService.delete(crop.cropId || crop.id);
         toast.success('Crop deleted successfully!');
         fetchUserData(); // Refresh the list
       } catch (error) {
@@ -192,7 +192,7 @@ const UserCropsView = () => {
           >
             <option value="">All Farms</option>
             {farms.map((farm, index) => (
-              <option key={farm.id || `farm-${index}`} value={farm.id}>
+              <option key={farm.farmId || farm.id || `farm-${index}`} value={farm.farmId || farm.id}>
                 {farm.name}
               </option>
             ))}
@@ -204,7 +204,7 @@ const UserCropsView = () => {
           >
             <option value="">All Fields</option>
             {fields.filter(field => !selectedFarm || field.farmId === selectedFarm).map((field, index) => (
-              <option key={field.id || `field-${index}`} value={field.id}>
+              <option key={field.fieldId || field.id || `field-${index}`} value={field.fieldId || field.id}>
                 {field.name}
               </option>
             ))}
@@ -243,7 +243,7 @@ const UserCropsView = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCrops.map((crop, index) => (
-            <div key={crop.id || `crop-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div key={crop.cropId || crop.id || `crop-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               {/* Crop Image Placeholder */}
               <div className="h-48 bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center">
                 <Wheat className="w-16 h-16 text-white opacity-50" />
@@ -314,7 +314,7 @@ const UserCropsView = () => {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
-                    to={`/user-dashboard/my-crops/${crop.id}`}
+                    to={`/user-dashboard/my-crops/${crop.cropId || crop.id}`}
                     className="flex-1 flex items-center justify-center px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm"
                   >
                     <Eye className="w-4 h-4 mr-1" />
@@ -323,7 +323,7 @@ const UserCropsView = () => {
                   {isOwnedByCurrentUser(crop) ? (
                     <>
                       <Link
-                        to={`/user-dashboard/my-crops/edit/${crop.id}`}
+                        to={`/user-dashboard/my-crops/edit/${crop.cropId || crop.id}`}
                         className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm"
                       >
                         <Edit className="w-4 h-4 mr-1" />

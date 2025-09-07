@@ -26,12 +26,25 @@ const FarmDetailComponent = () => {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    console.log('🔍 FarmDetailComponent useEffect - ID:', id, 'Type:', typeof id);
+    if (id && id !== 'undefined') {
       fetchFarmData();
+    } else {
+      console.warn('⚠️ Invalid or missing farm ID:', id);
+      toast.error('Invalid farm ID');
+      navigate('/user-dashboard/my-farms');
     }
   }, [id]);
 
   const fetchFarmData = async () => {
+    // Don't fetch if ID is undefined or null
+    if (!id || id === 'undefined') {
+      console.warn('Farm ID is undefined, skipping fetch');
+      toast.error('Invalid farm ID');
+      navigate('/user-dashboard/my-farms');
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await farmService.getById(id);

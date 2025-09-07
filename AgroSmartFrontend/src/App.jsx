@@ -27,6 +27,7 @@ import FieldWiseCropsView from "./Components/fieldWiseCrop/FieldWiseCropsView";
 import WeatherView from "./Components/weather/WeatherView";
 import WeatherFormPage from "./Components/weather/WeatherFormPage";
 import WeatherDetail from "./Components/weather/WeatherDetail";
+import WeatherAPITest from "./Components/weather/WeatherAPITest";
 import ScheduleView from "./Components/schedule/ScheduleView";
 import ScheduleFormPage from "./Components/schedule/ScheduleFormPage";
 import ScheduleDetail from "./Components/schedule/ScheduleDetail";
@@ -107,6 +108,7 @@ function App() {
               
               {/* Weather Routes */}
               <Route path="weather" element={<WeatherPage />} />
+              <Route path="weather/test" element={<WeatherAPITest />} />
               <Route path="weather/add" element={<WeatherFormPage />} />
               <Route path="weather/edit/:id" element={<WeatherFormPage />} />
               <Route path="weather/:id" element={<WeatherDetail />} />

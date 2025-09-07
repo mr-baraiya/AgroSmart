@@ -32,12 +32,25 @@ const FarmFormComponent = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (isEditMode && id) {
+    console.log('🔍 FarmFormComponent useEffect - ID:', id, 'Type:', typeof id, 'EditMode:', isEditMode);
+    if (isEditMode && id && id !== 'undefined') {
       fetchFarmData();
+    } else if (isEditMode) {
+      console.warn('⚠️ Edit mode but invalid or missing farm ID:', id);
+      toast.error('Invalid farm ID');
+      navigate('/user-dashboard/my-farms');
     }
   }, [isEditMode, id]);
 
   const fetchFarmData = async () => {
+    // Don't fetch if ID is undefined or null
+    if (!id || id === 'undefined') {
+      console.warn('Farm ID is undefined, skipping fetch');
+      toast.error('Invalid farm ID');
+      navigate('/user-dashboard/my-farms');
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await userFarmService.getById(id);
@@ -83,24 +96,42 @@ const FarmFormComponent = () => {
   const validateForm = () => {
     const newErrors = {};
 
+    // Farm name validation (matches FarmValidator)
     if (!formData.farmName.trim()) {
-      newErrors.farmName = 'Farm name is required';
+      newErrors.farmName = 'Farm name is required.';
+    } else if (formData.farmName.length > 150) {
+      newErrors.farmName = 'Farm name cannot exceed 150 characters.';
     }
 
+    // Location validation (matches FarmValidator)
     if (!formData.location.trim()) {
-      newErrors.location = 'Location is required';
+      newErrors.location = 'Location is required.';
+    } else if (formData.location.length > 250) {
+      newErrors.location = 'Location cannot exceed 250 characters.';
     }
 
-    if (formData.latitude && (parseFloat(formData.latitude) < -90 || parseFloat(formData.latitude) > 90)) {
-      newErrors.latitude = 'Latitude must be between -90 and 90';
+    // Latitude validation (matches FarmValidator)
+    if (formData.latitude && formData.latitude.trim()) {
+      const lat = parseFloat(formData.latitude);
+      if (isNaN(lat) || lat < -90 || lat > 90) {
+        newErrors.latitude = 'Latitude must be between -90 and 90.';
+      }
     }
 
-    if (formData.longitude && (parseFloat(formData.longitude) < -180 || parseFloat(formData.longitude) > 180)) {
-      newErrors.longitude = 'Longitude must be between -180 and 180';
+    // Longitude validation (matches FarmValidator)
+    if (formData.longitude && formData.longitude.trim()) {
+      const lng = parseFloat(formData.longitude);
+      if (isNaN(lng) || lng < -180 || lng > 180) {
+        newErrors.longitude = 'Longitude must be between -180 and 180.';
+      }
     }
 
-    if (formData.totalAcres && parseFloat(formData.totalAcres) <= 0) {
-      newErrors.totalAcres = 'Total acres must be positive';
+    // Total acres validation (matches FarmValidator)
+    if (formData.totalAcres && formData.totalAcres.trim()) {
+      const acres = parseFloat(formData.totalAcres);
+      if (isNaN(acres) || acres <= 0) {
+        newErrors.totalAcres = 'Total acres must be a positive number.';
+      }
     }
 
     setErrors(newErrors);
@@ -195,6 +226,7 @@ const FarmFormComponent = () => {
                 name="farmName"
                 value={formData.farmName}
                 onChange={handleInputChange}
+                maxLength={150}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.farmName ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -245,6 +277,7 @@ const FarmFormComponent = () => {
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
+                maxLength={250}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   errors.location ? 'border-red-500' : 'border-gray-300'
                 }`}
