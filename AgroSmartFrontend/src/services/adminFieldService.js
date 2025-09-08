@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_BASE_URL = '/api/Field';
+const API_BASE_URL = '/Field';
 
 export const adminFieldService = {
   // Get all fields (admin access)

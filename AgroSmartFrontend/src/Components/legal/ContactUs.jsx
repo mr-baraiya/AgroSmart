@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { ArrowLeft, Mail, Phone, MapPin, Clock, Send, AlertTriangle } from 'lucide-react';
 import Swal from 'sweetalert2';
 import emailjs from '@emailjs/browser';
 import { EMAIL_CONFIG } from '../../config/emailConfig';
 
 export default function ContactUs() {
+  const location = useLocation();
+  const isInactiveAccountRequest = location.state?.reason === 'account_inactive';
+  const userEmail = location.state?.userEmail || '';
+  const userName = location.state?.userName || '';
+  
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: userName,
+    email: userEmail,
     phone: '',
-    subject: '',
-    message: ''
+    subject: isInactiveAccountRequest ? 'Account Activation Request' : '',
+    message: isInactiveAccountRequest 
+      ? `Hello Admin,\n\nI am unable to access my account as it appears to be inactive. Please activate my account so I can continue using AgroSmart.\n\nAccount Details:\nEmail: ${userEmail}\nName: ${userName}\n\nThank you for your assistance.`
+      : ''
   });
+
+  // Update form data when location state changes
+  useEffect(() => {
+    if (isInactiveAccountRequest) {
+      setFormData(prev => ({
+        ...prev,
+        name: userName,
+        email: userEmail,
+        subject: 'Account Activation Request',
+        message: `Hello Admin,\n\nI am unable to access my account as it appears to be inactive. Please activate my account so I can continue using AgroSmart.\n\nAccount Details:\nEmail: ${userEmail}\nName: ${userName}\n\nThank you for your assistance.`
+      }));
+    }
+  }, [isInactiveAccountRequest, userEmail, userName]);
 
   const handleChange = (e) => {
     setFormData({
@@ -122,14 +142,24 @@ export default function ContactUs() {
         });
       }
       
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
+      // Reset form (but keep inactive account data if applicable)
+      if (isInactiveAccountRequest) {
+        setFormData({
+          name: userName,
+          email: userEmail,
+          phone: '',
+          subject: 'Account Activation Request',
+          message: `Hello Admin,\n\nI am unable to access my account as it appears to be inactive. Please activate my account so I can continue using AgroSmart.\n\nAccount Details:\nEmail: ${userEmail}\nName: ${userName}\n\nThank you for your assistance.`
+        });
+      } else {
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      }
       
     } catch (error) {
       console.error('Email sending error:', error);
@@ -178,6 +208,29 @@ export default function ContactUs() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Inactive Account Alert */}
+        {isInactiveAccountRequest && (
+          <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-6">
+            <div className="flex items-start">
+              <AlertTriangle className="w-6 h-6 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h3 className="text-lg font-semibold text-red-800 mb-2">Account Activation Required</h3>
+                <p className="text-red-700 mb-4">
+                  Your account is currently inactive and you cannot access the system. 
+                  Please fill out the form below to request account activation from our administrators.
+                </p>
+                <div className="bg-red-100 rounded-md p-3">
+                  <p className="text-sm text-red-800">
+                    <strong>What happens next?</strong><br />
+                    • Our admin team will review your request<br />
+                    • We'll activate your account within 24 hours<br />
+                    • You'll receive an email confirmation when your account is active
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div>
@@ -232,7 +285,9 @@ export default function ContactUs() {
 
           {/* Contact Form */}
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {isInactiveAccountRequest ? 'Request Account Activation' : 'Send us a Message'}
+            </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -315,7 +370,7 @@ export default function ContactUs() {
                 className="w-full bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-all duration-300 flex items-center justify-center"
               >
                 <Send className="w-5 h-5 mr-2" />
-                Send Message
+                {isInactiveAccountRequest ? 'Request Account Activation' : 'Send Message'}
               </button>
             </form>
           </div>

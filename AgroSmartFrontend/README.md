@@ -115,25 +115,190 @@ npm run preview
 ## 📁 Project Structure
 
 ```
-src/
-├── assets/          # Static assets (images, icons)
-├── components/      # Reusable UI components
-│   ├── auth/        # Authentication components
-│   ├── common/      # Shared components
-│   ├── crop/        # Crop management components
-│   ├── farm/        # Farm management components
-│   ├── field/       # Field management components
-│   └── DashBoard/   # Dashboard components
-├── contexts/        # React context providers
-├── hooks/           # Custom React hooks
-├── layouts/         # Page layout components
-├── pages/           # Page components
-│   ├── admin/       # Admin pages
-│   ├── guest/       # Public pages
-│   └── user/        # User pages
-├── services/        # API service functions
-├── styles/          # CSS and styling files
-└── utils/           # Utility functions
+D:\VS_CODES\.NET_PROJECT\AGROSMART\AGROSMARTFRONTEND\SRC
+│   App.css
+│   App.jsx
+│   config.js
+│   index.css
+│   main.jsx
+│
+├───assets
+│       react.svg
+│
+├───Components
+│   │   LandingPage.jsx
+│   │
+│   ├───auth
+│   │       ForgotPassword.jsx
+│   │       Login.jsx
+│   │       Profile.jsx
+│   │       ProtectedRoute.jsx
+│   │       Register.jsx
+│   │       RoleBasedRedirect.jsx
+│   │
+│   ├───common
+│   │       AuthDebugComponent.jsx
+│   │       CustomAlert.jsx
+│   │       OfflineState.jsx
+│   │       ProfileImage.jsx
+│   │       ProfileImageUpload.jsx
+│   │       ServerStatusBanner.jsx
+│   │       UserDebug.jsx
+│   │
+│   ├───crop
+│   │       CropActionsDropdown.jsx
+│   │       CropDetail.jsx
+│   │       CropFilter.jsx
+│   │       CropFormPage.jsx
+│   │       CropModal.jsx
+│   │       CropsView.jsx
+│   │       CropTable.jsx
+│   │       CropTableRow.jsx
+│   │
+│   ├───DashBoard
+│   │       Dashboard.jsx
+│   │       Header.jsx
+│   │       Layout.jsx
+│   │       Sidebar.jsx
+│   │       StatsCard.jsx
+│   │
+│   ├───farm
+│   │       FarmActionsDropdown.jsx
+│   │       FarmDetail.jsx
+│   │       FarmFilter.jsx
+│   │       FarmFormPage.jsx
+│   │       FarmsView.jsx
+│   │       FarmTable.jsx
+│   │       FarmTableRow.jsx
+│   │
+│   ├───field
+│   │       FieldActionsDropdown.jsx
+│   │       FieldDetail.jsx
+│   │       FieldFilter.jsx
+│   │       FieldFormPage.jsx
+│   │       FieldsView.jsx
+│   │       FieldTable.jsx
+│   │       FieldTableRow.jsx
+│   │
+│   ├───fieldWiseCrop
+│   │       FieldWiseCropFilter.jsx
+│   │       FieldWiseCropsView.jsx
+│   │       FieldWiseCropTable.jsx
+│   │       FieldWiseCropTableRow.jsx
+│   │
+│   ├───legal
+│   │       ContactUs.jsx
+│   │       PrivacyPolicy.jsx
+│   │       TermsOfService.jsx
+│   │
+│   ├───schedule
+│   │       ScheduleDetail.jsx
+│   │       ScheduleFilter.jsx
+│   │       ScheduleFormPage.jsx
+│   │       ScheduleTable.jsx
+│   │       ScheduleTableRow.jsx
+│   │       ScheduleView.jsx
+│   │
+│   ├───user
+│   │   │   ChangePasswordModal.jsx
+│   │   │
+│   │   ├───UserCrops
+│   │   │       CropDetailComponent.jsx
+│   │   │       CropFormComponent.jsx
+│   │   │       UserCropsView.jsx
+│   │   │
+│   │   ├───UserDashboard
+│   │   │       UserDashboard.jsx
+│   │   │       UserHeader.jsx
+│   │   │       UserLayout.jsx
+│   │   │       UserSidebar.jsx
+│   │   │
+│   │   ├───UserFarms
+│   │   │       FarmDetailComponent.jsx
+│   │   │       FarmFormComponent.jsx
+│   │   │       UserFarmsView.jsx
+│   │   │
+│   │   └───UserFields
+│   │           FieldDetailComponent.jsx
+│   │           FieldFormComponent.jsx
+│   │           UserFieldsView.jsx
+│   │
+│   └───weather
+│           DynamicWeatherWidget.jsx
+│           WeatherAPITest.jsx
+│           WeatherDashboard.jsx
+│           WeatherDetail.jsx
+│           WeatherFilter.jsx
+│           WeatherFormPage.jsx
+│           WeatherTable.jsx
+│           WeatherTableRow.jsx
+│           WeatherView.jsx
+│
+├───config
+│       emailConfig.js
+│
+├───contexts
+│       AuthProvider.jsx
+│       ServerStatusProvider.jsx
+│
+├───hooks
+│       useServerStatus.js
+│
+├───pages
+│   ├───admin
+│   │       AdminProfile.jsx
+│   │
+│   └───user
+│           InsightsPage.jsx
+│           KnowledgeBadgePage.jsx
+│           NotificationsPage.jsx
+│           SchedulePage.jsx
+│           UserProfile.jsx
+│           WeatherPage.jsx
+│
+├───services
+│       adminCropService.js
+│       adminFarmService.js
+│       adminFieldService.js
+│       adminFieldWiseCropService.js
+│       adminScheduleService.js
+│       adminSensorReadingService.js
+│       adminSensorService.js
+│       adminSmartInsightService.js
+│       adminUserService.js
+│       adminWeatherService.js
+│       api.js
+│       authService.js
+│       cropService.js
+│       farmService.js
+│       fieldService.js
+│       fieldWiseCropService.js
+│       healthService.js
+│       index.js
+│       realTimeWeatherService.js
+│       scheduleService.js
+│       sensorReadingService.js
+│       sensorService.js
+│       smartInsightService.js
+│       userCropService.js
+│       userFarmService.js
+│       userFieldService.js
+│       userFieldWiseCropService.js
+│       userScheduleService.js
+│       userSensorReadingService.js
+│       userSensorService.js
+│       userService.js
+│       userSmartInsightService.js
+│       userWeatherService.js
+│       weatherService.js
+│
+├───styles
+│       sweetalert2-custom.css
+│
+└───utils
+        apiErrorHandler.js
+        imageUtils.js
+
 ```
 
 ## 🔧 Configuration

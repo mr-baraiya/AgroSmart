@@ -69,6 +69,33 @@ const Login = () => {
     } catch (err) {
       console.error('Login error:', err);
       
+      // Check if user is inactive
+      if (err.isInactive) {
+        // Show inactive user popup and redirect to contact
+        toast.error('Your account is inactive. Please contact admin to activate your profile.', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        
+        // Redirect to contact us page after a short delay
+        setTimeout(() => {
+          navigate('/contact', { 
+            state: { 
+              reason: 'account_inactive',
+              userEmail: err.userData?.email,
+              userName: err.userData?.name
+            }
+          });
+        }, 2000);
+        
+        setError('Your account is inactive. Please contact admin to activate your profile.');
+        return;
+      }
+      
       let errorMessage = 'Login failed. Please try again.';
       
       if (err.response?.status === 401) {

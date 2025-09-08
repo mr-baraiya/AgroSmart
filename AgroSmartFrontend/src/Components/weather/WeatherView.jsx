@@ -122,11 +122,11 @@ const WeatherView = () => {
   const handleEdit = (weather) => {
     console.log('Editing weather data:', weather);
     console.log('Weather ID:', weather.weatherId);
-    navigate(`/weather/edit/${weather.weatherId}`);
+    navigate(`/dashboard/weather/edit/${weather.weatherId}`);
   };
 
   const handleAdd = () => {
-    navigate('/weather/add');
+    navigate('/dashboard/weather/add');
   };
 
   const handleDelete = async (weather) => {
@@ -160,7 +160,7 @@ const WeatherView = () => {
 
   // Navigate to the detail page
   const handleInfo = (weather) => {
-    navigate(`/weather/${weather.weatherId}`);
+    navigate(`/dashboard/weather/${weather.weatherId}`);
   };
 
   // Handle filter changes

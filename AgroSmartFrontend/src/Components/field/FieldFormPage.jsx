@@ -110,7 +110,7 @@ const FieldFormPage = () => {
       });
     } catch (error) {
       console.error("Error loading field:", error);
-      navigate("/fields", {
+      navigate("/dashboard/fields", {
         state: {
           message: "Failed to load field data",
           type: "error"
@@ -187,14 +187,14 @@ const FieldFormPage = () => {
         // Show success toast
         toast.success(`Field "${formData.fieldName}" has been updated successfully!`);
         
-        navigate("/fields");
+        navigate("/dashboard/fields");
       } else {
         await fieldService.create(submitData);
         
         // Show success toast  
         toast.success(`Field "${formData.fieldName}" has been created successfully!`);
         
-        navigate("/fields");
+        navigate("/dashboard/fields");
       }
     } catch (error) {
       console.error("Error saving field:", error);
@@ -212,9 +212,9 @@ const FieldFormPage = () => {
 
   const handleCancel = () => {
     if (preselectedFarmId) {
-      navigate(`/farms/${preselectedFarmId}/fields`);
+      navigate(`/dashboard/farms/${preselectedFarmId}/fields`);
     } else {
-      navigate("/fields");
+      navigate("/dashboard/fields");
     }
   };
 

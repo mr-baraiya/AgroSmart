@@ -15,7 +15,7 @@ const Header = ({ activeTab, notifications, onTabClick, onSearch, onBellClick, o
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate('/dashboard/profile');
     setShowUserMenu(false);
   };
 
@@ -117,20 +117,8 @@ const Header = ({ activeTab, notifications, onTabClick, onSearch, onBellClick, o
                 </button>
                 
                 <button
-                  onClick={async () => {
-                    console.log('Refreshing user profile...');
-                    await refreshUserProfile();
-                    setShowUserMenu(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Refresh Profile
-                </button>
-                
-                <button
                   onClick={() => {
-                    navigate('/settings');
+                    navigate('/dashboard/settings');
                     setShowUserMenu(false);
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"

@@ -48,6 +48,12 @@ import WeatherPage from "./pages/user/WeatherPage";
 import InsightsPage from "./pages/user/InsightsPage";
 import NotificationsPage from "./pages/user/NotificationsPage";
 import KnowledgeBadgePage from "./pages/user/KnowledgeBadgePage";
+import AdminSettings from "./Components/admin/AdminSettings";
+import UserSettings from "./Components/user/UserSettings";
+import UsersView from "./Components/user/UsersView";
+import UserFormPage from "./Components/user/UserFormPage";
+import UserDetail from "./Components/user/UserDetail";
+import SensorList from "./Components/admin/sensors/SensorList";
 
 function App() {
   return (
@@ -107,25 +113,31 @@ function App() {
               <Route path="farms/:farmId/crops" element={<FieldWiseCropsView />} />
               
               {/* Weather Routes */}
-              <Route path="weather" element={<WeatherPage />} />
+              <Route path="weather" element={<WeatherView />} />
               <Route path="weather/test" element={<WeatherAPITest />} />
               <Route path="weather/add" element={<WeatherFormPage />} />
               <Route path="weather/edit/:id" element={<WeatherFormPage />} />
               <Route path="weather/:id" element={<WeatherDetail />} />
               
               {/* Schedule Routes */}
-              <Route path="schedules" element={<SchedulePage />} />
+              <Route path="schedules" element={<ScheduleView />} />
               <Route path="schedules/add" element={<ScheduleFormPage />} />
               <Route path="schedules/edit/:id" element={<ScheduleFormPage />} />
               <Route path="schedules/:id" element={<ScheduleDetail />} />
               
               {/* System Management Routes */}
-              <Route path="sensors" element={<div className="p-6"><h1 className="text-2xl font-bold">Sensors Management</h1><p>Sensor monitoring and management coming soon...</p></div>} />
+              <Route path="sensors" element={<SensorList />} />
               <Route path="insights" element={<InsightsPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="badges" element={<KnowledgeBadgePage />} />
-              <Route path="users" element={<div className="p-6"><h1 className="text-2xl font-bold">User Management</h1><p>User administration coming soon...</p></div>} />
-              <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">System Settings</h1><p>Application settings coming soon...</p></div>} />
+              
+              {/* User Management Routes */}
+              <Route path="users" element={<UsersView />} />
+              <Route path="users/add" element={<UserFormPage />} />
+              <Route path="users/edit/:userId" element={<UserFormPage />} />
+              <Route path="users/:userId" element={<UserDetail />} />
+              
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
             
             {/* Protected User Dashboard Routes */}
@@ -167,7 +179,7 @@ function App() {
               <Route path="insights" element={<InsightsPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="knowledge" element={<KnowledgeBadgePage />} />
-              <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p>Personal settings coming soon...</p></div>} />
+              <Route path="settings" element={<UserSettings />} />
             </Route>
 
             {/* Role-based redirect route */}

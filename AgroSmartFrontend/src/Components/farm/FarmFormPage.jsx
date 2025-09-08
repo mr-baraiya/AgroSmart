@@ -156,7 +156,7 @@ const FarmFormPage = () => {
       // Show success toast
       toast.success(`Farm ${isEdit ? 'updated' : 'created'} successfully!`);
       
-      navigate('/farms');
+      navigate('/dashboard/farms');
     } catch (error) {
       console.error("API Error:", error);
       
@@ -172,7 +172,7 @@ const FarmFormPage = () => {
   };
 
   const handleCancel = () => {
-    navigate('/farms');
+    navigate('/dashboard/farms');
   };
 
   // Show loading state while fetching data for edit

@@ -1,6 +1,6 @@
 import api from './api';
 
-const API_BASE_URL = '/api/User';
+const API_BASE_URL = '/User';
 
 export const adminUserService = {
   // Get all users (admin access only)
@@ -21,6 +21,17 @@ export const adminUserService = {
       return response;
     } catch (error) {
       console.error('Error fetching user by ID (admin):', error);
+      throw error;
+    }
+  },
+
+  // Create new user (admin access)
+  createUser: async (userData) => {
+    try {
+      const response = await api.post(`${API_BASE_URL}`, userData);
+      return response;
+    } catch (error) {
+      console.error('Error creating user (admin):', error);
       throw error;
     }
   },
@@ -74,6 +85,8 @@ export const adminUserService = {
   // Upload profile picture for any user (admin access)
   uploadUserProfilePicture: async (userId, file) => {
     try {
+      console.log('🖼️ Uploading profile picture for user:', userId, 'File:', file.name, 'Size:', file.size);
+      
       const formData = new FormData();
       formData.append('file', file);
       
@@ -82,9 +95,12 @@ export const adminUserService = {
           'Content-Type': 'multipart/form-data',
         },
       });
+      
+      console.log('✅ Profile picture upload successful:', response.data);
       return response;
     } catch (error) {
-      console.error('Error uploading user profile picture (admin):', error);
+      console.error('❌ Error uploading user profile picture (admin):', error);
+      console.error('Upload URL:', `${API_BASE_URL}/${userId}/UploadProfilePicture`);
       throw error;
     }
   },

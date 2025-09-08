@@ -97,7 +97,7 @@ const CropDetail = () => {
         try {
           await cropService.delete(id);
           closeAlert();
-          navigate('/crops', { 
+          navigate('/dashboard/crops', { 
             state: { 
               message: `Crop "${crop?.cropName}" deleted successfully!`,
               type: 'success'
@@ -150,7 +150,7 @@ const CropDetail = () => {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/crops')}
+              onClick={() => navigate('/dashboard/crops')}
               className="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium transition-colors"
             >
               Back to Crops
@@ -205,7 +205,7 @@ const CropDetail = () => {
             <div className="flex items-center">
               <button
                 type="button"
-                onClick={() => navigate('/crops')}
+                onClick={() => navigate('/dashboard/crops')}
                 className="mr-4 p-3 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200"
               >
                 <ArrowLeft className="w-6 h-6" />
@@ -242,7 +242,7 @@ const CropDetail = () => {
             <div className="flex items-center space-x-4">
               <button
                 type="button"
-                onClick={() => navigate(`/crops/edit/${id}`)}
+                onClick={() => navigate(`/dashboard/crops/edit/${id}`)}
                 className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl"
               >
                 <Edit className="w-5 h-5" />

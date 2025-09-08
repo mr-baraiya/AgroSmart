@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Camera, Trash2, User } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthProvider';
+import defaultProfileImage from '../../assets/default-profile.png';
 
 const ProfileImageUpload = ({ user, size = 'lg' }) => {
   const fileInputRef = useRef(null);
@@ -151,7 +152,7 @@ const ProfileImageUpload = ({ user, size = 'lg' }) => {
   // Construct image URL
   const imageUrl = user?.profileImage 
     ? `${import.meta.env.VITE_IMAGE_BASE_URL}/${user.profileImage}`
-    : null;
+    : defaultProfileImage;
 
   // Get user initials for fallback
   const getUserInitials = (user) => {
@@ -170,23 +171,29 @@ const ProfileImageUpload = ({ user, size = 'lg' }) => {
     <div className="relative">
       <div className={`${sizeClasses[size]} rounded-full overflow-hidden border-4 border-gray-200 bg-gray-100`}>
         {/* Profile Image */}
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center">
-            <span className={`text-white font-bold ${
-              size === 'sm' ? 'text-xs' : 
-              size === 'md' ? 'text-sm' : 
-              size === 'lg' ? 'text-lg' : 'text-xl'
-            }`}>
-              {userInitials}
-            </span>
-          </div>
-        )}
+        <img
+          src={imageUrl}
+          alt="Profile"
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback to initials if image fails to load
+            e.target.style.display = 'none';
+            e.target.nextSibling.style.display = 'flex';
+          }}
+        />
+        {/* Fallback initials (hidden by default) */}
+        <div 
+          className="w-full h-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center"
+          style={{ display: 'none' }}
+        >
+          <span className={`text-white font-bold ${
+            size === 'sm' ? 'text-xs' : 
+            size === 'md' ? 'text-sm' : 
+            size === 'lg' ? 'text-lg' : 'text-xl'
+          }`}>
+            {userInitials}
+          </span>
+        </div>
       </div>
       
       {/* Upload/Delete Buttons */}

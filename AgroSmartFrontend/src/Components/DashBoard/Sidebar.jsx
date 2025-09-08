@@ -44,12 +44,13 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
 
   return (
     <div className={`
-      fixed left-0 top-0 w-64 bg-gradient-to-b from-green-800 to-green-900 text-white h-screen overflow-y-auto z-50
+      fixed left-0 top-0 w-64 bg-gradient-to-b from-green-800 to-green-900 text-white h-screen flex flex-col z-50
       transform transition-transform duration-300 ease-in-out
       ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
       lg:translate-x-0
     `}>
-      <div className="p-4 pb-20">
+      {/* Header Section */}
+      <div className="p-4">
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -70,6 +71,10 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
             </button>
           </div>
         </div>
+      </div>
+      
+      {/* Navigation Section - Scrollable */}
+      <div className="flex-1 overflow-y-auto px-4 scrollbar-hide">
         <nav className="space-y-2">
         {sidebarItems.map((item) => (
           <NavLink
@@ -91,8 +96,8 @@ const Sidebar = ({ isMobileOpen = false, onClose = () => {} }) => {
         </nav>
       </div>
       
-      {/* User Profile Section at Bottom */}
-      <div className="absolute bottom-4 left-4 right-4">
+      {/* User Profile Section at Bottom - Fixed */}
+      <div className="p-4 border-t border-white border-opacity-20">
         <div className="bg-white bg-opacity-10 rounded-lg p-3 border border-white border-opacity-20">
           <div className="flex items-center gap-3">
             <ProfileImageDisplay 

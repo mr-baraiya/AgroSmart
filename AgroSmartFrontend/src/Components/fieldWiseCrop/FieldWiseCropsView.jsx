@@ -186,11 +186,11 @@ const FieldWiseCropsView = () => {
 
   const handleBack = () => {
     if (fieldId && field) {
-      navigate(`/fields/${fieldId}`);
+      navigate(`/dashboard/fields/${fieldId}`);
     } else if (farmId && farm) {
-      navigate(`/farms/${farmId}`);
+      navigate(`/dashboard/farms/${farmId}`);
     } else {
-      navigate('/fields');
+      navigate('/dashboard/fields');
     }
   };
 

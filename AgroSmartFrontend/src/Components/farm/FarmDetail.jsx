@@ -38,7 +38,7 @@ const FarmDetail = () => {
     if (window.confirm(`Are you sure you want to delete "${farm?.farmName}"?`)) {
       farmService.delete(id)
         .then(() => {
-          navigate("/farms", {
+          navigate("/dashboard/farms", {
             state: {
               message: `Farm "${farm?.farmName}" deleted successfully!`,
               type: 'success'
@@ -53,7 +53,7 @@ const FarmDetail = () => {
   };
 
   const handleBack = () => {
-    navigate("/farms");
+    navigate("/dashboard/farms");
   };
 
   if (loading) {

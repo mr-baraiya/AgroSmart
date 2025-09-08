@@ -58,7 +58,7 @@ const WeatherDetail = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/weather/edit/${id}`);
+    navigate(`/dashboard/weather/edit/${id}`);
   };
 
   const handleDelete = () => {
@@ -70,7 +70,7 @@ const WeatherDetail = () => {
         try {
           await weatherService.delete(id);
           closeAlert();
-          navigate("/weather", {
+          navigate("/dashboard/weather", {
             state: {
               message: `Weather data for "${weather.location}" deleted successfully!`,
               type: "success"
@@ -91,7 +91,7 @@ const WeatherDetail = () => {
   };
 
   const handleBack = () => {
-    navigate("/weather");
+    navigate("/dashboard/weather");
   };
 
   // Get weather icon based on description

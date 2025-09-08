@@ -13,6 +13,15 @@ export const authService = {
       
       const response = await api.post('/Auth/Login', loginData);
       
+      // Check if user is active
+      if (response.data && response.data.isActive === false) {
+        // User is inactive - throw specific error
+        const error = new Error('Account is inactive');
+        error.isInactive = true;
+        error.userData = response.data;
+        throw error;
+      }
+      
       // Store token and user info in localStorage
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
@@ -25,7 +34,8 @@ export const authService = {
           email: response.data.email,
           phone: response.data.phone,
           role: response.data.role,
-          profileImage: response.data.profileImage || null
+          profileImage: response.data.profileImage || null,
+          isActive: response.data.isActive
         };
         
         localStorage.setItem('user', JSON.stringify(userInfo));

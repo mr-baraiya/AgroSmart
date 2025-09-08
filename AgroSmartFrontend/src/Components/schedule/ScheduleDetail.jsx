@@ -57,14 +57,14 @@ const ScheduleDetail = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/schedules/edit/${id}`);
+    navigate(`/dashboard/schedules/edit/${id}`);
   };
 
   const handleDelete = () => {
     if (window.confirm(`Are you sure you want to delete "${schedule.title}"?`)) {
       scheduleService.delete(id)
         .then(() => {
-          navigate('/schedules', { 
+          navigate('/dashboard/schedules', { 
             state: { 
               message: `Schedule "${schedule.title}" deleted successfully!`,
               type: 'success'
@@ -79,7 +79,7 @@ const ScheduleDetail = () => {
   };
 
   const handleBack = () => {
-    navigate('/schedules');
+    navigate('/dashboard/schedules');
   };
 
   const formatDate = (dateString) => {

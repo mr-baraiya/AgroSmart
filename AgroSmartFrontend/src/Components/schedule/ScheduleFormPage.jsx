@@ -148,7 +148,7 @@ const ScheduleFormPage = () => {
           }
         });
         
-        navigate("/schedules");
+        navigate("/dashboard/schedules");
       } else {
         await scheduleService.create(scheduleData);
         
@@ -164,7 +164,7 @@ const ScheduleFormPage = () => {
           }
         });
         
-        navigate("/schedules");
+        navigate("/dashboard/schedules");
       }
     } catch (err) {
       console.error("Error saving schedule:", err);
@@ -188,7 +188,7 @@ const ScheduleFormPage = () => {
   };
 
   const handleBack = () => {
-    navigate("/schedules");
+    navigate("/dashboard/schedules");
   };
 
   if (loading) {

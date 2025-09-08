@@ -130,7 +130,7 @@ const WeatherFormPage = () => {
           }
         });
         
-        navigate("/weather");
+        navigate("/dashboard/weather");
       } else {
         await weatherService.create(weatherData);
         
@@ -146,7 +146,7 @@ const WeatherFormPage = () => {
           }
         });
         
-        navigate("/weather");
+        navigate("/dashboard/weather");
       }
     } catch (err) {
       console.error("Error saving weather data:", err);
@@ -170,7 +170,7 @@ const WeatherFormPage = () => {
   };
 
   const handleBack = () => {
-    navigate("/weather");
+    navigate("/dashboard/weather");
   };
 
   // Real-time weather fetching functions
@@ -371,7 +371,7 @@ const WeatherFormPage = () => {
       const failed = results.filter(r => !r.success);
 
       if (successful.length > 0) {
-        navigate("/weather", {
+        navigate("/dashboard/weather", {
           state: {
             message: `✅ Weather data fetched for ${successful.length} farms successfully!${failed.length > 0 ? ` (${failed.length} failed)` : ''}`,
             type: "success"

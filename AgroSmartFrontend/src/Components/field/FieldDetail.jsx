@@ -89,7 +89,7 @@ const FieldDetail = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/fields/edit/${id}`);
+    navigate(`/dashboard/fields/edit/${id}`);
   };
 
   const handleDelete = async () => {
@@ -123,19 +123,19 @@ const FieldDetail = () => {
   };
 
   const handleAddCrop = () => {
-    navigate(`/fields/${id}/crops/add`);
+    navigate(`/dashboard/fields/${id}/crops/add`);
   };
 
   const handleViewAllCrops = () => {
-    navigate(`/fields/${id}/crops`);
+    navigate(`/dashboard/fields/${id}/crops`);
   };
 
   const handleViewCrop = (fieldCrop) => {
-    navigate(`/crops/${fieldCrop.cropId}`);
+    navigate(`/dashboard/crops/${fieldCrop.cropId}`);
   };
 
   const handleEditCrop = (fieldCrop) => {
-    navigate(`/field-crops/edit/${fieldCrop.fieldWiseCropId}`);
+    navigate(`/dashboard/field-crops/edit/${fieldCrop.fieldWiseCropId}`);
   };
 
   const handleDeleteCrop = async (fieldCrop) => {
@@ -206,7 +206,7 @@ const FieldDetail = () => {
         <div className="text-center text-red-500">{error || "Field not found"}</div>
         <div className="text-center mt-4">
           <button
-            onClick={() => navigate("/fields")}
+            onClick={() => navigate("/dashboard/fields")}
             className="text-blue-600 hover:text-blue-800"
           >
             ← Back to Fields

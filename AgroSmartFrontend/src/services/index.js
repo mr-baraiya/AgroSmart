@@ -2,7 +2,7 @@
 import farmService from './farmService';
 import cropService from './cropService';
 import fieldService from './fieldService';
-import sensorService from './sensorService';
+import { sensorService } from './sensorService';
 import weatherService from './weatherService';
 import userService from './userService'; // ✅ imported before usage
 import scheduleService from './scheduleService';

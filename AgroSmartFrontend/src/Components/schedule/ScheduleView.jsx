@@ -122,11 +122,11 @@ const ScheduleView = () => {
   const handleEdit = (schedule) => {
     console.log('Editing schedule:', schedule);
     console.log('Schedule ID:', schedule.scheduleId);
-    navigate(`/schedules/edit/${schedule.scheduleId}`);
+    navigate(`/dashboard/schedules/edit/${schedule.scheduleId}`);
   };
 
   const handleAdd = () => {
-    navigate('/schedules/add');
+    navigate('/dashboard/schedules/add');
   };
 
   const handleDelete = async (schedule) => {
@@ -160,7 +160,7 @@ const ScheduleView = () => {
 
   // Navigate to the detail page
   const handleInfo = (schedule) => {
-    navigate(`/schedules/${schedule.scheduleId}`);
+    navigate(`/dashboard/schedules/${schedule.scheduleId}`);
   };
 
   // Handle filter changes

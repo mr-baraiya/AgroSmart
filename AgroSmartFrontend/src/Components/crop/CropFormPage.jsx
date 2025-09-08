@@ -139,7 +139,7 @@ const CropFormPage = () => {
       // Show success toast
       toast.success(`Crop ${isEdit ? 'updated' : 'created'} successfully!`);
       
-      navigate('/crops');
+      navigate('/dashboard/crops');
     } catch (error) {
       console.error("API Error:", error);
       
@@ -159,7 +159,7 @@ const CropFormPage = () => {
   };
 
   const handleCancel = () => {
-    navigate('/crops');
+    navigate('/dashboard/crops');
   };
 
   if (pageLoading) {
