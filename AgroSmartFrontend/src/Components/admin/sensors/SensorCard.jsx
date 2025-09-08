@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Thermometer, 
   Droplets, 
@@ -18,12 +18,139 @@ import {
   MapPin,
   Zap,
   AlertTriangle,
-  Trash2
+  Trash2,
+  X,
+  Download,
+  Plus,
+  TrendingUp,
+  BarChart3
 } from 'lucide-react';
 import { sensorService } from '../../../services/sensorService';
 import { toast } from 'react-toastify';
 
-const SensorCard = ({ sensor, onEdit, onViewReadings, onStatusChange, onDelete }) => {
+const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
+  const [showReadingsModal, setShowReadingsModal] = useState(false);
+  const [readings, setReadings] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Generate sample readings for the sensor
+  const generateSampleReadings = () => {
+    const readings = [];
+    const now = new Date();
+    
+    for (let i = 0; i < 24; i++) {
+      const timestamp = new Date(now.getTime() - (i * 60 * 60 * 1000)); // Every hour for 24 hours
+      
+      let value, unit;
+      switch (sensor.sensorType) {
+        case 'Temperature':
+          value = (20 + Math.random() * 15).toFixed(1); // 20-35°C
+          unit = '°C';
+          break;
+        case 'Humidity':
+          value = (40 + Math.random() * 40).toFixed(1); // 40-80%
+          unit = '%';
+          break;
+        case 'Soil_Moisture':
+          value = (30 + Math.random() * 50).toFixed(1); // 30-80%
+          unit = '%';
+          break;
+        case 'pH':
+          value = (6.0 + Math.random() * 2).toFixed(1); // 6.0-8.0
+          unit = 'pH';
+          break;
+        case 'Light':
+          value = Math.floor(300 + Math.random() * 700); // 300-1000 lux
+          unit = 'lux';
+          break;
+        case 'Pressure':
+          value = (1000 + Math.random() * 50).toFixed(1); // 1000-1050 hPa
+          unit = 'hPa';
+          break;
+        case 'Wind':
+          value = (Math.random() * 20).toFixed(1); // 0-20 m/s
+          unit = 'm/s';
+          break;
+        case 'Rain':
+          value = (Math.random() * 10).toFixed(1); // 0-10 mm
+          unit = 'mm';
+          break;
+        default:
+          value = (Math.random() * 100).toFixed(1);
+          unit = 'units';
+      }
+      
+      readings.push({
+        readingId: `reading_${i}`,
+        sensorId: sensor.sensorId,
+        timestamp: timestamp.toISOString(),
+        value: parseFloat(value),
+        unit,
+        qualityScore: 0.85 + Math.random() * 0.15, // 85-100%
+        isAnomaly: Math.random() < 0.05 // 5% chance of anomaly
+      });
+    }
+    
+    return readings.reverse(); // Show oldest first
+  };
+
+  // Handle view readings
+  const handleViewReadings = () => {
+    setLoading(true);
+    setShowReadingsModal(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      const generatedReadings = generateSampleReadings();
+      setReadings(generatedReadings);
+      setLoading(false);
+      toast.success(`Generated ${generatedReadings.length} sample readings`);
+    }, 1000);
+  };
+
+  // Handle add new reading
+  const handleAddReading = () => {
+    const value = prompt(`Enter new ${sensor.sensorType} reading value:`);
+    if (value && !isNaN(value)) {
+      const newReading = {
+        readingId: `reading_${Date.now()}`,
+        sensorId: sensor.sensorId,
+        timestamp: new Date().toISOString(),
+        value: parseFloat(value),
+        unit: sensor.latestUnit,
+        qualityScore: 0.9 + Math.random() * 0.1,
+        isAnomaly: false
+      };
+      
+      setReadings(prev => [newReading, ...prev]);
+      toast.success('Reading added successfully');
+    }
+  };
+
+  // Export readings to CSV
+  const exportToCSV = () => {
+    if (readings.length === 0) return;
+    
+    const csvContent = [
+      ['Timestamp', 'Value', 'Unit', 'Quality Score', 'Anomaly'],
+      ...readings.map(reading => [
+        new Date(reading.timestamp).toLocaleString(),
+        reading.value,
+        reading.unit,
+        (reading.qualityScore * 100).toFixed(1) + '%',
+        reading.isAnomaly ? 'Yes' : 'No'
+      ])
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sensor_${sensor.serialNumber}_readings.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    toast.success('Readings exported to CSV');
+  };
   // Get sensor icon based on type
   const getSensorIcon = (sensorType) => {
     const iconMap = {
@@ -169,7 +296,7 @@ const SensorCard = ({ sensor, onEdit, onViewReadings, onStatusChange, onDelete }
           <div>
             <p className="text-sm text-gray-600">Last Reading</p>
             <p className="text-2xl font-bold text-gray-900">
-              {sensorService.formatValue(sensor.latestValue, sensor.latestUnit)} {sensor.latestUnit}
+              {sensorService.formatSensorValue(sensor.latestValue, sensor.latestUnit)} {sensor.latestUnit}
             </p>
           </div>
           <div className="text-right">
@@ -206,7 +333,7 @@ const SensorCard = ({ sensor, onEdit, onViewReadings, onStatusChange, onDelete }
       {/* Action buttons */}
       <div className="flex space-x-2">
         <button
-          onClick={() => onViewReadings(sensor)}
+          onClick={handleViewReadings}
           className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-sm"
         >
           <Eye className="w-4 h-4 mr-1" />
@@ -248,6 +375,180 @@ const SensorCard = ({ sensor, onEdit, onViewReadings, onStatusChange, onDelete }
       <div className="mt-3 pt-3 border-t border-gray-200">
         <p className="text-xs text-gray-500">Serial: {sensor.serialNumber}</p>
       </div>
+
+      {/* Readings Modal */}
+      <AnimatePresence>
+        {showReadingsModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowReadingsModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                      <BarChart3 className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">
+                        {sensor.sensorType.replace('_', ' ')} Sensor Readings
+                      </h2>
+                      <p className="text-blue-100">
+                        Serial: {sensor.serialNumber} | Field ID: {sensor.fieldId}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowReadingsModal(false)}
+                    className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex space-x-3 mt-4">
+                  <button
+                    onClick={handleAddReading}
+                    className="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Reading</span>
+                  </button>
+                  <button
+                    onClick={exportToCSV}
+                    disabled={readings.length === 0}
+                    className="bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CSV</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+                {loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span className="ml-3 text-gray-600">Generating readings...</span>
+                  </div>
+                ) : readings.length === 0 ? (
+                  <div className="text-center py-12">
+                    <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No readings available</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Click "View" to generate sample readings
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Summary Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-blue-50 p-4 rounded-lg">
+                        <p className="text-sm text-blue-600 font-medium">Total Readings</p>
+                        <p className="text-2xl font-bold text-blue-800">{readings.length}</p>
+                      </div>
+                      <div className="bg-green-50 p-4 rounded-lg">
+                        <p className="text-sm text-green-600 font-medium">Average Value</p>
+                        <p className="text-2xl font-bold text-green-800">
+                          {(readings.reduce((sum, r) => sum + r.value, 0) / readings.length).toFixed(1)}
+                        </p>
+                      </div>
+                      <div className="bg-yellow-50 p-4 rounded-lg">
+                        <p className="text-sm text-yellow-600 font-medium">Quality Score</p>
+                        <p className="text-2xl font-bold text-yellow-800">
+                          {((readings.reduce((sum, r) => sum + r.qualityScore, 0) / readings.length) * 100).toFixed(0)}%
+                        </p>
+                      </div>
+                      <div className="bg-red-50 p-4 rounded-lg">
+                        <p className="text-sm text-red-600 font-medium">Anomalies</p>
+                        <p className="text-2xl font-bold text-red-800">
+                          {readings.filter(r => r.isAnomaly).length}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Readings Table */}
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Timestamp
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Value
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Quality
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {readings.map((reading, index) => (
+                              <tr
+                                key={reading.readingId}
+                                className={`hover:bg-gray-50 ${reading.isAnomaly ? 'bg-red-50' : ''}`}
+                              >
+                                <td className="px-4 py-3 text-sm text-gray-900">
+                                  {new Date(reading.timestamp).toLocaleString()}
+                                </td>
+                                <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                  {reading.value} {reading.unit}
+                                </td>
+                                <td className="px-4 py-3 text-sm">
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    reading.qualityScore >= 0.9 
+                                      ? 'bg-green-100 text-green-800'
+                                      : reading.qualityScore >= 0.7
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {(reading.qualityScore * 100).toFixed(0)}%
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-sm">
+                                  {reading.isAnomaly ? (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                      <AlertTriangle className="w-3 h-3 mr-1" />
+                                      Anomaly
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                      Normal
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

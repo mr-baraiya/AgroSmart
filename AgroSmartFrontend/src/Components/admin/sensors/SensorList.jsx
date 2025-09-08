@@ -16,7 +16,6 @@ import { sensorService } from '../../../services/sensorService';
 import { adminFieldService } from '../../../services/adminFieldService';
 import SensorCard from './SensorCard';
 import SensorFormModal from './SensorFormModal';
-import SensorReadings from './SensorReadings';
 import { toast } from 'react-toastify';
 
 const SensorList = () => {
@@ -28,7 +27,6 @@ const SensorList = () => {
   const [selectedField, setSelectedField] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showReadingsModal, setShowReadingsModal] = useState(false);
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [stats, setStats] = useState({
     total: 0,
@@ -120,11 +118,6 @@ const SensorList = () => {
   const handleEditSensor = (sensor) => {
     setSelectedSensor(sensor);
     setShowModal(true);
-  };
-
-  const handleViewReadings = (sensor) => {
-    setSelectedSensor(sensor);
-    setShowReadingsModal(true);
   };
 
   const handleDeleteSensor = async () => {
@@ -364,7 +357,6 @@ const SensorList = () => {
               <SensorCard
                 sensor={sensor}
                 onEdit={handleEditSensor}
-                onViewReadings={handleViewReadings}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDeleteSensor}
               />
@@ -379,13 +371,6 @@ const SensorList = () => {
         onClose={() => setShowModal(false)}
         sensor={selectedSensor}
         onSave={handleModalSave}
-      />
-
-      {/* Sensor Readings Modal */}
-      <SensorReadings
-        isOpen={showReadingsModal}
-        onClose={() => setShowReadingsModal(false)}
-        sensor={selectedSensor}
       />
     </div>
   );
