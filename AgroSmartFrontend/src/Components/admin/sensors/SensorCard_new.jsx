@@ -28,30 +28,18 @@ import { toast } from 'react-toastify';
 
 const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
   const navigate = useNavigate();
-  const [isToggling, setIsToggling] = useState(false);
-
-  // Helper function to get current active status
-  const getCurrentActiveStatus = () => {
-    if (sensor.status !== undefined) {
-      return sensor.status === 'active';
-    }
-    if (sensor.isActive !== undefined) {
-      return sensor.isActive;
-    }
-    return false; // Default to inactive if no status info
-  };
 
   const handleViewReadings = () => {
-    navigate(`/dashboard/sensors/${sensor.sensorId}/readings`);
+    navigate(`/admin/sensors/${sensor.id}/readings`);
   };
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this sensor?')) {
       try {
-        await sensorService.delete(sensor.sensorId);
+        await sensorService.delete(sensor.id);
         toast.success('Sensor deleted successfully');
         if (onDelete) {
-          onDelete(sensor.sensorId);
+          onDelete(sensor.id);
         }
       } catch (error) {
         console.error('Error deleting sensor:', error);
@@ -61,30 +49,21 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
   };
 
   const handleStatusToggle = async () => {
-    if (isToggling) return; // Prevent double clicks
-    
     try {
-      setIsToggling(true);
-      const currentlyActive = getCurrentActiveStatus();
-      const newStatus = currentlyActive ? 'inactive' : 'active';
-      
-      // await sensorService.updateStatus(sensor.sensorId, newStatus);
+      const newStatus = sensor.status === 'active' ? 'inactive' : 'active';
+      // await sensorService.updateStatus(sensor.id, newStatus);
       toast.success(`Sensor ${newStatus === 'active' ? 'activated' : 'deactivated'}`);
-      
       if (onStatusChange) {
-        onStatusChange(sensor.sensorId, newStatus);
+        onStatusChange(sensor.id, newStatus);
       }
     } catch (error) {
       console.error('Error updating sensor status:', error);
       toast.error('Failed to update sensor status');
-    } finally {
-      setIsToggling(false);
     }
   };
 
   const getSensorIcon = () => {
-    const sensorType = sensor.sensorType || sensor.type;
-    switch (sensorType?.toLowerCase()) {
+    switch (sensor.type?.toLowerCase()) {
       case 'temperature':
         return <Thermometer className="w-8 h-8 text-red-500" />;
       case 'humidity':
@@ -98,10 +77,8 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
       case 'pressure':
         return <Gauge className="w-8 h-8 text-gray-500" />;
       case 'wind_speed':
-      case 'wind':
         return <Wind className="w-8 h-8 text-cyan-500" />;
       case 'rainfall':
-      case 'rain':
         return <CloudRain className="w-8 h-8 text-indigo-500" />;
       default:
         return <Activity className="w-8 h-8 text-green-500" />;
@@ -109,20 +86,30 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
   };
 
   const getStatusColor = () => {
-    const isActive = getCurrentActiveStatus();
-    if (isActive) {
-      return 'bg-green-100 text-green-800 border-green-200';
-    } else {
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+    switch (sensor.status?.toLowerCase()) {
+      case 'active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'warning':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'error':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getCardBorderColor = () => {
-    const isActive = getCurrentActiveStatus();
-    if (isActive) {
-      return 'border-green-200 hover:border-green-300';
-    } else {
-      return 'border-gray-200 hover:border-gray-300';
+    switch (sensor.status?.toLowerCase()) {
+      case 'active':
+        return 'border-green-200 hover:border-green-300';
+      case 'warning':
+        return 'border-yellow-200 hover:border-yellow-300';
+      case 'error':
+        return 'border-red-200 hover:border-red-300';
+      default:
+        return 'border-gray-200 hover:border-gray-300';
     }
   };
 
@@ -141,16 +128,14 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
             {getSensorIcon()}
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 text-lg">
-              {sensor.name || `${sensor.manufacturer || 'Unknown'} ${sensor.model || 'Sensor'}`}
-            </h3>
-            <p className="text-sm text-gray-600">{sensor.sensorType || sensor.type || 'Unknown Type'}</p>
+            <h3 className="font-bold text-gray-800 text-lg">{sensor.name}</h3>
+            <p className="text-sm text-gray-600">{sensor.type}</p>
           </div>
         </div>
         
         {/* Status badge */}
         <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor()}`}>
-          {getCurrentActiveStatus() ? 'Active' : 'Inactive'}
+          {sensor.status?.charAt(0).toUpperCase() + sensor.status?.slice(1) || 'Unknown'}
         </span>
       </div>
 
@@ -160,13 +145,13 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
           <div>
             <p className="text-sm text-gray-600 mb-1">Current Reading</p>
             <p className="text-2xl font-bold text-gray-800">
-              {sensorService.formatSensorValue(sensor.lastReading || sensor.currentValue || 0, sensor.sensorType || sensor.type)}
+              {sensorService.formatSensorValue(sensor.lastReading || 0, sensor.type)}
             </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-500 mb-1">Last Update</p>
             <p className="text-sm text-gray-700">
-              {sensor.lastUpdate || sensor.lastReadingTime ? new Date(sensor.lastUpdate || sensor.lastReadingTime).toLocaleString() : 'Never'}
+              {sensor.lastUpdate ? new Date(sensor.lastUpdate).toLocaleString() : 'Never'}
             </p>
           </div>
         </div>
@@ -176,27 +161,17 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
       <div className="space-y-3 mb-4">
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <MapPin className="w-4 h-4" />
-          <span>{sensor.location || sensor.fieldName || sensor.field?.name || 'Unknown Location'}</span>
+          <span>{sensor.location || 'Unknown Location'}</span>
         </div>
         
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Calendar className="w-4 h-4" />
-          <span>Installed: {
-            sensor.installDate || sensor.installationDate || sensor.createdDate || sensor.createdAt
-              ? new Date(sensor.installDate || sensor.installationDate || sensor.createdDate || sensor.createdAt).toLocaleDateString() 
-              : 'Unknown'
-          }</span>
+          <span>Installed: {sensor.installDate ? new Date(sensor.installDate).toLocaleDateString() : 'Unknown'}</span>
         </div>
 
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Zap className="w-4 h-4" />
-          <span>Battery: {
-            sensor.batteryLevel !== undefined 
-              ? `${sensor.batteryLevel}%`
-              : sensor.batteryPercentage !== undefined 
-                ? `${sensor.batteryPercentage}%`
-                : 'Unknown'
-          }</span>
+          <span>Battery: {sensor.batteryLevel || 'Unknown'}%</span>
         </div>
       </div>
 
@@ -236,22 +211,21 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
         
         <button
           onClick={handleStatusToggle}
-          disabled={isToggling}
           className={`flex-1 px-3 py-2 rounded-lg transition-colors flex items-center justify-center text-sm ${
-            getCurrentActiveStatus() 
-              ? 'bg-yellow-600 text-white hover:bg-yellow-700 disabled:bg-yellow-400' 
-              : 'bg-green-600 text-white hover:bg-green-700 disabled:bg-green-400'
+            sensor.status === 'active' 
+              ? 'bg-yellow-600 text-white hover:bg-yellow-700' 
+              : 'bg-green-600 text-white hover:bg-green-700'
           }`}
         >
-          {getCurrentActiveStatus() ? (
+          {sensor.status === 'active' ? (
             <>
               <PowerOff className="w-4 h-4 mr-1" />
-              {isToggling ? 'Disabling...' : 'Disable'}
+              Disable
             </>
           ) : (
             <>
               <Power className="w-4 h-4 mr-1" />
-              {isToggling ? 'Enabling...' : 'Enable'}
+              Enable
             </>
           )}
         </button>
@@ -266,13 +240,7 @@ const SensorCard = ({ sensor, onEdit, onStatusChange, onDelete }) => {
 
       {/* Serial number */}
       <div className="mt-3 pt-3 border-t border-gray-200">
-        <p className="text-xs text-gray-500">Serial: {sensor.serialNumber || 'N/A'}</p>
-        {sensor.manufacturer && (
-          <p className="text-xs text-gray-500">Manufacturer: {sensor.manufacturer}</p>
-        )}
-        {sensor.model && (
-          <p className="text-xs text-gray-500">Model: {sensor.model}</p>
-        )}
+        <p className="text-xs text-gray-500">Serial: {sensor.serialNumber}</p>
       </div>
     </motion.div>
   );

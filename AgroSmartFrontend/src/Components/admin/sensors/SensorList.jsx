@@ -129,8 +129,22 @@ const SensorList = () => {
     loadData();
   };
 
-  const handleStatusChange = () => {
-    loadData();
+  const handleStatusChange = (sensorId, newStatus) => {
+    // Update the sensor status immediately in the local state
+    setSensors(prevSensors => 
+      prevSensors.map(sensor => 
+        sensor.sensorId === sensorId 
+          ? { 
+              ...sensor, 
+              status: newStatus,
+              isActive: newStatus === 'active'
+            }
+          : sensor
+      )
+    );
+    
+    // Also reload data to get any other updates from server
+    // loadData();
   };
 
   const exportToCSV = () => {
