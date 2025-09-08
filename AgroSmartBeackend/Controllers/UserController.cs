@@ -253,5 +253,61 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
+        #region DeactivateMyAccount
+        [HttpPut("Deactivate/{id}")]
+        public async Task<IActionResult> DeactivateUser(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                    return NotFound(new { message = $"User with ID {id} not found." });
+
+                if (!user.IsActive)
+                    return BadRequest(new { message = $"User with ID {id} is already inactive." });
+
+                user.IsActive = false;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"User {id} deactivated successfully.", user });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error deactivating user", error = ex.Message });
+            }
+        }
+        #endregion
+
+        #region ActivateMyAccount
+        [HttpPut("Activate/{id}")]
+        public async Task<IActionResult> ActivateUser(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                    return NotFound(new { message = $"User with ID {id} not found." });
+
+                if (user.IsActive)
+                    return BadRequest(new { message = $"User with ID {id} is already active." });
+
+                user.IsActive = true;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"User {id} activated successfully.", user });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error activating user", error = ex.Message });
+            }
+        }
+        #endregion
+
     }
 }

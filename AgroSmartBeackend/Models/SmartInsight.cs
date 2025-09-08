@@ -21,8 +21,6 @@ public partial class SmartInsight
 
     public string? SourceType { get; set; }
 
-    public int? SourceId { get; set; }
-
     public int TargetUserId { get; set; }
 
     public DateTime? ValidUntil { get; set; }

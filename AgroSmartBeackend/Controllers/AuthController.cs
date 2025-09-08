@@ -59,7 +59,8 @@ public class AuthController : ControllerBase
                 userId = user.UserId,
                 name = user.FullName,
                 role = user.Role,
-                profileImage = user.ProfileImage // just return the path from DB
+                profileImage = user.ProfileImage, // path from DB
+                isActive = user.IsActive          // ✅ added this
             });
         }
         catch (Exception ex)
@@ -68,7 +69,6 @@ public class AuthController : ControllerBase
         }
     }
     #endregion
-
 
     #region JWT Token Generation
     private string GenerateJwtToken(User user)

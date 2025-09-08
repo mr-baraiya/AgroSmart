@@ -28,10 +28,6 @@ public class SmartInsightValidator : AbstractValidator<SmartInsight>
         RuleFor(x => x.SourceType)
             .MaximumLength(100).WithMessage("Source type cannot exceed 100 characters.");
 
-        RuleFor(x => x.SourceId)
-            .GreaterThan(0).When(x => x.SourceId.HasValue)
-            .WithMessage("SourceId must be a positive number.");
-
         RuleFor(x => x.TargetUserId)
             .GreaterThan(0).WithMessage("Target user ID must be a valid positive integer.");
 
