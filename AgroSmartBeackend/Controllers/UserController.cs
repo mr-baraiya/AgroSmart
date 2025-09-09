@@ -78,6 +78,7 @@ namespace AgroSmartBeackend.Controllers
                 existingUser.IsActive = u.IsActive;
                 existingUser.UpdatedAt = DateTime.UtcNow;
                 existingUser.ProfileImage = u.ProfileImage;
+                existingUser.Role = u.Role;
 
                 await _context.SaveChangesAsync();
 

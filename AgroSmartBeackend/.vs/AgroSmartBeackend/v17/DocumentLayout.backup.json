@@ -78,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
@@ -94,6 +94,10 @@
               "IsPinned": true
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "SmartInsightValidator.cs",
@@ -101,7 +105,7 @@
               "RelativeDocumentMoniker": "Validators\\SmartInsightValidator.cs",
               "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\SmartInsightValidator.cs",
               "RelativeToolTip": "Validators\\SmartInsightValidator.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwCUAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-08T18:49:24.3Z",
               "EditorCaption": ""
@@ -116,12 +120,7 @@
               "RelativeToolTip": "Models\\SmartInsight.cs",
               "ViewState": "AgIAAAIAAAAAAAAAAAAswBUAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T18:42:09.05Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+              "WhenOpened": "2025-09-08T18:42:09.05Z"
             },
             {
               "$type": "Document",
@@ -133,8 +132,7 @@
               "RelativeToolTip": "Validators\\CropValidator.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAgwC4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T17:36:41.721Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-06T17:36:41.721Z"
             },
             {
               "$type": "Document",
@@ -218,8 +216,7 @@
               "RelativeToolTip": "Models\\AgroSmartContext.cs",
               "ViewState": "AgIAAKMAAAAAAAAAAAAqwMIAAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-26T07:35:51.636Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-26T07:35:51.636Z"
             },
             {
               "$type": "Document",
@@ -231,8 +228,7 @@
               "RelativeToolTip": "Controllers\\AuthController.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAYwEYAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-08T03:36:45.95Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-08T03:36:45.95Z"
             },
             {
               "$type": "Document",
@@ -268,8 +264,7 @@
               "RelativeToolTip": "Controllers\\UserController.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAAABoBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-01T03:18:56.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-01T03:18:56.42Z"
             },
             {
               "$type": "Document",
@@ -293,8 +288,7 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-31T17:15:31.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-31T17:15:31.277Z"
             }
           ]
         }

@@ -22,6 +22,7 @@ const UserFormPage = () => {
     email: '',
     fullName: '',
     phoneNumber: '',
+    address: '',
     role: 'User',
     isActive: true,
     password: '',
@@ -53,6 +54,7 @@ const UserFormPage = () => {
           email: userData.email || '',
           fullName: userData.fullName || '',
           phoneNumber: userData.phoneNumber || userData.phone || '',
+          address: userData.address || '',
           role: userData.role || 'User',
           isActive: userData.isActive !== undefined ? userData.isActive : true,
           password: '',
@@ -131,26 +133,30 @@ const UserFormPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Username validation
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+    // Username validation (only for create mode)
+    if (!isEditMode) {
+      if (!formData.username.trim()) {
+        newErrors.username = 'Username is required';
+      } else if (formData.username.length < 3) {
+        newErrors.username = 'Username must be at least 3 characters';
+      }
     }
 
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email format is invalid';
+    // Email validation (only for create mode)
+    if (!isEditMode) {
+      if (!formData.email.trim()) {
+        newErrors.email = 'Email is required';
+      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        newErrors.email = 'Email format is invalid';
+      }
     }
 
-    // Full name validation
+    // Full name validation (always required)
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Full name is required';
     }
 
-    // Password validation (required for new users, optional for edit)
+    // Password validation (only for create mode)
     if (!isEditMode) {
       if (!formData.password) {
         newErrors.password = 'Password is required';
@@ -159,15 +165,6 @@ const UserFormPage = () => {
       }
 
       if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
-      }
-    } else {
-      // For edit mode, validate password only if provided
-      if (formData.password && formData.password.length < 6) {
-        newErrors.password = 'Password must be at least 6 characters';
-      }
-      
-      if (formData.password && formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
       }
     }
@@ -195,21 +192,14 @@ const UserFormPage = () => {
       let response;
       
       if (isEditMode) {
-        // Update user
+        // Update user - only send editable fields according to API
         const updateData = {
-          username: formData.username,
-          email: formData.email,
           fullName: formData.fullName,
-          phoneNumber: formData.phoneNumber,
-          phone: formData.phoneNumber, // Include both field names for compatibility
+          phone: formData.phoneNumber,
+          address: formData.address,
           role: formData.role,
           isActive: formData.isActive
         };
-        
-        // Add password only if provided
-        if (formData.password) {
-          updateData.password = formData.password;
-        }
         
         response = await adminUserService.updateUser(userId, updateData);
       } else {
@@ -232,8 +222,8 @@ const UserFormPage = () => {
         const userIdForImage = isEditMode ? userId : response.data.userId;
         let imageUploadSuccess = true;
         
-        // Upload profile image if provided (always call separate API)
-        if (profileImage && userIdForImage) {
+        // Upload profile image if provided (only for create mode)
+        if (!isEditMode && profileImage && userIdForImage) {
           try {
             console.log('Uploading profile image for user:', userIdForImage);
             const imageResponse = await adminUserService.uploadUserProfilePicture(userIdForImage, profileImage);
@@ -342,105 +332,106 @@ const UserFormPage = () => {
         {/* Form */}
         <div className="bg-white rounded-xl shadow-lg border border-gray-100">
           <form onSubmit={handleSubmit} className="p-8">
-            {/* Profile Image Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Image</h3>
-              <div className="flex items-center gap-6">
-                <div className="relative">
-                  {profileImagePreview || currentProfileImage ? (
-                    <img
-                      src={profileImagePreview || currentProfileImage}
-                      alt="Profile preview"
-                      className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
-                      onError={(e) => {
-                        // If image fails to load, show initials
-                        e.target.style.display = 'none';
-                        e.target.nextElementSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div 
-                    className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
-                    style={{ display: (profileImagePreview || currentProfileImage) ? 'none' : 'flex' }}
-                  >
-                    {formData.fullName || formData.username ? (
-                      <span className="text-white font-bold text-2xl">
-                        {getUserInitials({ fullName: formData.fullName, username: formData.username })}
-                      </span>
-                    ) : (
-                      <User className="w-12 h-12 text-white" />
+            {/* Profile Image Section - Only show in create mode */}
+            {!isEditMode && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Image</h3>
+                <div className="flex items-center gap-6">
+                  <div className="relative">
+                    {profileImagePreview || currentProfileImage ? (
+                      <img
+                        src={profileImagePreview || currentProfileImage}
+                        alt="Profile preview"
+                        className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
+                        onError={(e) => {
+                          // If image fails to load, show initials
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+                      style={{ display: (profileImagePreview || currentProfileImage) ? 'none' : 'flex' }}
+                    >
+                      {formData.fullName || formData.username ? (
+                        <span className="text-white font-bold text-2xl">
+                          {getUserInitials({ fullName: formData.fullName, username: formData.username })}
+                        </span>
+                      ) : (
+                        <User className="w-12 h-12 text-white" />
+                      )}
+                    </div>
+                    {profileImagePreview && (
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        title="Remove new image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                     )}
                   </div>
-                  {profileImagePreview && (
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                      title="Remove new image"
+                  <div>
+                    <label
+                      htmlFor="profileImage"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors duration-200"
                     >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-                <div>
-                  <label
-                    htmlFor="profileImage"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors duration-200"
-                  >
-                    <Camera className="w-4 h-4" />
-                    {isEditMode ? 'Change Image' : 'Choose Image'}
-                  </label>
-                  <input
-                    id="profileImage"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                  <p className="text-sm text-gray-500 mt-2">
-                    {isEditMode 
-                      ? 'Upload a new profile picture to replace the current one (Max 5MB, JPG, PNG, GIF)'
-                      : 'Upload a profile picture (Max 5MB, JPG, PNG, GIF)'
-                    }
-                  </p>
-                  {profileImagePreview && (
-                    <p className="text-sm text-blue-600 mt-1">
-                      ✓ New image selected - it will be uploaded when you save the user
+                      <Camera className="w-4 h-4" />
+                      Choose Image
+                    </label>
+                    <input
+                      id="profileImage"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                    <p className="text-sm text-gray-500 mt-2">
+                      Upload a profile picture (Max 5MB, JPG, PNG, GIF)
                     </p>
-                  )}
+                    {profileImagePreview && (
+                      <p className="text-sm text-blue-600 mt-1">
+                        ✓ New image selected - it will be uploaded when you save the user
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Basic Information */}
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Username */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Username *
-                  </label>
-                  <div className="relative">
-                    <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.username ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="Enter username"
-                    />
+                {/* Username - Only show in create mode */}
+                {!isEditMode && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Username *
+                    </label>
+                    <div className="relative">
+                      <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.username ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                        placeholder="Enter username"
+                      />
+                    </div>
+                    {errors.username && (
+                      <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+                    )}
                   </div>
-                  {errors.username && (
-                    <p className="text-red-500 text-sm mt-1">{errors.username}</p>
-                  )}
-                </div>
+                )}
 
                 {/* Full Name */}
-                <div>
+                <div className={!isEditMode ? '' : 'md:col-span-2'}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name *
                   </label>
@@ -459,28 +450,48 @@ const UserFormPage = () => {
                   )}
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
-                  </label>
-                  <div className="relative">
-                    <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.email ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="Enter email address"
-                    />
+                {/* Email - Read-only in edit mode, editable in create mode */}
+                {!isEditMode ? (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email *
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.email ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                        placeholder="Enter email address"
+                      />
+                    </div>
+                    {errors.email && (
+                      <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                    )}
                   </div>
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                  )}
-                </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email (Read-only)
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="email"
+                        value={formData.email}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
+                        readOnly
+                      />
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Email cannot be changed through this form
+                    </p>
+                  </div>
+                )}
 
                 {/* Phone Number */}
                 <div>
@@ -503,6 +514,21 @@ const UserFormPage = () => {
                   {errors.phoneNumber && (
                     <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
                   )}
+                </div>
+
+                {/* Address field */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter address"
+                  />
                 </div>
               </div>
             </div>
@@ -554,53 +580,84 @@ const UserFormPage = () => {
               </div>
             </div>
 
-            {/* Password Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {isEditMode ? 'Change Password (Optional)' : 'Password *'}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {isEditMode ? 'New Password' : 'Password'} {!isEditMode && '*'}
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.password ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder={isEditMode ? 'Leave blank to keep current password' : 'Enter password'}
-                  />
-                  {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                  )}
-                </div>
+            {/* Password Section - Only show in create mode */}
+            {!isEditMode && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Password *
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Password */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Password *
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.password ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter password"
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                    )}
+                  </div>
 
-                {/* Confirm Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm Password {!isEditMode && '*'}
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Confirm password"
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-                  )}
+                  {/* Confirm Password */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password *
+                    </label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Confirm password"
+                    />
+                    {errors.confirmPassword && (
+                      <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Note for edit mode */}
+            {isEditMode && (
+              <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">
+                      Edit Mode Limitations
+                    </h3>
+                    <div className="mt-2 text-sm text-blue-700">
+                      <p>In edit mode, you can only modify:</p>
+                      <ul className="list-disc list-inside mt-1 space-y-1">
+                        <li>Full Name</li>
+                        <li>Phone Number</li>
+                        <li>Address</li>
+                        <li>Role</li>
+                        <li>Account Status</li>
+                      </ul>
+                      <p className="mt-2">Email, username, password, and profile image cannot be changed through this form.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Form Actions */}
             <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
