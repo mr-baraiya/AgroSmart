@@ -44,12 +44,16 @@ export const getProfileImageUrl = (user) => {
     return profileImage;
   }
 
-  // If it's a relative path, construct the full URL
+  // Get base URL from environment variables
   const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL || 'https://agrosmart-backend-7xdp.onrender.com';
+  
+  // Clean up paths
+  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const cleanPath = profileImage.startsWith('/') ? profileImage : `/${profileImage}`;
   
   // Add cache-busting parameter to force reload of updated images
   const timestamp = Date.now();
-  return `${baseUrl}/Images/${profileImage}?t=${timestamp}`;
+  return `${cleanBaseUrl}${cleanPath}?t=${timestamp}`;
 };
 
 /**

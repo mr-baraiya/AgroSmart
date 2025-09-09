@@ -7,6 +7,15 @@ export const adminUserService = {
   getAllUsers: async () => {
     try {
       const response = await api.get(`${API_BASE_URL}/All`);
+      console.log('🔍 Users API Response:', response.data);
+      if (response.data && response.data.length > 0) {
+        console.log('🔍 First user structure:', response.data[0]);
+        console.log('🔍 Profile fields in first user:', {
+          profilePicture: response.data[0]?.profilePicture,
+          profileImage: response.data[0]?.profileImage,
+          image: response.data[0]?.image
+        });
+      }
       return response;
     } catch (error) {
       console.error('Error fetching all users (admin):', error);
@@ -28,10 +37,21 @@ export const adminUserService = {
   // Create new user (admin access)
   createUser: async (userData) => {
     try {
-      const response = await api.post(`${API_BASE_URL}`, userData);
+      console.log('🔍 Creating user with data:', userData);
+      // Use Auth/Register endpoint for creating new users
+      const response = await api.post('/Auth/Register', userData);
+      console.log('✅ User created successfully:', response.data);
       return response;
     } catch (error) {
       console.error('Error creating user (admin):', error);
+      console.error('🚨 Request data was:', userData);
+      if (error.response) {
+        console.error('🚨 Error response data:', error.response.data);
+        console.error('🚨 Error response status:', error.response.status);
+        if (error.response.data && error.response.data.errors) {
+          console.error('🚨 Validation errors:', error.response.data.errors);
+        }
+      }
       throw error;
     }
   },

@@ -18,7 +18,6 @@ const UserFormPage = () => {
   const [isServerError, setIsServerError] = useState(false);
   
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     fullName: '',
     phoneNumber: '',
@@ -32,14 +31,22 @@ const UserFormPage = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [currentProfileImage, setCurrentProfileImage] = useState(null);
+  const [originalUserData, setOriginalUserData] = useState(null);
   const [errors, setErrors] = useState({});
+
+  // Check if this is a protected user
+  const isProtectedUser = isEditMode && userId === '20';
 
   // Fetch user data for edit mode
   useEffect(() => {
     if (isEditMode && isServerOnline && !isInitialCheck && userId) {
+      // Skip fetching data for protected user - will show protected UI instead
+      if (isProtectedUser) {
+        return;
+      }
       fetchUserData();
     }
-  }, [isEditMode, isServerOnline, isInitialCheck, userId]);
+  }, [isEditMode, isServerOnline, isInitialCheck, userId, isProtectedUser]);
 
   const fetchUserData = async () => {
     setLoading(true);
@@ -49,8 +56,11 @@ const UserFormPage = () => {
       const response = await adminUserService.getUserById(userId);
       if (response && response.data) {
         const userData = response.data;
+        
+        // Store original user data for API submission
+        setOriginalUserData(userData);
+        
         setFormData({
-          username: userData.username || '',
           email: userData.email || '',
           fullName: userData.fullName || '',
           phoneNumber: userData.phoneNumber || userData.phone || '',
@@ -133,15 +143,6 @@ const UserFormPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Username validation (only for create mode)
-    if (!isEditMode) {
-      if (!formData.username.trim()) {
-        newErrors.username = 'Username is required';
-      } else if (formData.username.length < 3) {
-        newErrors.username = 'Username must be at least 3 characters';
-      }
-    }
-
     // Email validation (only for create mode)
     if (!isEditMode) {
       if (!formData.email.trim()) {
@@ -181,6 +182,12 @@ const UserFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Prevent editing protected user
+    if (isProtectedUser) {
+      toast.error('This user account is protected and cannot be edited.');
+      return;
+    }
+    
     if (!validateForm()) {
       toast.error('Please fix the errors in the form');
       return;
@@ -192,29 +199,46 @@ const UserFormPage = () => {
       let response;
       
       if (isEditMode) {
-        // Update user - only send editable fields according to API
+        // Ensure we have original user data before updating
+        if (!originalUserData) {
+          toast.error('User data not loaded. Please refresh and try again.');
+          return;
+        }
+        
+        // Update user - send complete object with proper field names for the API
         const updateData = {
+          userId: originalUserData.userId || parseInt(userId),
           fullName: formData.fullName,
-          phone: formData.phoneNumber,
-          address: formData.address,
+          email: originalUserData.email || '', // Keep original email (not editable)
+          passwordHash: originalUserData.passwordHash || originalUserData.password || '', // Keep original password
           role: formData.role,
-          isActive: formData.isActive
+          phone: formData.phoneNumber || '',
+          address: formData.address || '',
+          isActive: formData.isActive,
+          createdAt: originalUserData.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(), // Update timestamp
+          profileImage: originalUserData.profileImage || originalUserData.profilePicture || ''
         };
         
+        console.log('📝 Sending update data:', updateData);
         response = await adminUserService.updateUser(userId, updateData);
       } else {
-        // Create new user
+        // Create new user - match exact API structure
         const createData = {
-          username: formData.username,
-          email: formData.email,
+          userId: 0,
           fullName: formData.fullName,
-          phoneNumber: formData.phoneNumber,
-          phone: formData.phoneNumber, // Include both field names for compatibility
+          email: formData.email,
+          passwordHash: formData.password,
           role: formData.role,
+          phone: formData.phoneNumber || '',
+          address: formData.address || '',
           isActive: formData.isActive,
-          password: formData.password
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          profileImage: ''
         };
         
+        console.log('🔍 Sending create user data:', createData);
         response = await adminUserService.createUser(createData);
       }
 
@@ -291,6 +315,33 @@ const UserFormPage = () => {
     );
   }
 
+  // Protected user state
+  if (isProtectedUser) {
+    return (
+      <div className="p-6 bg-gradient-to-br from-red-50 to-orange-50 min-h-screen">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-xl shadow-lg border border-red-200 p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m8-9a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-red-800 mb-2">Protected User Account</h2>
+            <p className="text-red-600 mb-6">
+              This user account is protected and cannot be edited for security reasons.
+            </p>
+            <button
+              onClick={() => navigate('/dashboard/users')}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Back to Users
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Loading state for edit mode
   if (isEditMode && loading) {
     return (
@@ -354,9 +405,9 @@ const UserFormPage = () => {
                       className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
                       style={{ display: (profileImagePreview || currentProfileImage) ? 'none' : 'flex' }}
                     >
-                      {formData.fullName || formData.username ? (
+                      {formData.fullName ? (
                         <span className="text-white font-bold text-2xl">
-                          {getUserInitials({ fullName: formData.fullName, username: formData.username })}
+                          {getUserInitials({ fullName: formData.fullName })}
                         </span>
                       ) : (
                         <User className="w-12 h-12 text-white" />
@@ -405,31 +456,6 @@ const UserFormPage = () => {
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Username - Only show in create mode */}
-                {!isEditMode && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Username *
-                    </label>
-                    <div className="relative">
-                      <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.username ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                        placeholder="Enter username"
-                      />
-                    </div>
-                    {errors.username && (
-                      <p className="text-red-500 text-sm mt-1">{errors.username}</p>
-                    )}
-                  </div>
-                )}
-
                 {/* Full Name */}
                 <div className={!isEditMode ? '' : 'md:col-span-2'}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -625,35 +651,6 @@ const UserFormPage = () => {
                     {errors.confirmPassword && (
                       <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
                     )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Note for edit mode */}
-            {isEditMode && (
-              <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-blue-800">
-                      Edit Mode Limitations
-                    </h3>
-                    <div className="mt-2 text-sm text-blue-700">
-                      <p>In edit mode, you can only modify:</p>
-                      <ul className="list-disc list-inside mt-1 space-y-1">
-                        <li>Full Name</li>
-                        <li>Phone Number</li>
-                        <li>Address</li>
-                        <li>Role</li>
-                        <li>Account Status</li>
-                      </ul>
-                      <p className="mt-2">Email, username, password, and profile image cannot be changed through this form.</p>
-                    </div>
                   </div>
                 </div>
               </div>

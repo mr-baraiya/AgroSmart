@@ -1,8 +1,8 @@
 import React from "react";
-import { Edit, Trash2, Eye, UserCheck, UserX, Shield, User } from "lucide-react";
+import { Edit, Trash2, Eye, UserCheck, UserX, Shield, User, Camera } from "lucide-react";
 import { getProfileImageUrl, getUserInitials, handleImageError } from '../../utils/imageUtils';
 
-const UserTable = ({ users, loading, onEdit, onSoftDelete, onHardDelete, onInfo, error }) => {
+const UserTable = ({ users, loading, onEdit, onSoftDelete, onHardDelete, onInfo, onEditProfilePicture, error }) => {
   
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -121,20 +121,31 @@ const UserTable = ({ users, loading, onEdit, onSoftDelete, onHardDelete, onInfo,
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
-                      {user.profilePicture ? (
+                      {console.log('🔍 User data for', user.fullName, ':', { profilePicture: user.profilePicture, profileImage: user.profileImage, image: user.image })}
+                      {user.profilePicture || user.profileImage || user.image ? (
                         <img
-                          className="h-10 w-10 rounded-full object-cover"
+                          className="h-10 w-10 rounded-full object-cover border-2 border-gray-200"
                           src={getProfileImageUrl(user)}
                           alt={user.fullName}
-                          onError={handleImageError}
+                          onError={(e) => {
+                            console.log('❌ Image failed to load for user:', user.fullName, 'URL:', getProfileImageUrl(user));
+                            // Show fallback
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                          onLoad={() => {
+                            console.log('✅ Image loaded successfully for user:', user.fullName, 'URL:', getProfileImageUrl(user));
+                          }}
                         />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                          <span className="text-white font-semibold text-sm">
-                            {getUserInitials(user)}
-                          </span>
-                        </div>
-                      )}
+                      ) : null}
+                      <div 
+                        className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+                        style={{ display: (user.profilePicture || user.profileImage || user.image) ? 'none' : 'flex' }}
+                      >
+                        <span className="text-white font-semibold text-sm">
+                          {getUserInitials(user)}
+                        </span>
+                      </div>
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900">
@@ -173,6 +184,13 @@ const UserTable = ({ users, loading, onEdit, onSoftDelete, onHardDelete, onInfo,
                       title="View Details"
                     >
                       <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onEditProfilePicture(user)}
+                      className="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-100 transition-colors duration-150"
+                      title="Edit Profile Picture"
+                    >
+                      <Camera className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(user)}
