@@ -11,7 +11,6 @@ import {
   TreePine,
   CheckCircle,
   XCircle,
-  Users,
   Wheat
 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -65,7 +64,17 @@ const FieldDetailComponent = () => {
   };
 
   const isOwnedByCurrentUser = () => {
-    return field && field.farm && field.farm.userId === user?.userId;
+    if (!field) return false;
+    
+    // Primary ownership check: field's farm is owned by current user
+    const farmOwnership = field.farm && field.farm.userId === user?.userId;
+    
+    // Secondary ownership check: direct field ownership (if API provides it)
+    const directOwnership = field.createdBy === user?.userId || field.userId === user?.userId;
+    
+    // The proper way to check ownership is through the farm relationship:
+    // field.farmId -> farm.userId should match current user.userId
+    return farmOwnership || directOwnership;
   };
 
   if (loading) {
@@ -139,7 +148,7 @@ const FieldDetailComponent = () => {
             <div className="ml-4">
               <p className="text-sm font-medium text-green-600">Field Size</p>
               <p className="text-2xl font-bold text-green-900">
-                {field.fieldSize ? `${field.sizeAcres} acres` : 'N/A'}
+                {field.sizeAcres ? `${field.sizeAcres} acres` : 'N/A'}
               </p>
             </div>
           </div>
@@ -205,10 +214,10 @@ const FieldDetailComponent = () => {
             <p className="text-lg font-semibold text-gray-900">{field.fieldName}</p>
           </div>
           
-          {field.fieldSize && (
+          {field.sizeAcres && (
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Field Size</label>
-              <p className="text-lg font-semibold text-gray-900">{field.fieldSize} acres</p>
+              <p className="text-lg font-semibold text-gray-900">{field.sizeAcres} acres</p>
             </div>
           )}
 
@@ -283,31 +292,6 @@ const FieldDetailComponent = () => {
           </div>
         </div>
       </div>
-
-      {/* Owner Information */}
-      {field.farm && field.farm.user && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center mb-6">
-            <Users className="w-5 h-5 text-gray-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">Owner Information</h2>
-          </div>
-          
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-              <Users className="w-5 h-5 text-gray-600" />
-            </div>
-            <div className="ml-4">
-              <p className="font-medium text-gray-900">{field.farm.user.firstName} {field.farm.user.lastName}</p>
-              <p className="text-sm text-gray-600">{field.farm.user.email}</p>
-            </div>
-            {isOwnedByCurrentUser() && (
-              <span className="ml-auto bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                You
-              </span>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">

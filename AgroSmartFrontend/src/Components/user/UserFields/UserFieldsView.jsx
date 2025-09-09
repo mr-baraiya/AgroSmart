@@ -47,7 +47,29 @@ const UserFieldsView = () => {
 
   // Helper function to check if current user owns the field
   const isOwnedByCurrentUser = (field) => {
-    return field.createdBy === user?.userId || field.userId === user?.userId;
+    // Primary ownership check: field's farm is owned by current user
+    const farmOwnership = field.farm && field.farm.userId === user?.userId;
+    
+    // Secondary ownership check: direct field ownership (if API provides it)
+    const directOwnership = field.createdBy === user?.userId || field.userId === user?.userId;
+    
+    // Debug logging to understand the farm relationship
+    if (field.fieldId >= 11) { // Only log for your fields
+      console.log('🔍 Field ownership check:', {
+        fieldId: field.fieldId,
+        fieldName: field.fieldName,
+        farmId: field.farmId,
+        farmUserId: field.farm?.userId,
+        currentUserId: user?.userId,
+        farmOwnership,
+        directOwnership,
+        result: farmOwnership || directOwnership
+      });
+    }
+    
+    // The proper way to check ownership is through the farm relationship:
+    // field.farmId -> farm.userId should match current user.userId
+    return farmOwnership || directOwnership;
   };
 
   useEffect(() => {
@@ -184,7 +206,7 @@ const UserFieldsView = () => {
         const associatedFarm = allFarms.find(farm => 
           farm.farmId === field.farmId
         );
-        
+
         const enrichedField = {
           ...field,
           // Map API response fields to component expected fields
@@ -200,10 +222,15 @@ const UserFieldsView = () => {
           isActive: field.isActive,
           createdAt: field.createdAt,
           updatedAt: field.updatedAt,
+          // Preserve ownership information
+          userId: field.userId,
+          createdBy: field.createdBy,
+          // Also preserve the farm object with its ownership info
+          farm: associatedFarm,
           // Ensure we have proper crop count (this might come from a separate API call)
           cropsCount: field.cropsCount || field.crops?.length || 0
         };
-        
+
         return enrichedField;
       });
       

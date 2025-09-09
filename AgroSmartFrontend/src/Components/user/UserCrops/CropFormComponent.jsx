@@ -11,7 +11,7 @@ import {
   FileText
 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { userCropService } from '../../../services/userCropService';
+import { cropService } from '../../../services/cropService';
 import { authService } from '../../../services/authService';
 import { useAuth } from '../../../contexts/AuthProvider';
 
@@ -48,7 +48,7 @@ const CropFormComponent = () => {
   const fetchCropData = async () => {
     try {
       setLoading(true);
-      const response = await userCropService.getById(id);
+      const response = await cropService.getById(id);
       const crop = response.data;
       
       setFormData({
@@ -97,7 +97,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal soil pH min validation (matches CropValidator)
-    if (formData.optimalSoilpHmin && formData.optimalSoilpHmin.trim()) {
+    if (formData.optimalSoilpHmin && typeof formData.optimalSoilpHmin === 'string' && formData.optimalSoilpHmin.trim()) {
       const pHMin = parseFloat(formData.optimalSoilpHmin);
       if (isNaN(pHMin) || pHMin < 0 || pHMin > 14) {
         newErrors.optimalSoilpHmin = 'Minimum soil pH must be between 0 and 14.';
@@ -105,7 +105,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal soil pH max validation (matches CropValidator)
-    if (formData.optimalSoilpHmax && formData.optimalSoilpHmax.trim()) {
+    if (formData.optimalSoilpHmax && typeof formData.optimalSoilpHmax === 'string' && formData.optimalSoilpHmax.trim()) {
       const pHMax = parseFloat(formData.optimalSoilpHmax);
       if (isNaN(pHMax) || pHMax < 0 || pHMax > 14) {
         newErrors.optimalSoilpHmax = 'Maximum soil pH must be between 0 and 14.';
@@ -122,7 +122,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal temperature min validation (matches CropValidator)
-    if (formData.optimalTempMin && formData.optimalTempMin.trim()) {
+    if (formData.optimalTempMin && typeof formData.optimalTempMin === 'string' && formData.optimalTempMin.trim()) {
       const tempMin = parseFloat(formData.optimalTempMin);
       if (isNaN(tempMin) || tempMin < -50 || tempMin > 100) {
         newErrors.optimalTempMin = 'Minimum temperature must be between -50 and 100 °C.';
@@ -130,7 +130,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal temperature max validation (matches CropValidator)
-    if (formData.optimalTempMax && formData.optimalTempMax.trim()) {
+    if (formData.optimalTempMax && typeof formData.optimalTempMax === 'string' && formData.optimalTempMax.trim()) {
       const tempMax = parseFloat(formData.optimalTempMax);
       if (isNaN(tempMax) || tempMax < -50 || tempMax > 100) {
         newErrors.optimalTempMax = 'Maximum temperature must be between -50 and 100 °C.';
@@ -147,7 +147,7 @@ const CropFormComponent = () => {
     }
 
     // Average water requirement validation (matches CropValidator)
-    if (formData.avgWaterReqmm && formData.avgWaterReqmm.trim()) {
+    if (formData.avgWaterReqmm && typeof formData.avgWaterReqmm === 'string' && formData.avgWaterReqmm.trim()) {
       const waterReq = parseFloat(formData.avgWaterReqmm);
       if (isNaN(waterReq) || waterReq <= 0) {
         newErrors.avgWaterReqmm = 'Average water requirement must be a positive number.';
@@ -155,7 +155,7 @@ const CropFormComponent = () => {
     }
 
     // Growth duration validation (matches CropValidator)
-    if (formData.growthDurationDays && formData.growthDurationDays.trim()) {
+    if (formData.growthDurationDays && typeof formData.growthDurationDays === 'string' && formData.growthDurationDays.trim()) {
       const duration = parseInt(formData.growthDurationDays);
       if (isNaN(duration) || duration <= 0) {
         newErrors.growthDurationDays = 'Growth duration must be a positive number of days.';
@@ -163,7 +163,7 @@ const CropFormComponent = () => {
     }
 
     // Seeding depth validation (matches CropValidator)
-    if (formData.seedingDepthCm && formData.seedingDepthCm.trim()) {
+    if (formData.seedingDepthCm && typeof formData.seedingDepthCm === 'string' && formData.seedingDepthCm.trim()) {
       const depth = parseFloat(formData.seedingDepthCm);
       if (isNaN(depth) || depth <= 0) {
         newErrors.seedingDepthCm = 'Seeding depth must be a positive number.';
@@ -211,19 +211,19 @@ const CropFormComponent = () => {
       
       // Debug auth status
       const token = localStorage.getItem('authToken');
-      const user = authService.getCurrentUser();
+      const currentUser = authService.getCurrentUser();
       console.log('🔍 Auth debug:', {
         hasToken: !!token,
         tokenPreview: token ? token.substring(0, 20) + '...' : 'No token',
-        user: user ? user.userId : 'No user',
-        userName: user ? user.fullName : 'No name'
+        user: currentUser ? currentUser.userId : 'No user',
+        userName: currentUser ? currentUser.fullName : 'No name'
       });
 
       if (isEditMode) {
-        await userCropService.update(id, submitData);
+        await cropService.update(id, submitData);
         toast.success('Crop updated successfully!');
       } else {
-        await userCropService.create(submitData);
+        await cropService.create(submitData);
         toast.success('Crop created successfully!');
       }
       

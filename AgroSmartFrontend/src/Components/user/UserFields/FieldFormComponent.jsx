@@ -114,7 +114,7 @@ const FieldFormComponent = () => {
     }
 
     // Size acres validation (matches FieldValidator)
-    if (formData.sizeAcres && formData.sizeAcres.trim()) {
+    if (formData.sizeAcres && (typeof formData.sizeAcres === 'string' ? formData.sizeAcres.trim() : formData.sizeAcres)) {
       const size = parseFloat(formData.sizeAcres);
       if (isNaN(size) || size <= 0) {
         newErrors.sizeAcres = 'Size (in acres) must be a positive value.';
