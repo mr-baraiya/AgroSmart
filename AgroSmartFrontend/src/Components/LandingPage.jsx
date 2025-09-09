@@ -608,10 +608,10 @@ const LandingPage = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
+              <Link to="/features" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
                 Features
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
-              </a>
+              </Link>
               <a href="#about" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
                 About
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
@@ -666,7 +666,7 @@ const LandingPage = () => {
               >
                 <div className="flex flex-col space-y-4">
                   {[
-                    { href: "#features", label: "Features", icon: <Sparkles className="w-4 h-4" /> },
+                    { to: "/features", label: "Features", icon: <Sparkles className="w-4 h-4" /> },
                     { href: "#about", label: "About", icon: <Eye className="w-4 h-4" /> },
                     { to: "/weather", label: "Weather", icon: <Cloud className="w-4 h-4" /> },
                     { href: "#testimonials", label: "Testimonials", icon: <Star className="w-4 h-4" /> },
