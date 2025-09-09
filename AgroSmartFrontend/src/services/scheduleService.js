@@ -40,17 +40,6 @@ export const scheduleService = {
       } 
     });
     return response.data || [];
-  },
-
-  // Mark schedule as completed/incomplete
-  markAsCompleted: async (id, isCompleted = true) => {
-    try {
-      const response = await api.put(`/Schedule/${id}/complete?isCompleted=${isCompleted}`);
-      return response;
-    } catch (error) {
-      console.error(`Error marking schedule ${id} as ${isCompleted ? 'completed' : 'incomplete'}:`, error);
-      throw error;
-    }
   }
 };
 

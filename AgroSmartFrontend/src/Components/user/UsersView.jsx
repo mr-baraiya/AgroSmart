@@ -98,11 +98,7 @@ const UsersView = () => {
         response = await adminUserService.getAllUsers();
       }
       
-      console.log('👥 Users API response:', response);
-      
       if (response && response.data) {
-        console.log('🖼️ Sample user data:', response.data[0]);
-        console.log('📝 User object keys:', Object.keys(response.data[0] || {}));
         setUsers(response.data);
         setError(null);
       }

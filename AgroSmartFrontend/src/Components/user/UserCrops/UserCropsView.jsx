@@ -16,31 +16,25 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cropService } from '../../../services/cropService';
+import { fieldService } from '../../../services/fieldService';
+import { farmService } from '../../../services/farmService';
 import { useAuth } from '../../../contexts/AuthProvider';
 
 const UserCropsView = () => {
   const { user } = useAuth();
   const [crops, setCrops] = useState([]);
+  const [fields, setFields] = useState([]);
+  const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedField, setSelectedField] = useState('');
+  const [selectedFarm, setSelectedFarm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [filteredCrops, setFilteredCrops] = useState([]);
 
-  // Helper function to check if current user can manage the crop
+  // Helper function to check if current user owns the crop
   const isOwnedByCurrentUser = (crop) => {
-    // Since crops are system-wide data without direct ownership in the API schema,
-    // we'll allow users to edit crops based on certain criteria:
-    
-    // 1. Direct ownership check (if API ever provides it)
-    const directOwnership = crop.createdBy === user?.userId || crop.userId === user?.userId;
-    
-    // 2. Allow editing of crops with higher IDs (likely user-created crops)
-    const isUserManageableCrop = crop.cropId && crop.cropId >= 10; // Adjust threshold as needed
-    
-    // 3. Check if user has special permissions (you can add admin role check here)
-    const hasManagePermission = user?.role === 'admin' || user?.canManageCrops;
-    
-    return directOwnership || isUserManageableCrop || hasManagePermission;
+    return crop.createdBy === user?.userId || crop.userId === user?.userId;
   };
 
   useEffect(() => {
@@ -53,37 +47,53 @@ const UserCropsView = () => {
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(crop =>
-        (crop.cropName && crop.cropName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (crop.harvestSeason && crop.harvestSeason.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (crop.description && crop.description.toLowerCase().includes(searchTerm.toLowerCase()))
+        (crop.name && crop.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (crop.variety && crop.variety.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (crop.fieldName && crop.fieldName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (crop.farmName && crop.farmName.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
-    // Filter by status (if crops have isActive property)
+    // Filter by selected farm
+    if (selectedFarm) {
+      filtered = filtered.filter(crop => crop.farmId === selectedFarm);
+    }
+
+    // Filter by selected field
+    if (selectedField) {
+      filtered = filtered.filter(crop => crop.fieldId === selectedField);
+    }
+
+    // Filter by status
     if (selectedStatus) {
-      if (selectedStatus === 'active') {
-        filtered = filtered.filter(crop => crop.isActive !== false);
-      } else if (selectedStatus === 'inactive') {
-        filtered = filtered.filter(crop => crop.isActive === false);
-      }
+      filtered = filtered.filter(crop => crop.status === selectedStatus);
     }
 
     setFilteredCrops(filtered);
-  }, [searchTerm, selectedStatus, crops]);
+  }, [searchTerm, selectedField, selectedFarm, selectedStatus, crops]);
 
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const cropsResponse = await cropService.getAll();
+      const [cropsResponse, fieldsResponse, farmsResponse] = await Promise.all([
+        cropService.getAll(),
+        fieldService.getAll(),
+        farmService.getAll()
+      ]);
       
       const allCrops = cropsResponse.data || [];
+      const allFields = fieldsResponse.data || [];
+      const allFarms = farmsResponse.data || [];
       
       setCrops(allCrops);
+      setFields(allFields);
+      setFarms(allFarms);
       setFilteredCrops(allCrops);
     } catch (error) {
       console.error('Error fetching user data:', error);
       toast.error('Unable to load your crops. Please try again.');
       setCrops([]);
+      setFields([]);
       setFarms([]);
       setFilteredCrops([]);
     } finally {
@@ -98,7 +108,7 @@ const UserCropsView = () => {
       return;
     }
 
-    const result = window.confirm(`Are you sure you want to delete "${crop.cropName || crop.name}"? This action cannot be undone.`);
+    const result = window.confirm(`Are you sure you want to delete "${crop.name}"? This action cannot be undone.`);
 
     if (result) {
       try {
@@ -168,7 +178,7 @@ const UserCropsView = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search crops by name, harvest season..."
+                placeholder="Search crops, varieties, fields..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -176,13 +186,40 @@ const UserCropsView = () => {
             </div>
           </div>
           <select
+            value={selectedFarm}
+            onChange={(e) => setSelectedFarm(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
+            <option value="">All Farms</option>
+            {farms.map((farm, index) => (
+              <option key={farm.farmId || farm.id || `farm-${index}`} value={farm.farmId || farm.id}>
+                {farm.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedField}
+            onChange={(e) => setSelectedField(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
+            <option value="">All Fields</option>
+            {fields.filter(field => !selectedFarm || field.farmId === selectedFarm).map((field, index) => (
+              <option key={field.fieldId || field.id || `field-${index}`} value={field.fieldId || field.id}>
+                {field.name}
+              </option>
+            ))}
+          </select>
+          <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
             <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="planning">Planning</option>
+            <option value="planted">Planted</option>
+            <option value="growing">Growing</option>
+            <option value="harvesting">Harvesting</option>
+            <option value="harvested">Harvested</option>
           </select>
         </div>
       </div>
@@ -193,7 +230,7 @@ const UserCropsView = () => {
           <Sprout className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No crops found</h3>
           <p className="text-gray-600 mb-6">
-            {searchTerm || selectedStatus ? 'No crops match your search criteria.' : 'Get started by adding your first crop.'}
+            {searchTerm || selectedField || selectedFarm || selectedStatus ? 'No crops match your search criteria.' : 'Get started by adding your first crop.'}
           </p>
           <Link
             to="/user-dashboard/my-crops/add"
@@ -216,46 +253,44 @@ const UserCropsView = () => {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{crop.cropName || crop.name || 'Unknown Crop'}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{crop.name}</h3>
                     {crop.variety && (
                       <p className="text-sm text-gray-600 mb-1">{crop.variety}</p>
                     )}
                     <div className="text-sm text-green-600 font-medium">
-                      {crop.harvestSeason || 'Crop Information'}
+                      {crop.fieldName || 'Unknown Field'} • {crop.farmName || 'Unknown Farm'}
                     </div>
                   </div>
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${crop.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {crop.isActive !== false ? 'Active' : 'Inactive'}
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(crop.status)}`}>
+                    {crop.status?.charAt(0).toUpperCase() + crop.status?.slice(1) || 'Unknown'}
                   </span>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="text-center">
-                    <p className="text-lg font-bold text-gray-900">{crop.growthDurationDays || '0'}</p>
-                    <p className="text-xs text-gray-600">Growth Days</p>
+                    <p className="text-lg font-bold text-gray-900">{crop.area || '0'}</p>
+                    <p className="text-xs text-gray-600">Area (acres)</p>
                   </div>
                   <div className="text-center">
                     <p className="text-lg font-bold text-gray-900">
-                      {crop.avgWaterReqmm || 'N/A'}
+                      {crop.harvestingDate ? getDaysUntilHarvest(crop.plantingDate, crop.harvestingDate) || 'Ready' : 'N/A'}
                     </p>
-                    <p className="text-xs text-gray-600">Water Req (mm)</p>
+                    <p className="text-xs text-gray-600">Days to Harvest</p>
                   </div>
                 </div>
 
-                {/* Crop Details */}
-                {(crop.optimalTempMin || crop.optimalTempMax || crop.optimalSoilpHmin || crop.optimalSoilpHmax) && (
+                {/* Dates */}
+                {crop.plantingDate && (
                   <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                    {(crop.optimalTempMin || crop.optimalTempMax) && (
-                      <div className="flex items-center text-sm text-gray-600 mb-1">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Temp: {crop.optimalTempMin}°C - {crop.optimalTempMax}°C
-                      </div>
-                    )}
-                    {(crop.optimalSoilpHmin || crop.optimalSoilpHmax) && (
+                    <div className="flex items-center text-sm text-gray-600 mb-1">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Planted: {new Date(crop.plantingDate).toLocaleDateString()}
+                    </div>
+                    {crop.harvestingDate && (
                       <div className="flex items-center text-sm text-gray-600">
                         <Clock className="w-4 h-4 mr-2" />
-                        pH: {crop.optimalSoilpHmin} - {crop.optimalSoilpHmax}
+                        Expected Harvest: {new Date(crop.harvestingDate).toLocaleDateString()}
                       </div>
                     )}
                   </div>

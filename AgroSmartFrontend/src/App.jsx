@@ -14,9 +14,6 @@ import LandingPage from "./Components/LandingPage";
 import PrivacyPolicy from "./Components/legal/PrivacyPolicy";
 import TermsOfService from "./Components/legal/TermsOfService";
 import ContactUs from "./Components/legal/ContactUs";
-import GuestWeatherPage from "./pages/guest/WeatherPage";
-import FeaturesPage from "./pages/guest/FeaturesPage";
-import LearnMorePage from "./pages/guest/LearnMorePage";
 import CropsView from "./Components/crop/CropsView";
 import CropDetail from "./Components/crop/CropDetail";
 import CropFormPage from "./Components/crop/CropFormPage";
@@ -73,9 +70,6 @@ function App() {
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-            <Route path="/weather" element={<GuestWeatherPage />} />
-            <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/learn-more" element={<LearnMorePage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/contact" element={<ContactUs />} />
