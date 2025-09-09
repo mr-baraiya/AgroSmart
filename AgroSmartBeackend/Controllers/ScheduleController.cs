@@ -185,5 +185,33 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
+        #region MarkScheduleAsCompleted
+        [HttpPut("{id}/complete")]
+        public async Task<ActionResult> MarkScheduleAsCompleted(int id, [FromQuery] bool isCompleted = true)
+        {
+            try
+            {
+                var schedule = await _context.Schedules.FindAsync(id);
+                if (schedule == null)
+                    return NotFound(new { Message = $"Schedule with ID {id} not found." });
+
+                schedule.IsCompleted = isCompleted;
+                schedule.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    Message = $"Schedule {(isCompleted ? "marked as completed" : "marked as not completed")} successfully.",
+                    Schedule = schedule
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error updating schedule completion status", Error = ex.Message });
+            }
+        }
+        #endregion
+
     }
 }
