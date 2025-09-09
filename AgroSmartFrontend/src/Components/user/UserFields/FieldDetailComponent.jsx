@@ -35,7 +35,7 @@ const FieldDetailComponent = () => {
   const fetchFieldData = async () => {
     try {
       setLoading(true);
-      const response = await userFieldService.getFieldById(id);
+      const response = await userFieldService.getById(id);
       setField(response.data);
     } catch (error) {
       console.error('Error fetching field data:', error);
@@ -52,7 +52,7 @@ const FieldDetailComponent = () => {
     if (confirmDelete) {
       try {
         setDeleting(true);
-        await userFieldService.deleteField(id);
+        await userFieldService.delete(id);
         toast.success('Field deleted successfully!');
         navigate('/user-dashboard/my-fields');
       } catch (error) {
