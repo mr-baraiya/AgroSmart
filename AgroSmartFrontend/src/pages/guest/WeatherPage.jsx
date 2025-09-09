@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   Cloud, 
@@ -21,7 +21,16 @@ import {
   BarChart3,
   Wheat,
   Star,
-  Zap
+  Zap,
+  Menu,
+  X,
+  Sparkles,
+  Mail,
+  Phone,
+  Github,
+  Users,
+  Shield,
+  Leaf
 } from 'lucide-react';
 import { realTimeWeatherService } from '../../services/realTimeWeatherService';
 
@@ -35,6 +44,7 @@ const WeatherPage = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState('pending'); // 'pending', 'granted', 'denied'
   const [isUsingLocation, setIsUsingLocation] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Default cities for quick access
   const popularCities = [
@@ -232,6 +242,101 @@ const WeatherPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600">
       {/* Header */}
+      <header className="bg-gray-900/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <Leaf className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-white">AgroSmart</span>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link to="/" className="text-white hover:text-green-400 transition-colors">
+                Home
+              </Link>
+              <Link to="/features" className="text-white hover:text-green-400 transition-colors">
+                Features
+              </Link>
+              <Link to="/weather" className="text-green-400 font-semibold">
+                Weather
+              </Link>
+              <Link to="/contact" className="text-white hover:text-green-400 transition-colors">
+                Contact
+              </Link>
+              <Link 
+                to="/auth/login" 
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Login
+              </Link>
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-white hover:text-green-400 transition-colors"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="md:hidden border-t border-white/20 py-4"
+              >
+                <nav className="flex flex-col space-y-4">
+                  <Link 
+                    to="/" 
+                    className="text-white hover:text-green-400 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link 
+                    to="/features" 
+                    className="text-white hover:text-green-400 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Features
+                  </Link>
+                  <Link 
+                    to="/weather" 
+                    className="text-green-400 font-semibold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Weather
+                  </Link>
+                  <Link 
+                    to="/contact" 
+                    className="text-white hover:text-green-400 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Contact
+                  </Link>
+                  <Link 
+                    to="/auth/login" 
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                </nav>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </header>
+
+      {/* Weather Content Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

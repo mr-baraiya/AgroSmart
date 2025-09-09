@@ -23,7 +23,9 @@ import {
   Zap,
   Eye,
   TrendingUp,
-  Cloud
+  Cloud,
+  QrCode,
+  Smartphone
 } from 'lucide-react';
 
 // Custom hook for responsive canvas settings
@@ -467,6 +469,21 @@ const LandingPage = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [totalAcres, setTotalAcres] = useState(0);
   const [isLoadingAcres, setIsLoadingAcres] = useState(true);
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  // Check if device is desktop/laptop
+  useEffect(() => {
+    const checkDeviceType = () => {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isSmallScreen = window.innerWidth < 768;
+      setIsDesktop(!isMobile && !isSmallScreen);
+    };
+    
+    checkDeviceType();
+    window.addEventListener('resize', checkDeviceType);
+    return () => window.removeEventListener('resize', checkDeviceType);
+  }, []);
 
   // Fetch total user count and total acres
   useEffect(() => {
@@ -534,6 +551,21 @@ const LandingPage = () => {
       icon: <Shield className="w-8 h-8 text-red-600" />,
       title: "Secure Platform",
       description: "Enterprise-grade security to protect your agricultural data and insights"
+    },
+    {
+      icon: <Eye className="w-8 h-8 text-orange-600" />,
+      title: "Field Monitoring",
+      description: "Real-time field condition monitoring with IoT sensors and satellite imagery"
+    },
+    {
+      icon: <TrendingUp className="w-8 h-8 text-emerald-600" />,
+      title: "Yield Optimization",
+      description: "Maximize crop yields through precision agriculture and smart recommendations"
+    },
+    {
+      icon: <Zap className="w-8 h-8 text-yellow-600" />,
+      title: "Smart Irrigation",
+      description: "Automated irrigation systems that optimize water usage based on soil conditions"
     }
   ];
 
@@ -628,6 +660,23 @@ const LandingPage = () => {
                 Contact
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
+              
+              {/* QR Code button - only show on desktop */}
+              {isDesktop && (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <button
+                    onClick={() => setShowQRCode(true)}
+                    className="flex items-center space-x-2 bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-300 hover:border-green-600 hover:text-green-600 transition-all duration-200"
+                    title="Open on Mobile"
+                  >
+                    <Smartphone className="w-4 h-4" />
+                    <span className="text-sm">Mobile</span>
+                  </button>
+                </motion.div>
+              )}
               
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -812,7 +861,7 @@ const LandingPage = () => {
                   className="w-full sm:w-auto"
                 >
                   <Link
-                    to="/contact"
+                    to="/learn-more"
                     className="inline-flex items-center justify-center w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-4 border-2 border-green-600 font-semibold rounded-lg transition-all duration-300 text-green-600 hover:bg-green-600 hover:text-white"
                   >
                     <Eye className="w-5 h-5 mr-2" />
@@ -1230,6 +1279,64 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+
+      {/* QR Code Modal */}
+      <AnimatePresence>
+        {showQRCode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowQRCode(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="bg-white rounded-2xl p-8 max-w-sm w-full mx-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl flex items-center justify-center">
+                    <QrCode className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Open on Mobile
+                </h3>
+                
+                <p className="text-gray-600 mb-6">
+                  Scan this QR code with your phone to access AgroSmart on mobile
+                </p>
+                
+                <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                  <img 
+                    src="/AgrosmartQR.jpeg" 
+                    alt="QR Code for AgroSmart Mobile"
+                    className="w-48 h-48 mx-auto rounded-lg"
+                  />
+                </div>
+                
+                <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-6">
+                  <Smartphone className="w-4 h-4" />
+                  <span>Optimized for mobile devices</span>
+                </div>
+                
+                <button
+                  onClick={() => setShowQRCode(false)}
+                  className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 font-semibold"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

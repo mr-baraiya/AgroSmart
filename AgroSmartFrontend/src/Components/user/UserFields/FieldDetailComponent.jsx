@@ -139,7 +139,7 @@ const FieldDetailComponent = () => {
             <div className="ml-4">
               <p className="text-sm font-medium text-green-600">Field Size</p>
               <p className="text-2xl font-bold text-green-900">
-                {field.fieldSize ? `${field.fieldSize} acres` : 'N/A'}
+                {field.fieldSize ? `${field.sizeAcres} acres` : 'N/A'}
               </p>
             </div>
           </div>
