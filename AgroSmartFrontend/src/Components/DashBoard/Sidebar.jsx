@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   Home, Sprout, MapPin, Calendar, TrendingUp,
   Users, Settings, Activity, Cloud, Leaf, Layers, User,
-  Bell, Award
+  Bell, Award, Lightbulb
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthProvider";
 import ProfileImageDisplay from "../common/ProfileImage";
@@ -16,6 +16,7 @@ const sidebarItems = [
   { id: "sensors", label: "Sensors", icon: Activity, path: "/dashboard/sensors" },
   { id: "weather", label: "Weather", icon: Cloud, path: "/dashboard/weather" },
   { id: "schedule", label: "Schedule", icon: Calendar, path: "/dashboard/schedules" },
+  { id: "smart-insights", label: "Smart Insights", icon: Lightbulb, path: "/dashboard/smart-insights" },
   { id: "insights", label: "Insights", icon: TrendingUp, path: "/dashboard/insights" },
   { id: "notifications", label: "Notifications", icon: Bell, path: "/dashboard/notifications" },
   { id: "badges", label: "Knowledge Badges", icon: Award, path: "/dashboard/badges" },

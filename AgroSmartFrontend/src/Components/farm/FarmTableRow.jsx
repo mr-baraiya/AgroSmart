@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { MapPin, MoreHorizontal } from "lucide-react";
-import FarmActionsDropdown from "./FarmActionsDropdown";
+import React from "react";
+import { MapPin, Eye, Edit, Trash2, Grid } from "lucide-react";
 
 const FarmTableRow = ({
   farm,
@@ -11,15 +10,6 @@ const FarmTableRow = ({
   selected = false,
   onSelect
 }) => {
-  const [showActions, setShowActions] = useState(false);
-
-  const toggleActions = () => {
-    setShowActions(prev => !prev);
-  };
-
-  const hideActions = () => {
-    setShowActions(false);
-  };
 
   return (
     <tr className={`hover:bg-gray-50 relative ${selected ? 'bg-blue-50' : ''}`}>
@@ -62,23 +52,37 @@ const FarmTableRow = ({
           </span>
         )}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
-        <button
-          className="p-1 rounded hover:bg-gray-200 transition-colors"
-          onClick={toggleActions}
-        >
-          <MoreHorizontal className="w-5 h-5 text-gray-600" />
-        </button>
-        {showActions && (
-          <FarmActionsDropdown
-            farm={farm}
-            onEdit={() => onEdit(farm)}
-            onDelete={() => onDelete(farm)}
-            onInfo={() => onInfo(farm)}
-            onViewFields={() => onViewFields(farm)}
-            onClose={hideActions}
-          />
-        )}
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onInfo(farm)}
+            className="p-1.5 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+            title="View Details"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onViewFields(farm)}
+            className="p-1.5 rounded-full hover:bg-purple-100 text-purple-600 transition-colors"
+            title="View Fields"
+          >
+            <Grid className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onEdit(farm)}
+            className="p-1.5 rounded-full hover:bg-green-100 text-green-600 transition-colors"
+            title="Edit Farm"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(farm)}
+            className="p-1.5 rounded-full hover:bg-red-100 text-red-600 transition-colors"
+            title="Delete Farm"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </td>
     </tr>
   );

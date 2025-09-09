@@ -12,7 +12,10 @@ import {
   List, 
   BarChart3, 
   Home, 
-  Activity 
+  Activity,
+  Eye,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { farmService } from "../../services";
@@ -38,6 +41,12 @@ const FarmsView = () => {
   const [filterLoading, setFilterLoading] = useState(false);
   const [selectedFarms, setSelectedFarms] = useState([]);
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'cards'
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+  
   const [analytics, setAnalytics] = useState({
     total: 0,
     active: 0,
@@ -95,6 +104,28 @@ const FarmsView = () => {
     setAlert(prev => ({ ...prev, isOpen: false }));
   };
 
+  // Pagination helper functions
+  const getPaginatedData = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = () => {
+    return Math.ceil(totalItems / itemsPerPage);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setSelectedFarms([]); // Clear selection when changing pages
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page
+    setSelectedFarms([]); // Clear selection
+  };
+
   const fetchFarms = async (appliedFilters = null) => {
     const filtersToUse = appliedFilters !== null ? appliedFilters : filters;
     const hasFilters = Object.keys(filtersToUse).length > 0;
@@ -128,6 +159,7 @@ const FarmsView = () => {
       const farmsData = Array.isArray(response.data) ? response.data : [];
       console.log('Received farms data:', farmsData.length, 'items');
       setFarms(farmsData);
+      setTotalItems(farmsData.length);
       
       // Calculate analytics
       calculateAnalytics(farmsData);
@@ -279,9 +311,15 @@ const FarmsView = () => {
   // Bulk operations
   const handleSelectAll = (isSelected) => {
     if (isSelected) {
-      setSelectedFarms(farms.map(farm => farm.farmId));
+      // Only select farms on current page
+      const currentPageFarms = getPaginatedData(farms);
+      const currentPageFarmIds = currentPageFarms.map(farm => farm.farmId);
+      setSelectedFarms(prev => [...new Set([...prev, ...currentPageFarmIds])]);
     } else {
-      setSelectedFarms([]);
+      // Deselect farms on current page
+      const currentPageFarms = getPaginatedData(farms);
+      const currentPageFarmIds = currentPageFarms.map(farm => farm.farmId);
+      setSelectedFarms(prev => prev.filter(id => !currentPageFarmIds.includes(id)));
     }
   };
 
@@ -462,7 +500,7 @@ const FarmsView = () => {
         loading={filterLoading}
       />
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm overflow-visible">
         {/* Toolbar */}
         <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -526,15 +564,22 @@ const FarmsView = () => {
 
         {/* Results Summary */}
         {!loading && !error && (
-          <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm text-gray-600">
-            <span className="font-medium">
-              {farms.length} farm{farms.length !== 1 ? 's' : ''} found
-              {Object.keys(filters).length > 0 && ' (filtered)'}
-            </span>
+          <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm text-gray-600 flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="font-medium">
+                {totalItems} farm{totalItems !== 1 ? 's' : ''} found
+                {Object.keys(filters).length > 0 && ' (filtered)'}
+              </span>
+              {totalItems > itemsPerPage && (
+                <span className="text-xs text-gray-500">
+                  • Page {currentPage} of {getTotalPages()}
+                </span>
+              )}
+            </div>
           </div>
         )}
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-visible">
           {loading ? (
             <div className="p-6 text-gray-500 text-center">Loading farms...</div>
           ) : error ? (
@@ -548,7 +593,7 @@ const FarmsView = () => {
             )
           ) : viewMode === 'table' ? (
             <FarmTable
-              farms={farms}
+              farms={getPaginatedData(farms)}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onInfo={handleInfo}
@@ -560,7 +605,7 @@ const FarmsView = () => {
           ) : (
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {farms.map((farm) => (
+                {getPaginatedData(farms).map((farm) => (
                   <div
                     key={farm.farmId || farm.id}
                     className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
@@ -599,21 +644,37 @@ const FarmsView = () => {
                       </div>
                     </div>
                     
-                    <div className="flex gap-2 pt-3 border-t border-gray-200">
-                      <button
-                        onClick={() => handleInfo(farm)}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
-                      >
-                        <Info className="w-4 h-4" />
-                        Details
-                      </button>
-                      <button
-                        onClick={() => handleEdit(farm)}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors"
-                      >
-                        <Edit className="w-4 h-4" />
-                        Edit
-                      </button>
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleInfo(farm)}
+                          className="p-1.5 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleViewFields(farm)}
+                          className="p-1.5 rounded-full hover:bg-purple-100 text-purple-600 transition-colors"
+                          title="View Fields"
+                        >
+                          <Grid className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(farm)}
+                          className="p-1.5 rounded-full hover:bg-green-100 text-green-600 transition-colors"
+                          title="Edit Farm"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(farm)}
+                          className="p-1.5 rounded-full hover:bg-red-100 text-red-600 transition-colors"
+                          title="Delete Farm"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -636,6 +697,90 @@ const FarmsView = () => {
             </div>
           )}
         </div>
+        
+        {/* Pagination */}
+        {!loading && !error && totalItems > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* Items per page selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700">Show:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                  className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                <span className="text-sm text-gray-700">items per page</span>
+              </div>
+
+              {/* Pagination info and controls */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-700">
+                  Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to{' '}
+                  {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
+                </span>
+                
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded ${
+                      currentPage === 1 
+                        ? 'text-gray-400 cursor-not-allowed' 
+                        : 'text-gray-600 hover:bg-gray-200'
+                    } transition-colors`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  
+                  {/* Page numbers */}
+                  {Array.from({ length: getTotalPages() }, (_, i) => i + 1)
+                    .filter(page => {
+                      const totalPages = getTotalPages();
+                      if (totalPages <= 7) return true;
+                      if (page === 1 || page === totalPages) return true;
+                      if (page >= currentPage - 1 && page <= currentPage + 1) return true;
+                      return false;
+                    })
+                    .map((page, index, array) => (
+                      <React.Fragment key={page}>
+                        {index > 0 && array[index - 1] !== page - 1 && (
+                          <span className="px-2 text-gray-400">...</span>
+                        )}
+                        <button
+                          onClick={() => handlePageChange(page)}
+                          className={`px-3 py-1 rounded text-sm ${
+                            currentPage === page
+                              ? 'bg-blue-600 text-white'
+                              : 'text-gray-600 hover:bg-gray-200'
+                          } transition-colors`}
+                        >
+                          {page}
+                        </button>
+                      </React.Fragment>
+                    ))}
+                  
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === getTotalPages()}
+                    className={`p-2 rounded ${
+                      currentPage === getTotalPages() 
+                        ? 'text-gray-400 cursor-not-allowed' 
+                        : 'text-gray-600 hover:bg-gray-200'
+                    } transition-colors`}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Summary Section */}

@@ -1,71 +1,80 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Edit, Trash2, Info } from "lucide-react";
 
 const CropActionsDropdown = ({ onEdit, onDelete, onInfo, onClose, buttonRef }) => {
   const dropdownRef = useRef(null);
-  const [position, setPosition] = useState({ showAbove: false, shouldUseFixed: false });
+  const [position, setPosition] = useState({ top: 0, left: 0, showAbove: false });
 
-  // Close dropdown when clicking outside and determine position
+  // Close dropdown when clicking outside and calculate position
   useEffect(() => {
-    // Check dropdown position relative to viewport
-    const checkPosition = () => {
+    const calculatePosition = () => {
       if (buttonRef?.current) {
         const buttonRect = buttonRef.current.getBoundingClientRect();
         const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
         const dropdownHeight = 140; // Approximate height of dropdown
+        const dropdownWidth = 128; // w-32 = 128px
         
-        // Check if we're in the top half of the viewport
-        const isInTopHalf = buttonRect.top < windowHeight / 2;
+        // Calculate if dropdown should appear above or below
+        const spaceBelow = windowHeight - buttonRect.bottom;
+        const spaceAbove = buttonRect.top;
+        const showAbove = spaceBelow < dropdownHeight && spaceAbove > dropdownHeight;
         
-        // For rows in top area, show dropdown below
-        // For rows in bottom area, show dropdown above
-        const showAbove = !isInTopHalf && (buttonRect.bottom + dropdownHeight > windowHeight);
+        // Calculate horizontal position (align to right of button)
+        let left = buttonRect.right - dropdownWidth;
         
-        // Use fixed positioning for better z-index handling if needed
-        const shouldUseFixed = buttonRect.top < 150; // If close to top
+        // Ensure dropdown doesn't go off-screen horizontally
+        if (left < 8) left = 8; // 8px padding from left edge
+        if (left + dropdownWidth > windowWidth - 8) {
+          left = windowWidth - dropdownWidth - 8; // 8px padding from right edge
+        }
         
-        setPosition({ showAbove, shouldUseFixed });
+        // Calculate vertical position
+        const top = showAbove 
+          ? buttonRect.top - dropdownHeight - 5 
+          : buttonRect.bottom + 5;
+        
+        setPosition({ top, left, showAbove });
       }
     };
 
-    checkPosition();
-    window.addEventListener('resize', checkPosition);
-    window.addEventListener('scroll', checkPosition);
+    calculatePosition();
+    
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+          buttonRef?.current && !buttonRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('resize', calculatePosition);
+    window.addEventListener('scroll', calculatePosition);
     
     return () => {
-      window.removeEventListener('resize', checkPosition);
-      window.removeEventListener('scroll', checkPosition);
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', calculatePosition);
+      window.removeEventListener('scroll', calculatePosition);
     };
-  }, [buttonRef]);
+  }, [buttonRef, onClose]);
 
   const handleAction = (action) => {
     action();
     onClose(); // Close dropdown after action
   };
 
-  return (
-    <>
-      {/* Backdrop to close dropdown */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      />
-      
-      {/* Dropdown menu */}
-      <div 
-        ref={dropdownRef}
-        className={`absolute right-0 w-32 bg-white rounded shadow-lg border py-1 ${
-          position.showAbove ? 'bottom-full mb-2' : 'top-full mt-2'
-        }`}
-        style={{ 
-          zIndex: 9999,
-          position: position.shouldUseFixed ? 'fixed' : 'absolute',
-          ...(position.shouldUseFixed && buttonRef?.current ? {
-            top: buttonRef.current.getBoundingClientRect().bottom + 5,
-            right: window.innerWidth - buttonRef.current.getBoundingClientRect().right,
-          } : {})
-        }}
-      >
+  // Render dropdown using portal to ensure it's not clipped by parent containers
+  return createPortal(
+    <div 
+      ref={dropdownRef}
+      className="fixed w-32 bg-white rounded shadow-lg border py-1"
+      style={{ 
+        top: position.top,
+        left: position.left,
+        zIndex: 9999,
+      }}
+    >
       <button
         className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
         onClick={() => handleAction(onEdit)}
@@ -87,8 +96,8 @@ const CropActionsDropdown = ({ onEdit, onDelete, onInfo, onClose, buttonRef }) =
         <Info className="w-4 h-4 text-gray-600" />
         Details
       </button>
-      </div>
-    </>
+    </div>,
+    document.body
   );
 };
 

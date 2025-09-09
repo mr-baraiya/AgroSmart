@@ -12,7 +12,8 @@ const CropTable = ({
   // Ensure crops is always an array
   const cropsArray = Array.isArray(crops) ? crops : [];
   return (
-    <table className="w-full">
+    <div style={{ overflow: 'visible' }}>
+      <table className="w-full" style={{ position: 'relative' }}>
     <thead className="bg-green-600">
       <tr>
         {onSelectCrop && (
@@ -67,6 +68,7 @@ const CropTable = ({
       )}
     </tbody>
     </table>
+    </div>
   );
 };
 

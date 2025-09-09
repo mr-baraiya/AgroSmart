@@ -55,6 +55,7 @@ import UserFormPage from "./Components/user/UserFormPage";
 import UserDetail from "./Components/user/UserDetail";
 import SensorList from "./Components/admin/sensors/SensorList";
 import SensorReadings from "./pages/admin/SensorReadings";
+import SmartInsightsPage from "./pages/admin/SmartInsightsPage";
 
 function App() {
   return (
@@ -129,6 +130,7 @@ function App() {
               {/* System Management Routes */}
               <Route path="sensors" element={<SensorList />} />
               <Route path="sensors/:sensorId/readings" element={<SensorReadings />} />
+              <Route path="smart-insights" element={<SmartInsightsPage />} />
               <Route path="insights" element={<InsightsPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="badges" element={<KnowledgeBadgePage />} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plus, CheckCircle, XCircle, Download, Grid, List, Trash2, BarChart3, Sprout, Calendar, Activity } from "lucide-react";
+import { Plus, CheckCircle, XCircle, Download, Grid, List, Trash2, BarChart3, Sprout, Calendar, Activity, Eye, Edit, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cropService } from "../../services";
 import { useServerStatusContext } from "../../contexts/ServerStatusProvider";
@@ -23,6 +23,12 @@ const CropsView = () => {
   const [filterLoading, setFilterLoading] = useState(false);
   const [selectedCrops, setSelectedCrops] = useState([]);
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'cards'
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
+  
   const [analytics, setAnalytics] = useState({
     total: 0,
     active: 0,
@@ -80,6 +86,28 @@ const CropsView = () => {
     setAlert(prev => ({ ...prev, isOpen: false }));
   };
 
+  // Pagination helper functions
+  const getPaginatedData = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = () => {
+    return Math.ceil(totalItems / itemsPerPage);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setSelectedCrops([]); // Clear selection when changing pages
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page
+    setSelectedCrops([]); // Clear selection
+  };
+
   const fetchCrops = async (appliedFilters = null) => {
     const filtersToUse = appliedFilters !== null ? appliedFilters : filters;
     const hasFilters = Object.keys(filtersToUse).length > 0;
@@ -113,6 +141,7 @@ const CropsView = () => {
       const cropsData = Array.isArray(response.data) ? response.data : [];
       console.log('Received crops data:', cropsData.length, 'items');
       setCrops(cropsData);
+      setTotalItems(cropsData.length);
       
       // Calculate analytics
       calculateAnalytics(cropsData);
@@ -261,9 +290,15 @@ const CropsView = () => {
   // Bulk operations
   const handleSelectAll = (isSelected) => {
     if (isSelected) {
-      setSelectedCrops(crops.map(crop => crop.cropId));
+      // Only select crops on current page
+      const currentPageCrops = getPaginatedData(crops);
+      const currentPageCropIds = currentPageCrops.map(crop => crop.cropId);
+      setSelectedCrops(prev => [...new Set([...prev, ...currentPageCropIds])]);
     } else {
-      setSelectedCrops([]);
+      // Deselect crops on current page
+      const currentPageCrops = getPaginatedData(crops);
+      const currentPageCropIds = currentPageCrops.map(crop => crop.cropId);
+      setSelectedCrops(prev => prev.filter(id => !currentPageCropIds.includes(id)));
     }
   };
 
@@ -461,29 +496,40 @@ const CropsView = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm overflow-visible">
         {/* Results Summary */}
         {!loading && !error && (
           <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm text-gray-600 flex items-center justify-between">
-            <span className="font-medium">
-              {crops.length} crop{crops.length !== 1 ? 's' : ''} found
-              {Object.keys(filters).length > 0 && ' (filtered)'}
-            </span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="font-medium">
+                {totalItems} crop{totalItems !== 1 ? 's' : ''} found
+                {Object.keys(filters).length > 0 && ' (filtered)'}
+              </span>
+              {totalItems > itemsPerPage && (
+                <span className="text-xs text-gray-500">
+                  • Page {currentPage} of {getTotalPages()}
+                </span>
+              )}
+            </div>
             {viewMode === 'table' && crops.length > 0 && (
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={selectedCrops.length === crops.length}
+                  checked={(() => {
+                    const currentPageCrops = getPaginatedData(crops);
+                    const currentPageCropIds = currentPageCrops.map(crop => crop.cropId);
+                    return currentPageCropIds.length > 0 && currentPageCropIds.every(id => selectedCrops.includes(id));
+                  })()}
                   onChange={(e) => handleSelectAll(e.target.checked)}
                   className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                 />
-                <span className="text-sm">Select All</span>
+                <span className="text-sm">Select All (Page)</span>
               </label>
             )}
           </div>
         )}
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-visible">
           {loading ? (
             <div className="p-6 text-gray-500 text-center">Loading crops...</div>
           ) : error ? (
@@ -497,7 +543,7 @@ const CropsView = () => {
             )
           ) : viewMode === 'table' ? (
             <CropTable
-              crops={crops}
+              crops={getPaginatedData(crops)}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onInfo={handleInfo}
@@ -507,7 +553,7 @@ const CropsView = () => {
           ) : (
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {crops.map((crop) => (
+                {getPaginatedData(crops).map((crop) => (
                   <div key={crop.cropId} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
@@ -542,19 +588,30 @@ const CropsView = () => {
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleInfo(crop)}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-3 rounded transition-colors"
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleEdit(crop)}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs py-2 px-3 rounded transition-colors"
-                      >
-                        Edit
-                      </button>
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleInfo(crop)}
+                          className="p-1.5 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(crop)}
+                          className="p-1.5 rounded-full hover:bg-green-100 text-green-600 transition-colors"
+                          title="Edit Crop"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(crop)}
+                          className="p-1.5 rounded-full hover:bg-red-100 text-red-600 transition-colors"
+                          title="Delete Crop"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -569,6 +626,90 @@ const CropsView = () => {
             </div>
           )}
         </div>
+        
+        {/* Pagination */}
+        {!loading && !error && totalItems > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* Items per page selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700">Show:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                  className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                <span className="text-sm text-gray-700">items per page</span>
+              </div>
+
+              {/* Pagination info and controls */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-700">
+                  Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to{' '}
+                  {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
+                </span>
+                
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded ${
+                      currentPage === 1 
+                        ? 'text-gray-400 cursor-not-allowed' 
+                        : 'text-gray-600 hover:bg-gray-200'
+                    } transition-colors`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  
+                  {/* Page numbers */}
+                  {Array.from({ length: getTotalPages() }, (_, i) => i + 1)
+                    .filter(page => {
+                      const totalPages = getTotalPages();
+                      if (totalPages <= 7) return true;
+                      if (page === 1 || page === totalPages) return true;
+                      if (page >= currentPage - 1 && page <= currentPage + 1) return true;
+                      return false;
+                    })
+                    .map((page, index, array) => (
+                      <React.Fragment key={page}>
+                        {index > 0 && array[index - 1] !== page - 1 && (
+                          <span className="px-2 text-gray-400">...</span>
+                        )}
+                        <button
+                          onClick={() => handlePageChange(page)}
+                          className={`px-3 py-1 rounded text-sm ${
+                            currentPage === page
+                              ? 'bg-green-600 text-white'
+                              : 'text-gray-600 hover:bg-gray-200'
+                          } transition-colors`}
+                        >
+                          {page}
+                        </button>
+                      </React.Fragment>
+                    ))}
+                  
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === getTotalPages()}
+                    className={`p-2 rounded ${
+                      currentPage === getTotalPages() 
+                        ? 'text-gray-400 cursor-not-allowed' 
+                        : 'text-gray-600 hover:bg-gray-200'
+                    } transition-colors`}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Summary Section */}

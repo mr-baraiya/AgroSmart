@@ -23,7 +23,8 @@ const FarmTable = ({
   ) && !isAllSelected;
   
   return (
-    <table className="w-full">
+    <div style={{ overflow: 'visible' }}>
+      <table className="w-full" style={{ position: 'relative' }}>
       <thead className="bg-blue-100">
         <tr>
           <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
@@ -79,6 +80,7 @@ const FarmTable = ({
         )}
       </tbody>
     </table>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Sprout, MoreHorizontal } from "lucide-react";
-import CropActionsDropdown from "./CropActionsDropdown";
+import React from "react";
+import { Sprout, Eye, Edit, Trash2 } from "lucide-react";
 
 const CropTableRow = ({
   crop,
@@ -10,19 +9,9 @@ const CropTableRow = ({
   isSelected = false,
   onSelect
 }) => {
-  const [showActions, setShowActions] = useState(false);
-  const buttonRef = useRef(null);
-
-  const toggleActions = () => {
-    setShowActions(prev => !prev);
-  };
-
-  const hideActions = () => {
-    setShowActions(false);
-  };
 
   return (
-    <tr className="hover:bg-gray-50 relative">
+    <tr className="hover:bg-gray-50" style={{ position: 'relative' }}>
       {onSelect && (
         <td className="px-6 py-4 whitespace-nowrap">
           <input
@@ -73,23 +62,30 @@ const CropTableRow = ({
           </span>
         )}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
-        <button
-          ref={buttonRef}
-          className="p-1 rounded hover:bg-gray-200 transition-colors"
-          onClick={toggleActions}
-        >
-          <MoreHorizontal className="w-5 h-5 text-gray-600" />
-        </button>
-        {showActions && (
-          <CropActionsDropdown
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onInfo={onInfo}
-            onClose={hideActions}
-            buttonRef={buttonRef}
-          />
-        )}
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onInfo}
+            className="p-1.5 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+            title="View Details"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onEdit}
+            className="p-1.5 rounded-full hover:bg-green-100 text-green-600 transition-colors"
+            title="Edit Crop"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onDelete}
+            className="p-1.5 rounded-full hover:bg-red-100 text-red-600 transition-colors"
+            title="Delete Crop"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </td>
     </tr>
   );
