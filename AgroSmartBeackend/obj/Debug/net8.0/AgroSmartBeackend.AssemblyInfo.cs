@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AgroSmartBeackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0016f35d190895061c361fdff7f53eb17fd8eea3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+564bb85b947cdcde17ad3b0a8ce91cddffb0ad74")]
 [assembly: System.Reflection.AssemblyProductAttribute("AgroSmartBeackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AgroSmartBeackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

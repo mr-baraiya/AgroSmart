@@ -233,5 +233,26 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
+        #region TotalAcres
+        [AllowAnonymous]
+        [HttpGet("TotalAcres")]
+        public async Task<IActionResult> GetTotalAcres()
+        {
+            try
+            {
+                var totalAcres = await _context.Farms.SumAsync(f => f.TotalAcres);
+
+                return Ok(new
+                {
+                    totalAcres
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error calculating total acres.", Error = ex.Message });
+            }
+        }
+        #endregion
+
     }
 }

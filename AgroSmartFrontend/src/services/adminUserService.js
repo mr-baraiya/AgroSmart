@@ -134,6 +134,17 @@ export const adminUserService = {
       console.error('Error deleting user profile picture (admin):', error);
       throw error;
     }
+  },
+
+  // Get total count of all users (public access)
+  countAllUsers: async () => {
+    try {
+      const response = await api.get(`${API_BASE_URL}/CountAllUsers`);
+      return response;
+    } catch (error) {
+      console.error('Error fetching user count:', error);
+      throw error;
+    }
   }
 };
 

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Box, Cylinder, Sphere, OrbitControls, Text } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
+import { adminUserService } from '../services/adminUserService';
+import { farmService } from '../services/farmService';
 import { 
   Menu, 
   X, 
@@ -20,7 +22,8 @@ import {
   Sparkles,
   Zap,
   Eye,
-  TrendingUp
+  TrendingUp,
+  Cloud
 } from 'lucide-react';
 
 // Custom hook for responsive canvas settings
@@ -460,6 +463,43 @@ const EnhancedTooltip = ({ position, data, onClose }) => {
 const LandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [totalAcres, setTotalAcres] = useState(0);
+  const [isLoadingAcres, setIsLoadingAcres] = useState(true);
+
+  // Fetch total user count and total acres
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Fetch user count
+        setIsLoadingUsers(true);
+        const userResponse = await adminUserService.countAllUsers();
+        if (userResponse.data && userResponse.data.totalUsers !== undefined) {
+          setTotalUsers(userResponse.data.totalUsers);
+        }
+      } catch (error) {
+        console.error('Error fetching user count:', error);
+      } finally {
+        setIsLoadingUsers(false);
+      }
+
+      try {
+        // Fetch total acres
+        setIsLoadingAcres(true);
+        const acresResponse = await farmService.getTotalAcres();
+        if (acresResponse.data && acresResponse.data.totalAcres !== undefined) {
+          setTotalAcres(acresResponse.data.totalAcres);
+        }
+      } catch (error) {
+        console.error('Error fetching total acres:', error);
+      } finally {
+        setIsLoadingAcres(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   // Auto-cycle testimonials
   useEffect(() => {
@@ -474,6 +514,11 @@ const LandingPage = () => {
       icon: <Leaf className="w-8 h-8 text-green-600" />,
       title: "Smart Crop Management",
       description: "AI-powered crop monitoring and management system for optimal yield"
+    },
+    {
+      icon: <Cloud className="w-8 h-8 text-sky-600" />,
+      title: "Real-Time Weather",
+      description: "Access live weather data and forecasts to make informed farming decisions"
     },
     {
       icon: <BarChart3 className="w-8 h-8 text-blue-600" />,
@@ -513,9 +558,27 @@ const LandingPage = () => {
     }
   ];
 
+  // Format user count for display
+  const formatUserCount = (count) => {
+    if (isLoadingUsers) return "Loading...";
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}K+`;
+    }
+    return count.toString();
+  };
+
+  // Format acres count for display
+  const formatAcresCount = (acres) => {
+    if (isLoadingAcres) return "Loading...";
+    if (acres >= 1000) {
+      return `${(acres / 1000).toFixed(acres >= 10000 ? 0 : 1)}K+`;
+    }
+    return acres.toString();
+  };
+
   const stats = [
-    { number: "10,000+", label: "Active Farmers" },
-    { number: "50,000+", label: "Acres Managed" },
+    { number: formatUserCount(totalUsers), label: "Active Farmers" },
+    { number: formatAcresCount(totalAcres), label: "Acres Managed" },
     { number: "30%", label: "Yield Increase" },
     { number: "24/7", label: "Support" }
   ];
@@ -553,6 +616,10 @@ const LandingPage = () => {
                 About
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
               </a>
+              <Link to="/weather" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
+                Weather
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
               <a href="#testimonials" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
                 Testimonials
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
@@ -601,6 +668,7 @@ const LandingPage = () => {
                   {[
                     { href: "#features", label: "Features", icon: <Sparkles className="w-4 h-4" /> },
                     { href: "#about", label: "About", icon: <Eye className="w-4 h-4" /> },
+                    { to: "/weather", label: "Weather", icon: <Cloud className="w-4 h-4" /> },
                     { href: "#testimonials", label: "Testimonials", icon: <Star className="w-4 h-4" /> },
                     { to: "/contact", label: "Contact", icon: <Mail className="w-4 h-4" /> }
                   ].map((item, index) => (
@@ -763,7 +831,7 @@ const LandingPage = () => {
                 {[
                   { icon: <TrendingUp className="w-5 h-5" />, label: "30% Yield ↑", color: "text-green-500" },
                   { icon: <Shield className="w-5 h-5" />, label: "100% Secure", color: "text-blue-500" },
-                  { icon: <Users className="w-5 h-5" />, label: "10K+ Farmers", color: "text-purple-500" }
+                  { icon: <Users className="w-5 h-5" />, label: `${formatUserCount(totalUsers)} Farmers`, color: "text-purple-500" }
                 ].map((item, index) => (
                   <motion.div
                     key={index}

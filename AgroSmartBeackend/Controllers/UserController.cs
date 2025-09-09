@@ -310,5 +310,26 @@ namespace AgroSmartBeackend.Controllers
         }
         #endregion
 
+        #region CountAllUsers
+        [AllowAnonymous]
+        [HttpGet("CountAllUsers")]
+        public async Task<IActionResult> CountAllUsers()
+        {
+            try
+            {
+                var totalUsers = await _context.Users.CountAsync();
+
+                return Ok(new
+                {
+                    totalUsers = totalUsers
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error counting users", error = ex.Message });
+            }
+        }
+        #endregion
+
     }
 }
