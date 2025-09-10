@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|d:\\vs_codes\\.net_project\\agrosmart\\agrosmartbeackend\\controllers\\farmcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0C6AE2DF-4104-4DF7-BAE2-EB98369B2DB9}|AgroSmartBeackend.csproj|solutionrelative:controllers\\farmcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -82,11 +86,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 18,
+          "SelectedChildIndex": 19,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -99,15 +103,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ScheduleController.cs",
-              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\ScheduleController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ScheduleController.cs",
-              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\ScheduleController.cs",
-              "RelativeToolTip": "Controllers\\ScheduleController.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAAwNYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-09T13:38:52.788Z",
+              "DocumentIndex": 1,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-10T16:46:59.442Z",
               "EditorCaption": ""
             },
             {
@@ -117,6 +121,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "ScheduleController.cs",
+              "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\ScheduleController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ScheduleController.cs",
+              "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\ScheduleController.cs",
+              "RelativeToolTip": "Controllers\\ScheduleController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAAwNYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T13:38:52.788Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "SmartInsightValidator.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\SmartInsightValidator.cs",
               "RelativeDocumentMoniker": "Validators\\SmartInsightValidator.cs",
@@ -124,12 +140,11 @@
               "RelativeToolTip": "Validators\\SmartInsightValidator.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T18:49:24.3Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-08T18:49:24.3Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "SmartInsight.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\SmartInsight.cs",
               "RelativeDocumentMoniker": "Models\\SmartInsight.cs",
@@ -141,7 +156,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "CropValidator.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Validators\\CropValidator.cs",
               "RelativeDocumentMoniker": "Validators\\CropValidator.cs",
@@ -153,7 +168,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "Crop.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Crop.cs",
               "RelativeDocumentMoniker": "Models\\Crop.cs",
@@ -165,7 +180,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "Field.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Field.cs",
               "RelativeDocumentMoniker": "Models\\Field.cs",
@@ -177,7 +192,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "Farm.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\Farm.cs",
               "RelativeDocumentMoniker": "Models\\Farm.cs",
@@ -189,7 +204,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "SmartInsightController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\SmartInsightController.cs",
               "RelativeDocumentMoniker": "Controllers\\SmartInsightController.cs",
@@ -201,7 +216,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "ImageHelper.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Helper\\ImageHelper.cs",
               "RelativeDocumentMoniker": "Helper\\ImageHelper.cs",
@@ -213,7 +228,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\User.cs",
               "RelativeDocumentMoniker": "Models\\User.cs",
@@ -221,12 +236,11 @@
               "RelativeToolTip": "Models\\User.cs",
               "ViewState": "AgIAAA8AAAAAAAAAAAAYwCUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-26T07:36:04.466Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-26T07:36:04.466Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "AgroSmartContext.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Models\\AgroSmartContext.cs",
               "RelativeDocumentMoniker": "Models\\AgroSmartContext.cs",
@@ -238,7 +252,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -250,7 +264,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "FarmController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\FarmController.cs",
               "RelativeDocumentMoniker": "Controllers\\FarmController.cs",
@@ -258,12 +272,11 @@
               "RelativeToolTip": "Controllers\\FarmController.cs",
               "ViewState": "AgIAADoAAAAAAAAAAAAAwP4AAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-24T06:40:03.568Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-24T06:40:03.568Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "CropController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\CropController.cs",
               "RelativeDocumentMoniker": "Controllers\\CropController.cs",
@@ -275,7 +288,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "UserController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "Controllers\\UserController.cs",
@@ -283,12 +296,11 @@
               "RelativeToolTip": "Controllers\\UserController.cs",
               "ViewState": "AgIAAAABAAAAAAAAAAAAADgBAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-01T03:18:56.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-01T03:18:56.42Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "HealthController.cs",
               "DocumentMoniker": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\Controllers\\HealthController.cs",
               "RelativeDocumentMoniker": "Controllers\\HealthController.cs",
@@ -306,7 +318,7 @@
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "D:\\VS_CODES\\.NET_Project\\AgroSmart\\AgroSmartBeackend\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-07-31T17:15:31.277Z",
               "EditorCaption": ""

@@ -1,0 +1,17 @@
+# Ignore build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.vs
+*.vscode
+
+# Local secrets
+appsettings.Development.json
+
+# Optional: other local files
+*.db
+*.sqlite
+*.log
