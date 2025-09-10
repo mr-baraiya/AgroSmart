@@ -176,22 +176,50 @@ npm run preview
 ### **Backend Configuration**
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=AgroSmart;Trusted_Connection=true;"
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
   },
-  "JwtSettings": {
-    "SecretKey": "your-secret-key",
-    "Issuer": "AgroSmart",
-    "Audience": "AgroSmart-Users"
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "myConnectionString": "YOUR_CONNECTION_STRING_HERE"
+  },
+  "Jwt": {
+    "Key": "YOUR_JWT_KEY",
+    "Issuer": "https://localhost:7059",
+    "Audience": "*",
+    "TokenExpiryMinutes": 60
+  },
+  "SmtpSettings": {
+    "Host": "smtp.gmail.com",
+    "Port": "587",
+    "Username": "YOUR_EMAIL",
+    "Password": "YOUR_PASSWORD",
+    "FromEmail": "YOUR_EMAIL"
   }
 }
 ```
 
 ### **Frontend Environment Variables**
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
-VITE_APP_NAME=AgroSmart
-VITE_WEATHER_API_KEY=your-weather-api-key
+# Frontend environment variables (Vite)
+
+# API base URL for your backend
+VITE_API_BASE_URL=https://your-backend-url.com/api
+
+# Base URL for images served by backend
+VITE_IMAGE_BASE_URL=https://your-backend-url.com
+
+# OpenWeatherMap API
+VITE_WEATHER_API_KEY=YOUR_OPENWEATHERMAP_API_KEY
+VITE_WEATHER_API_BASE_URL=https://api.openweathermap.org/data/2.5
+
+# EmailJS configuration
+VITE_EMAILJS_USER_ID=YOUR_EMAILJS_USER_ID
+VITE_EMAILJS_SERVICE_ID=YOUR_EMAILJS_SERVICE_ID
+VITE_EMAILJS_TEMPLATE_ID=YOUR_EMAILJS_TEMPLATE_ID
 ```
 
 ## 📊 API Services
