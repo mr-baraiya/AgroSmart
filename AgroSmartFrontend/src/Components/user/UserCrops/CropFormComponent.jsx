@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  Save, 
-  ArrowLeft, 
-  Thermometer, 
-  Droplets, 
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Save,
+  ArrowLeft,
+  Thermometer,
+  Droplets,
   Calendar,
   Ruler,
   Wheat,
-  FileText
-} from 'lucide-react';
-import { toast } from 'react-toastify';
-import { userCropService } from '../../../services/userCropService';
-import { authService } from '../../../services/authService';
-import { useAuth } from '../../../contexts/AuthProvider';
+  FileText,
+} from "lucide-react";
+import { toast } from "react-toastify";
+import { userCropService } from "../../../services/userCropService";
+import { authService } from "../../../services/authService";
+import { useAuth } from "../../../contexts/AuthProvider";
 
 const CropFormComponent = () => {
   const navigate = useNavigate();
@@ -24,17 +24,17 @@ const CropFormComponent = () => {
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
-    cropName: '',
-    optimalSoilpHmin: '',
-    optimalSoilpHmax: '',
-    optimalTempMin: '',
-    optimalTempMax: '',
-    avgWaterReqmm: '',
-    growthDurationDays: '',
-    seedingDepthCm: '',
-    harvestSeason: '',
-    description: '',
-    isActive: true
+    cropName: "",
+    optimalSoilpHmin: "",
+    optimalSoilpHmax: "",
+    optimalTempMin: "",
+    optimalTempMax: "",
+    avgWaterReqmm: "",
+    growthDurationDays: "",
+    seedingDepthCm: "",
+    harvestSeason: "",
+    description: "",
+    isActive: true,
   });
 
   const [errors, setErrors] = useState({});
@@ -50,24 +50,24 @@ const CropFormComponent = () => {
       setLoading(true);
       const response = await userCropService.getById(id);
       const crop = response.data;
-      
+
       setFormData({
-        cropName: crop.cropName || '',
-        optimalSoilpHmin: crop.optimalSoilpHmin || '',
-        optimalSoilpHmax: crop.optimalSoilpHmax || '',
-        optimalTempMin: crop.optimalTempMin || '',
-        optimalTempMax: crop.optimalTempMax || '',
-        avgWaterReqmm: crop.avgWaterReqmm || '',
-        growthDurationDays: crop.growthDurationDays || '',
-        seedingDepthCm: crop.seedingDepthCm || '',
-        harvestSeason: crop.harvestSeason || '',
-        description: crop.description || '',
-        isActive: crop.isActive !== undefined ? crop.isActive : true
+        cropName: crop.cropName || "",
+        optimalSoilpHmin: crop.optimalSoilpHmin || "",
+        optimalSoilpHmax: crop.optimalSoilpHmax || "",
+        optimalTempMin: crop.optimalTempMin || "",
+        optimalTempMax: crop.optimalTempMax || "",
+        avgWaterReqmm: crop.avgWaterReqmm || "",
+        growthDurationDays: crop.growthDurationDays || "",
+        seedingDepthCm: crop.seedingDepthCm || "",
+        harvestSeason: crop.harvestSeason || "",
+        description: crop.description || "",
+        isActive: crop.isActive !== undefined ? crop.isActive : true,
       });
     } catch (error) {
-      console.error('Error fetching crop data:', error);
-      toast.error('Failed to load crop data');
-      navigate('/user-dashboard/my-crops');
+      console.error("Error fetching crop data:", error);
+      toast.error("Failed to load crop data");
+      navigate("/user-dashboard/my-crops");
     } finally {
       setLoading(false);
     }
@@ -75,14 +75,14 @@ const CropFormComponent = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -91,16 +91,17 @@ const CropFormComponent = () => {
 
     // Crop name validation (matches CropValidator)
     if (!formData.cropName.trim()) {
-      newErrors.cropName = 'Crop name is required.';
+      newErrors.cropName = "Crop name is required.";
     } else if (formData.cropName.length > 150) {
-      newErrors.cropName = 'Crop name cannot exceed 150 characters.';
+      newErrors.cropName = "Crop name cannot exceed 150 characters.";
     }
 
     // Optimal soil pH min validation (matches CropValidator)
     if (formData.optimalSoilpHmin && formData.optimalSoilpHmin.trim()) {
       const pHMin = parseFloat(formData.optimalSoilpHmin);
       if (isNaN(pHMin) || pHMin < 0 || pHMin > 14) {
-        newErrors.optimalSoilpHmin = 'Minimum soil pH must be between 0 and 14.';
+        newErrors.optimalSoilpHmin =
+          "Minimum soil pH must be between 0 and 14.";
       }
     }
 
@@ -108,7 +109,8 @@ const CropFormComponent = () => {
     if (formData.optimalSoilpHmax && formData.optimalSoilpHmax.trim()) {
       const pHMax = parseFloat(formData.optimalSoilpHmax);
       if (isNaN(pHMax) || pHMax < 0 || pHMax > 14) {
-        newErrors.optimalSoilpHmax = 'Maximum soil pH must be between 0 and 14.';
+        newErrors.optimalSoilpHmax =
+          "Maximum soil pH must be between 0 and 14.";
       }
     }
 
@@ -117,7 +119,8 @@ const CropFormComponent = () => {
       const pHMin = parseFloat(formData.optimalSoilpHmin);
       const pHMax = parseFloat(formData.optimalSoilpHmax);
       if (!isNaN(pHMin) && !isNaN(pHMax) && pHMin > pHMax) {
-        newErrors.optimalSoilpHmax = 'Minimum soil pH cannot be greater than maximum soil pH.';
+        newErrors.optimalSoilpHmax =
+          "Minimum soil pH cannot be greater than maximum soil pH.";
       }
     }
 
@@ -125,7 +128,8 @@ const CropFormComponent = () => {
     if (formData.optimalTempMin && formData.optimalTempMin.trim()) {
       const tempMin = parseFloat(formData.optimalTempMin);
       if (isNaN(tempMin) || tempMin < -50 || tempMin > 100) {
-        newErrors.optimalTempMin = 'Minimum temperature must be between -50 and 100 °C.';
+        newErrors.optimalTempMin =
+          "Minimum temperature must be between -50 and 100 °C.";
       }
     }
 
@@ -133,7 +137,8 @@ const CropFormComponent = () => {
     if (formData.optimalTempMax && formData.optimalTempMax.trim()) {
       const tempMax = parseFloat(formData.optimalTempMax);
       if (isNaN(tempMax) || tempMax < -50 || tempMax > 100) {
-        newErrors.optimalTempMax = 'Maximum temperature must be between -50 and 100 °C.';
+        newErrors.optimalTempMax =
+          "Maximum temperature must be between -50 and 100 °C.";
       }
     }
 
@@ -142,7 +147,8 @@ const CropFormComponent = () => {
       const tempMin = parseFloat(formData.optimalTempMin);
       const tempMax = parseFloat(formData.optimalTempMax);
       if (!isNaN(tempMin) && !isNaN(tempMax) && tempMin > tempMax) {
-        newErrors.optimalTempMax = 'Minimum temperature cannot be greater than maximum temperature.';
+        newErrors.optimalTempMax =
+          "Minimum temperature cannot be greater than maximum temperature.";
       }
     }
 
@@ -150,7 +156,8 @@ const CropFormComponent = () => {
     if (formData.avgWaterReqmm && formData.avgWaterReqmm.trim()) {
       const waterReq = parseFloat(formData.avgWaterReqmm);
       if (isNaN(waterReq) || waterReq <= 0) {
-        newErrors.avgWaterReqmm = 'Average water requirement must be a positive number.';
+        newErrors.avgWaterReqmm =
+          "Average water requirement must be a positive number.";
       }
     }
 
@@ -158,7 +165,8 @@ const CropFormComponent = () => {
     if (formData.growthDurationDays && formData.growthDurationDays.trim()) {
       const duration = parseInt(formData.growthDurationDays);
       if (isNaN(duration) || duration <= 0) {
-        newErrors.growthDurationDays = 'Growth duration must be a positive number of days.';
+        newErrors.growthDurationDays =
+          "Growth duration must be a positive number of days.";
       }
     }
 
@@ -166,18 +174,18 @@ const CropFormComponent = () => {
     if (formData.seedingDepthCm && formData.seedingDepthCm.trim()) {
       const depth = parseFloat(formData.seedingDepthCm);
       if (isNaN(depth) || depth <= 0) {
-        newErrors.seedingDepthCm = 'Seeding depth must be a positive number.';
+        newErrors.seedingDepthCm = "Seeding depth must be a positive number.";
       }
     }
 
     // Harvest season validation (matches CropValidator)
     if (formData.harvestSeason && formData.harvestSeason.length > 100) {
-      newErrors.harvestSeason = 'Harvest season cannot exceed 100 characters.';
+      newErrors.harvestSeason = "Harvest season cannot exceed 100 characters.";
     }
 
     // Description validation (matches CropValidator)
     if (formData.description && formData.description.length > 1000) {
-      newErrors.description = 'Description cannot exceed 1000 characters.';
+      newErrors.description = "Description cannot exceed 1000 characters.";
     }
 
     setErrors(newErrors);
@@ -186,52 +194,66 @@ const CropFormComponent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
-      toast.error('Please fix the errors before submitting');
+      toast.error("Please fix the errors before submitting");
       return;
     }
 
     try {
       setSaving(true);
-      
+
       const submitData = {
         ...formData,
-        optimalSoilpHmin: formData.optimalSoilpHmin ? parseFloat(formData.optimalSoilpHmin) : null,
-        optimalSoilpHmax: formData.optimalSoilpHmax ? parseFloat(formData.optimalSoilpHmax) : null,
-        optimalTempMin: formData.optimalTempMin ? parseFloat(formData.optimalTempMin) : null,
-        optimalTempMax: formData.optimalTempMax ? parseFloat(formData.optimalTempMax) : null,
-        avgWaterReqmm: formData.avgWaterReqmm ? parseFloat(formData.avgWaterReqmm) : null,
-        growthDurationDays: formData.growthDurationDays ? parseInt(formData.growthDurationDays) : null,
-        seedingDepthCm: formData.seedingDepthCm ? parseFloat(formData.seedingDepthCm) : null,
-        userId: user?.userId
+        optimalSoilpHmin: formData.optimalSoilpHmin
+          ? parseFloat(formData.optimalSoilpHmin)
+          : null,
+        optimalSoilpHmax: formData.optimalSoilpHmax
+          ? parseFloat(formData.optimalSoilpHmax)
+          : null,
+        optimalTempMin: formData.optimalTempMin
+          ? parseFloat(formData.optimalTempMin)
+          : null,
+        optimalTempMax: formData.optimalTempMax
+          ? parseFloat(formData.optimalTempMax)
+          : null,
+        avgWaterReqmm: formData.avgWaterReqmm
+          ? parseFloat(formData.avgWaterReqmm)
+          : null,
+        growthDurationDays: formData.growthDurationDays
+          ? parseInt(formData.growthDurationDays)
+          : null,
+        seedingDepthCm: formData.seedingDepthCm
+          ? parseFloat(formData.seedingDepthCm)
+          : null,
+        userId: user?.userId,
       };
 
-      console.log('Submitting crop data:', submitData); // Debug log
-      
+      console.log("Submitting crop data:", submitData); // Debug log
+
       // Debug auth status
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
       const user = authService.getCurrentUser();
-      console.log('🔍 Auth debug:', {
+      console.log("🔍 Auth debug:", {
         hasToken: !!token,
-        tokenPreview: token ? token.substring(0, 20) + '...' : 'No token',
-        user: user ? user.userId : 'No user',
-        userName: user ? user.fullName : 'No name'
+        tokenPreview: token ? token.substring(0, 20) + "..." : "No token",
+        user: user ? user.userId : "No user",
+        userName: user ? user.fullName : "No name",
       });
 
       if (isEditMode) {
         await userCropService.update(id, submitData);
-        toast.success('Crop updated successfully!');
+        toast.success("Crop updated successfully!");
       } else {
         await userCropService.create(submitData);
-        toast.success('Crop created successfully!');
+        toast.success("Crop created successfully!");
       }
-      
-      navigate('/user-dashboard/my-crops');
+
+      navigate("/user-dashboard/my-crops");
     } catch (error) {
-      console.error('Error saving crop:', error);
-      console.error('Error details:', error.response?.data); // Additional debug info
-      toast.error(`Failed to ${isEditMode ? 'update' : 'create'} crop`);
+      console.error("Error saving crop:", error);
+      console.error("Error details:", error.response?.data); // Additional debug info
+      toast.error(`Failed to ${isEditMode ? "update" : "create"} crop`);
     } finally {
       setSaving(false);
     }
@@ -254,17 +276,19 @@ const CropFormComponent = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
-            onClick={() => navigate('/user-dashboard/my-crops')}
+            onClick={() => navigate("/user-dashboard/my-crops")}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              {isEditMode ? 'Edit Crop' : 'Add New Crop'}
+              {isEditMode ? "Edit Crop" : "Add New Crop"}
             </h1>
             <p className="text-gray-600 mt-1">
-              {isEditMode ? 'Update crop information' : 'Create a new crop with optimal growing conditions'}
+              {isEditMode
+                ? "Update crop information"
+                : "Create a new crop with optimal growing conditions"}
             </p>
           </div>
         </div>
@@ -276,9 +300,11 @@ const CropFormComponent = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center mb-6">
             <Wheat className="w-5 h-5 text-green-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Basic Information
+            </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -291,7 +317,7 @@ const CropFormComponent = () => {
                 onChange={handleInputChange}
                 maxLength={150}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.cropName ? 'border-red-500' : 'border-gray-300'
+                  errors.cropName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Enter crop name"
               />
@@ -324,9 +350,11 @@ const CropFormComponent = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center mb-6">
             <div className="w-5 h-5 bg-green-600 rounded mr-2"></div>
-            <h2 className="text-lg font-semibold text-gray-900">Soil Conditions</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Soil Conditions
+            </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -341,12 +369,14 @@ const CropFormComponent = () => {
                 min="0"
                 max="14"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.optimalSoilpHmin ? 'border-red-500' : 'border-gray-300'
+                  errors.optimalSoilpHmin ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., 6.0"
               />
               {errors.optimalSoilpHmin && (
-                <p className="text-red-500 text-sm mt-1">{errors.optimalSoilpHmin}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.optimalSoilpHmin}
+                </p>
               )}
             </div>
 
@@ -363,12 +393,14 @@ const CropFormComponent = () => {
                 min="0"
                 max="14"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.optimalSoilpHmax ? 'border-red-500' : 'border-gray-300'
+                  errors.optimalSoilpHmax ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., 7.5"
               />
               {errors.optimalSoilpHmax && (
-                <p className="text-red-500 text-sm mt-1">{errors.optimalSoilpHmax}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.optimalSoilpHmax}
+                </p>
               )}
             </div>
           </div>
@@ -378,9 +410,11 @@ const CropFormComponent = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center mb-6">
             <Thermometer className="w-5 h-5 text-orange-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">Temperature Requirements</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Temperature Requirements
+            </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -395,12 +429,14 @@ const CropFormComponent = () => {
                 min="-50"
                 max="100"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.optimalTempMin ? 'border-red-500' : 'border-gray-300'
+                  errors.optimalTempMin ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., 15.0"
               />
               {errors.optimalTempMin && (
-                <p className="text-red-500 text-sm mt-1">{errors.optimalTempMin}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.optimalTempMin}
+                </p>
               )}
             </div>
 
@@ -417,12 +453,14 @@ const CropFormComponent = () => {
                 min="-50"
                 max="100"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.optimalTempMax ? 'border-red-500' : 'border-gray-300'
+                  errors.optimalTempMax ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., 30.0"
               />
               {errors.optimalTempMax && (
-                <p className="text-red-500 text-sm mt-1">{errors.optimalTempMax}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.optimalTempMax}
+                </p>
               )}
             </div>
           </div>
@@ -432,9 +470,11 @@ const CropFormComponent = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center mb-6">
             <Droplets className="w-5 h-5 text-blue-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">Growing Conditions</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Growing Conditions
+            </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -463,12 +503,16 @@ const CropFormComponent = () => {
                 onChange={handleInputChange}
                 min="1"
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.growthDurationDays ? 'border-red-500' : 'border-gray-300'
+                  errors.growthDurationDays
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
                 placeholder="e.g., 90"
               />
               {errors.growthDurationDays && (
-                <p className="text-red-500 text-sm mt-1">{errors.growthDurationDays}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.growthDurationDays}
+                </p>
               )}
             </div>
 
@@ -494,9 +538,11 @@ const CropFormComponent = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center mb-6">
             <FileText className="w-5 h-5 text-gray-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">Additional Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Additional Information
+            </h2>
           </div>
-          
+
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -509,12 +555,14 @@ const CropFormComponent = () => {
                 rows={4}
                 maxLength={1000}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  errors.description ? 'border-red-500' : 'border-gray-300'
+                  errors.description ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Enter crop description, notes, or additional information..."
               />
               {errors.description && (
-                <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.description}
+                </p>
               )}
             </div>
 
@@ -537,7 +585,7 @@ const CropFormComponent = () => {
         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
           <button
             type="button"
-            onClick={() => navigate('/user-dashboard/my-crops')}
+            onClick={() => navigate("/user-dashboard/my-crops")}
             className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
           >
             Cancel
@@ -552,7 +600,7 @@ const CropFormComponent = () => {
             ) : (
               <Save className="w-4 h-4 mr-2" />
             )}
-            {saving ? 'Saving...' : (isEditMode ? 'Update Crop' : 'Create Crop')}
+            {saving ? "Saving..." : isEditMode ? "Update Crop" : "Create Crop"}
           </button>
         </div>
       </form>
