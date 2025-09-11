@@ -1,32 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <!-- Homepage -->
+  <!-- Homepage & Marketing -->
   <url>
     <loc>https://agrosmart.me/</loc>
     <lastmod>2025-09-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://agrosmart.me/features</loc>
+    <lastmod>2025-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://agrosmart.me/learn-more</loc>
+    <lastmod>2025-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-  <!-- Public Pages -->
+  <!-- Authentication Pages -->
   <url>
     <loc>https://agrosmart.me/login</loc>
     <lastmod>2025-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <url>
     <loc>https://agrosmart.me/register</loc>
     <lastmod>2025-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
+  <url>
+    <loc>https://agrosmart.me/auth/login</loc>
+    <lastmod>2025-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://agrosmart.me/auth/register</loc>
+    <lastmod>2025-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://agrosmart.me/auth/forgot-password</loc>
     <lastmod>2025-09-11</lastmod>
@@ -34,300 +53,32 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- Legal Pages -->
+  <!-- Guest Services -->
+  <url>
+    <loc>https://agrosmart.me/weather</loc>
+    <lastmod>2025-09-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Legal & Info -->
   <url>
     <loc>https://agrosmart.me/privacy-policy</loc>
     <lastmod>2025-09-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
-
   <url>
     <loc>https://agrosmart.me/terms-of-service</loc>
     <lastmod>2025-09-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
-
   <url>
     <loc>https://agrosmart.me/contact</loc>
     <lastmod>2025-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <!-- Admin Dashboard -->
-  <url>
-    <loc>https://agrosmart.me/dashboard</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/profile</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Farm Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/farms</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/farms/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Field Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/fields</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/fields/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Crop Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/crops</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/crops/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Field-Wise Crops -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/field-crops</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Weather Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/weather</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/weather/test</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/weather/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Schedule Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/schedules</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/schedules/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- System Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/sensors</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/smart-insights</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/insights</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/notifications</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/badges</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- User Management -->
-  <url>
-    <loc>https://agrosmart.me/dashboard/users</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/users/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/dashboard/settings</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- User Dashboard -->
-  <url>
-    <loc>https://agrosmart.me/user-dashboard</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/profile</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- User Farm Management -->
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/my-farms</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/my-farms/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- User Field Management -->
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/my-fields</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/my-fields/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- User Crop Management -->
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/my-crops</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/my-crops/add</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- User Weather & Schedule -->
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/weather</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/schedule</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/insights</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/notifications</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/knowledge</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://agrosmart.me/user-dashboard/settings</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Auth Success Route -->
-  <url>
-    <loc>https://agrosmart.me/auth/success</loc>
-    <lastmod>2025-09-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
 
 </urlset>
