@@ -8,12 +8,21 @@ import {
   Calendar,
   Ruler,
   Wheat,
+<<<<<<< HEAD
   FileText,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { userCropService } from "../../../services/userCropService";
 import { authService } from "../../../services/authService";
 import { useAuth } from "../../../contexts/AuthProvider";
+=======
+  FileText
+} from 'lucide-react';
+import { toast } from 'react-toastify';
+import { cropService } from '../../../services/cropService';
+import { authService } from '../../../services/authService';
+import { useAuth } from '../../../contexts/AuthProvider';
+>>>>>>> parent of 9f60f9a (Refactor crop, farm, and landing page components)
 
 const CropFormComponent = () => {
   const navigate = useNavigate();
@@ -48,7 +57,7 @@ const CropFormComponent = () => {
   const fetchCropData = async () => {
     try {
       setLoading(true);
-      const response = await userCropService.getById(id);
+      const response = await cropService.getById(id);
       const crop = response.data;
 
       setFormData({
@@ -97,7 +106,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal soil pH min validation (matches CropValidator)
-    if (formData.optimalSoilpHmin && formData.optimalSoilpHmin.trim()) {
+    if (formData.optimalSoilpHmin && typeof formData.optimalSoilpHmin === 'string' && formData.optimalSoilpHmin.trim()) {
       const pHMin = parseFloat(formData.optimalSoilpHmin);
       if (isNaN(pHMin) || pHMin < 0 || pHMin > 14) {
         newErrors.optimalSoilpHmin =
@@ -106,7 +115,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal soil pH max validation (matches CropValidator)
-    if (formData.optimalSoilpHmax && formData.optimalSoilpHmax.trim()) {
+    if (formData.optimalSoilpHmax && typeof formData.optimalSoilpHmax === 'string' && formData.optimalSoilpHmax.trim()) {
       const pHMax = parseFloat(formData.optimalSoilpHmax);
       if (isNaN(pHMax) || pHMax < 0 || pHMax > 14) {
         newErrors.optimalSoilpHmax =
@@ -125,7 +134,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal temperature min validation (matches CropValidator)
-    if (formData.optimalTempMin && formData.optimalTempMin.trim()) {
+    if (formData.optimalTempMin && typeof formData.optimalTempMin === 'string' && formData.optimalTempMin.trim()) {
       const tempMin = parseFloat(formData.optimalTempMin);
       if (isNaN(tempMin) || tempMin < -50 || tempMin > 100) {
         newErrors.optimalTempMin =
@@ -134,7 +143,7 @@ const CropFormComponent = () => {
     }
 
     // Optimal temperature max validation (matches CropValidator)
-    if (formData.optimalTempMax && formData.optimalTempMax.trim()) {
+    if (formData.optimalTempMax && typeof formData.optimalTempMax === 'string' && formData.optimalTempMax.trim()) {
       const tempMax = parseFloat(formData.optimalTempMax);
       if (isNaN(tempMax) || tempMax < -50 || tempMax > 100) {
         newErrors.optimalTempMax =
@@ -153,7 +162,7 @@ const CropFormComponent = () => {
     }
 
     // Average water requirement validation (matches CropValidator)
-    if (formData.avgWaterReqmm && formData.avgWaterReqmm.trim()) {
+    if (formData.avgWaterReqmm && typeof formData.avgWaterReqmm === 'string' && formData.avgWaterReqmm.trim()) {
       const waterReq = parseFloat(formData.avgWaterReqmm);
       if (isNaN(waterReq) || waterReq <= 0) {
         newErrors.avgWaterReqmm =
@@ -162,7 +171,7 @@ const CropFormComponent = () => {
     }
 
     // Growth duration validation (matches CropValidator)
-    if (formData.growthDurationDays && formData.growthDurationDays.trim()) {
+    if (formData.growthDurationDays && typeof formData.growthDurationDays === 'string' && formData.growthDurationDays.trim()) {
       const duration = parseInt(formData.growthDurationDays);
       if (isNaN(duration) || duration <= 0) {
         newErrors.growthDurationDays =
@@ -171,7 +180,7 @@ const CropFormComponent = () => {
     }
 
     // Seeding depth validation (matches CropValidator)
-    if (formData.seedingDepthCm && formData.seedingDepthCm.trim()) {
+    if (formData.seedingDepthCm && typeof formData.seedingDepthCm === 'string' && formData.seedingDepthCm.trim()) {
       const depth = parseFloat(formData.seedingDepthCm);
       if (isNaN(depth) || depth <= 0) {
         newErrors.seedingDepthCm = "Seeding depth must be a positive number.";
@@ -232,6 +241,7 @@ const CropFormComponent = () => {
       console.log("Submitting crop data:", submitData); // Debug log
 
       // Debug auth status
+<<<<<<< HEAD
       const token = localStorage.getItem("authToken");
       const user = authService.getCurrentUser();
       console.log("🔍 Auth debug:", {
@@ -247,6 +257,23 @@ const CropFormComponent = () => {
       } else {
         await userCropService.create(submitData);
         toast.success("Crop created successfully!");
+=======
+      const token = localStorage.getItem('authToken');
+      const currentUser = authService.getCurrentUser();
+      console.log('🔍 Auth debug:', {
+        hasToken: !!token,
+        tokenPreview: token ? token.substring(0, 20) + '...' : 'No token',
+        user: currentUser ? currentUser.userId : 'No user',
+        userName: currentUser ? currentUser.fullName : 'No name'
+      });
+
+      if (isEditMode) {
+        await cropService.update(id, submitData);
+        toast.success('Crop updated successfully!');
+      } else {
+        await cropService.create(submitData);
+        toast.success('Crop created successfully!');
+>>>>>>> parent of 9f60f9a (Refactor crop, farm, and landing page components)
       }
 
       navigate("/user-dashboard/my-crops");

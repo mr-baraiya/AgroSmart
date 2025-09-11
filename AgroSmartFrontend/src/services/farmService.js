@@ -63,6 +63,17 @@ export const farmService = {
       console.error('Error status:', error.response?.status);
       throw error;
     }
+  },
+
+  // GET /api/Farm/TotalAcres - Get total acres across all farms
+  getTotalAcres: async () => {
+    try {
+      const response = await api.get('/Farm/TotalAcres');
+      return response;
+    } catch (error) {
+      console.error('Error fetching total acres:', error);
+      throw error;
+    }
   }
 };
 

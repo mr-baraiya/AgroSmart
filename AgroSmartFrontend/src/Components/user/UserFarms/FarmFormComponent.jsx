@@ -32,11 +32,9 @@ const FarmFormComponent = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log('🔍 FarmFormComponent useEffect - ID:', id, 'Type:', typeof id, 'EditMode:', isEditMode);
     if (isEditMode && id && id !== 'undefined') {
       fetchFarmData();
     } else if (isEditMode) {
-      console.warn('⚠️ Edit mode but invalid or missing farm ID:', id);
       toast.error('Invalid farm ID');
       navigate('/user-dashboard/my-farms');
     }
@@ -45,7 +43,6 @@ const FarmFormComponent = () => {
   const fetchFarmData = async () => {
     // Don't fetch if ID is undefined or null
     if (!id || id === 'undefined') {
-      console.warn('Farm ID is undefined, skipping fetch');
       toast.error('Invalid farm ID');
       navigate('/user-dashboard/my-farms');
       return;
@@ -111,7 +108,7 @@ const FarmFormComponent = () => {
     }
 
     // Latitude validation (matches FarmValidator)
-    if (formData.latitude && formData.latitude.trim()) {
+    if (formData.latitude && (typeof formData.latitude === 'string' ? formData.latitude.trim() : formData.latitude)) {
       const lat = parseFloat(formData.latitude);
       if (isNaN(lat) || lat < -90 || lat > 90) {
         newErrors.latitude = 'Latitude must be between -90 and 90.';
@@ -119,7 +116,7 @@ const FarmFormComponent = () => {
     }
 
     // Longitude validation (matches FarmValidator)
-    if (formData.longitude && formData.longitude.trim()) {
+    if (formData.longitude && (typeof formData.longitude === 'string' ? formData.longitude.trim() : formData.longitude)) {
       const lng = parseFloat(formData.longitude);
       if (isNaN(lng) || lng < -180 || lng > 180) {
         newErrors.longitude = 'Longitude must be between -180 and 180.';
@@ -127,7 +124,7 @@ const FarmFormComponent = () => {
     }
 
     // Total acres validation (matches FarmValidator)
-    if (formData.totalAcres && formData.totalAcres.trim()) {
+    if (formData.totalAcres && (typeof formData.totalAcres === 'string' ? formData.totalAcres.trim() : formData.totalAcres)) {
       const acres = parseFloat(formData.totalAcres);
       if (isNaN(acres) || acres <= 0) {
         newErrors.totalAcres = 'Total acres must be a positive number.';
@@ -157,6 +154,11 @@ const FarmFormComponent = () => {
         userId: user?.userId
       };
 
+      // Include farmId for edit mode
+      if (isEditMode) {
+        submitData.farmId = parseInt(id);
+      }
+
       if (isEditMode) {
         await userFarmService.update(id, submitData);
         toast.success('Farm updated successfully!');
@@ -168,7 +170,14 @@ const FarmFormComponent = () => {
       navigate('/user-dashboard/my-farms');
     } catch (error) {
       console.error('Error saving farm:', error);
-      toast.error(`Failed to ${isEditMode ? 'update' : 'create'} farm`);
+      
+      // Show more specific error message if available
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.title || 
+                          error.message || 
+                          `Failed to ${isEditMode ? 'update' : 'create'} farm`;
+      
+      toast.error(errorMessage);
     } finally {
       setSaving(false);
     }

@@ -66,7 +66,7 @@ const FieldFormComponent = () => {
 
   const fetchUserFarms = async () => {
     try {
-      const response = await userFarmService.getAllUserFarms();
+      const response = await userFarmService.getDropdown();
       setUserFarms(response.data || []);
     } catch (error) {
       console.error('Error fetching user farms:', error);
@@ -77,7 +77,7 @@ const FieldFormComponent = () => {
   const fetchFieldData = async () => {
     try {
       setLoading(true);
-      const response = await userFieldService.getFieldById(id);
+      const response = await userFieldService.getById(id);
       const field = response.data;
 
       setFormData({
@@ -114,7 +114,7 @@ const FieldFormComponent = () => {
     }
 
     // Size acres validation (matches FieldValidator)
-    if (formData.sizeAcres && formData.sizeAcres.trim()) {
+    if (formData.sizeAcres && (typeof formData.sizeAcres === 'string' ? formData.sizeAcres.trim() : formData.sizeAcres)) {
       const size = parseFloat(formData.sizeAcres);
       if (isNaN(size) || size <= 0) {
         newErrors.sizeAcres = 'Size (in acres) must be a positive value.';
@@ -176,10 +176,10 @@ const FieldFormComponent = () => {
       };
 
       if (isEditMode) {
-        await userFieldService.updateField(id, fieldData);
+        await userFieldService.update(id, fieldData);
         toast.success('Field updated successfully!');
       } else {
-        await userFieldService.createField(fieldData);
+        await userFieldService.create(fieldData);
         toast.success('Field created successfully!');
       }
       

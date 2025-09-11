@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Plus, 
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { fieldService } from '../../../services/fieldService';
+import { userFieldService } from '../../../services/userFieldService';
 import { farmService } from '../../../services/farmService';
 import { useAuth } from '../../../contexts/AuthProvider';
 
@@ -26,51 +26,217 @@ const UserFieldsView = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFarm, setSelectedFarm] = useState('');
+  const [selectedSoilType, setSelectedSoilType] = useState('');
+  const [selectedIrrigationType, setSelectedIrrigationType] = useState('');
+  const [minSize, setMinSize] = useState('');
+  const [maxSize, setMaxSize] = useState('');
   const [filteredFields, setFilteredFields] = useState([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+
+  // Memoized filter options
+  const soilTypeOptions = useMemo(() => [
+    'Clay', 'Sandy', 'Loam', 'Silt', 'Sandy Loam', 'Clay Loam', 
+    'Silty Clay', 'Sandy Clay', 'Silty Clay Loam', 'Peat', 'Chalk', 'Other'
+  ], []);
+
+  const irrigationTypeOptions = useMemo(() => [
+    'None', 'Drip Irrigation', 'Sprinkler', 'Flood Irrigation', 
+    'Furrow Irrigation', 'Centre Pivot', 'Lateral Move', 
+    'Manual Watering', 'Rain Fed', 'Other'
+  ], []);
 
   // Helper function to check if current user owns the field
   const isOwnedByCurrentUser = (field) => {
-    return field.createdBy === user?.userId || field.userId === user?.userId;
+    // Primary ownership check: field's farm is owned by current user
+    const farmOwnership = field.farm && field.farm.userId === user?.userId;
+    
+    // Secondary ownership check: direct field ownership (if API provides it)
+    const directOwnership = field.createdBy === user?.userId || field.userId === user?.userId;
+    
+    // Debug logging to understand the farm relationship
+    if (field.fieldId >= 11) { // Only log for your fields
+      console.log('🔍 Field ownership check:', {
+        fieldId: field.fieldId,
+        fieldName: field.fieldName,
+        farmId: field.farmId,
+        farmUserId: field.farm?.userId,
+        currentUserId: user?.userId,
+        farmOwnership,
+        directOwnership,
+        result: farmOwnership || directOwnership
+      });
+    }
+    
+    // The proper way to check ownership is through the farm relationship:
+    // field.farmId -> farm.userId should match current user.userId
+    return farmOwnership || directOwnership;
   };
 
   useEffect(() => {
     fetchUserData();
   }, []);
 
+  // Debounced filter application
   useEffect(() => {
-    let filtered = fields;
+    const timer = setTimeout(() => {
+      applyFilters();
+    }, 300); // 300ms debounce
 
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(field =>
-        (field.name && field.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (field.location && field.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (field.farmName && field.farmName.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+    return () => clearTimeout(timer);
+  }, [searchTerm, selectedFarm, selectedSoilType, selectedIrrigationType, minSize, maxSize]);
+
+  // Apply filters when fields data changes (without debounce)
+  useEffect(() => {
+    if (fields.length > 0) {
+      applyFilters();
     }
+  }, [fields]);
 
-    // Filter by selected farm
-    if (selectedFarm) {
-      filtered = filtered.filter(field => field.farmId === selectedFarm);
+  const applyFilters = useCallback(async () => {
+    try {
+      setIsFiltering(true);
+      
+      // Build filter parameters
+      const filters = {};
+      
+      if (searchTerm) filters.name = searchTerm;
+      if (selectedFarm) filters.farmId = parseInt(selectedFarm);
+      if (selectedSoilType) filters.soilType = selectedSoilType;
+      if (selectedIrrigationType) filters.irrigationType = selectedIrrigationType;
+      if (minSize) filters.minSize = parseFloat(minSize);
+      if (maxSize) filters.maxSize = parseFloat(maxSize);
+
+      // If no filters are applied, show all fields
+      if (Object.keys(filters).length === 0) {
+        setFilteredFields(fields);
+        return;
+      }
+
+      // Use API filtering
+      const response = await userFieldService.filter(filters);
+      const filteredData = response.data || [];
+      
+      // Enrich filtered fields with farm data
+      const enrichedFields = filteredData.map(field => {
+        const associatedFarm = farms.find(farm => 
+          farm.farmId === field.farmId
+        );
+        
+        return {
+          ...field,
+          // Map API response fields to component expected fields
+          id: field.fieldId,
+          name: field.fieldName,
+          area: field.sizeAcres,
+          soilType: field.soilType,
+          farmName: associatedFarm?.farmName || 'Unknown Farm',
+          farmLocation: associatedFarm?.location,
+          location: associatedFarm?.location || associatedFarm?.address || 'No location specified',
+          irrigationType: field.irrigationType,
+          isActive: field.isActive,
+          createdAt: field.createdAt,
+          updatedAt: field.updatedAt,
+          cropsCount: field.cropsCount || field.crops?.length || 0
+        };
+      });
+      
+      setFilteredFields(enrichedFields);
+    } catch (error) {
+      console.error('Error applying filters:', error);
+      // Fallback to client-side filtering if API fails
+      let filtered = fields;
+
+      if (searchTerm) {
+        filtered = filtered.filter(field =>
+          (field.name && field.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (field.location && field.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (field.farmName && field.farmName.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
+
+      if (selectedFarm) {
+        filtered = filtered.filter(field => field.farmId === parseInt(selectedFarm));
+      }
+
+      if (selectedSoilType) {
+        filtered = filtered.filter(field => field.soilType === selectedSoilType);
+      }
+
+      if (selectedIrrigationType) {
+        filtered = filtered.filter(field => field.irrigationType === selectedIrrigationType);
+      }
+
+      if (minSize) {
+        filtered = filtered.filter(field => field.area >= parseFloat(minSize));
+      }
+
+      if (maxSize) {
+        filtered = filtered.filter(field => field.area <= parseFloat(maxSize));
+      }
+
+      setFilteredFields(filtered);
+      toast.warn('Using offline filtering due to connection issues');
+    } finally {
+      setIsFiltering(false);
     }
+  }, [searchTerm, selectedFarm, selectedSoilType, selectedIrrigationType, minSize, maxSize, fields, farms]);
 
-    setFilteredFields(filtered);
-  }, [searchTerm, selectedFarm, fields]);
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedFarm('');
+    setSelectedSoilType('');
+    setSelectedIrrigationType('');
+    setMinSize('');
+    setMaxSize('');
+  };
 
   const fetchUserData = async () => {
     try {
       setLoading(true);
       const [fieldsResponse, farmsResponse] = await Promise.all([
-        fieldService.getAll(),
-        farmService.getAll()
+        userFieldService.getAll(),
+        farmService.getDropdown() // Use dropdown API for farms
       ]);
       
       const allFields = fieldsResponse.data || [];
       const allFarms = farmsResponse.data || [];
       
-      setFields(allFields);
+      // Enrich fields with farm names and other farm data
+      const enrichedFields = allFields.map(field => {
+        const associatedFarm = allFarms.find(farm => 
+          farm.farmId === field.farmId
+        );
+
+        const enrichedField = {
+          ...field,
+          // Map API response fields to component expected fields
+          id: field.fieldId,
+          name: field.fieldName,
+          area: field.sizeAcres,
+          soilType: field.soilType,
+          farmName: associatedFarm?.farmName || 'Unknown Farm',
+          farmLocation: associatedFarm?.location,
+          location: associatedFarm?.location || associatedFarm?.address || 'No location specified',
+          // Additional field properties from API
+          irrigationType: field.irrigationType,
+          isActive: field.isActive,
+          createdAt: field.createdAt,
+          updatedAt: field.updatedAt,
+          // Preserve ownership information
+          userId: field.userId,
+          createdBy: field.createdBy,
+          // Also preserve the farm object with its ownership info
+          farm: associatedFarm,
+          // Ensure we have proper crop count (this might come from a separate API call)
+          cropsCount: field.cropsCount || field.crops?.length || 0
+        };
+
+        return enrichedField;
+      });
+      
+      setFields(enrichedFields);
       setFarms(allFarms);
-      setFilteredFields(allFields);
+      setFilteredFields(enrichedFields);
     } catch (error) {
       console.error('Error fetching user data:', error);
       Swal.fire({
@@ -107,7 +273,7 @@ const UserFieldsView = () => {
 
     if (result.isConfirmed) {
       try {
-        await fieldService.delete(field.fieldId || field.id);
+        await userFieldService.delete(field.fieldId || field.id);
         toast.success('Field deleted successfully!');
         fetchUserData(); // Refresh the list
       } catch (error) {
@@ -147,35 +313,110 @@ const UserFieldsView = () => {
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col gap-4">
+          {/* Search Bar */}
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search fields by name, location, or farm..."
+                placeholder="Search fields by name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
           </div>
-          <select
-            value={selectedFarm}
-            onChange={(e) => setSelectedFarm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          >
-            <option value="">All Farms</option>
-            {farms.map((farm, index) => (
-              <option key={farm.farmId || farm.id || `farm-${index}`} value={farm.farmId || farm.id}>
-                {farm.name}
-              </option>
-            ))}
-          </select>
-          <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <Filter className="w-5 h-5 mr-2 text-gray-400" />
-            More Filters
-          </button>
+          
+          {/* Filter Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {/* Farm Filter */}
+            <select
+              value={selectedFarm}
+              onChange={(e) => setSelectedFarm(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="">All Farms</option>
+              {farms.map((farm, index) => (
+                <option key={farm.farmId || `farm-${index}`} value={farm.farmId}>
+                  {farm.farmName}
+                </option>
+              ))}
+            </select>
+
+            {/* Soil Type Filter */}
+            <select
+              value={selectedSoilType}
+              onChange={(e) => setSelectedSoilType(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="">All Soil Types</option>
+              {soilTypeOptions.map(soilType => (
+                <option key={soilType} value={soilType}>
+                  {soilType}
+                </option>
+              ))}
+            </select>
+
+            {/* Irrigation Type Filter */}
+            <select
+              value={selectedIrrigationType}
+              onChange={(e) => setSelectedIrrigationType(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="">All Irrigation Types</option>
+              {irrigationTypeOptions.map(irrigationType => (
+                <option key={irrigationType} value={irrigationType}>
+                  {irrigationType}
+                </option>
+              ))}
+            </select>
+
+            {/* Size Range Filters */}
+            <input
+              type="number"
+              placeholder="Min Size (acres)"
+              value={minSize}
+              onChange={(e) => setMinSize(e.target.value)}
+              min="0"
+              step="0.1"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+
+            <input
+              type="number"
+              placeholder="Max Size (acres)"
+              value={maxSize}
+              onChange={(e) => setMaxSize(e.target.value)}
+              min="0"
+              step="0.1"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Filter Actions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              {isFiltering && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Filtering...
+                </div>
+              )}
+              <span className="text-sm text-gray-600">
+                {filteredFields.length} field{filteredFields.length !== 1 ? 's' : ''} found
+              </span>
+            </div>
+            
+            {(searchTerm || selectedFarm || selectedSoilType || selectedIrrigationType || minSize || maxSize) && (
+              <button
+                onClick={clearFilters}
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -208,10 +449,12 @@ const UserFieldsView = () => {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{field.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {field.name || field.fieldName || `Field ${index + 1}`}
+                    </h3>
                     <div className="flex items-center text-sm text-gray-600 mb-1">
                       <MapPin className="w-4 h-4 mr-1" />
-                      {field.location || 'No location specified'}
+                      {field.location || field.address || 'No location specified'}
                     </div>
                     <div className="text-sm text-green-600 font-medium">
                       {field.farmName || 'Unknown Farm'}
@@ -237,6 +480,17 @@ const UserFieldsView = () => {
                     <p className="text-xs text-gray-600">Soil Type</p>
                   </div>
                 </div>
+
+                {/* Additional Info */}
+                {field.irrigationType && (
+                  <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center text-sm text-blue-700">
+                      <Wheat className="w-4 h-4 mr-2" />
+                      <span className="font-medium">Irrigation:</span>
+                      <span className="ml-1">{field.irrigationType}</span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Owner Info */}
                 {field.createdByName && (
