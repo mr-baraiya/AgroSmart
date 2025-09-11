@@ -8,21 +8,12 @@ import {
   Calendar,
   Ruler,
   Wheat,
-<<<<<<< HEAD
-  FileText,
-} from "lucide-react";
-import { toast } from "react-toastify";
-import { userCropService } from "../../../services/userCropService";
-import { authService } from "../../../services/authService";
-import { useAuth } from "../../../contexts/AuthProvider";
-=======
   FileText
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { cropService } from '../../../services/cropService';
 import { authService } from '../../../services/authService';
 import { useAuth } from '../../../contexts/AuthProvider';
->>>>>>> parent of 9f60f9a (Refactor crop, farm, and landing page components)
 
 const CropFormComponent = () => {
   const navigate = useNavigate();
@@ -241,23 +232,6 @@ const CropFormComponent = () => {
       console.log("Submitting crop data:", submitData); // Debug log
 
       // Debug auth status
-<<<<<<< HEAD
-      const token = localStorage.getItem("authToken");
-      const user = authService.getCurrentUser();
-      console.log("🔍 Auth debug:", {
-        hasToken: !!token,
-        tokenPreview: token ? token.substring(0, 20) + "..." : "No token",
-        user: user ? user.userId : "No user",
-        userName: user ? user.fullName : "No name",
-      });
-
-      if (isEditMode) {
-        await userCropService.update(id, submitData);
-        toast.success("Crop updated successfully!");
-      } else {
-        await userCropService.create(submitData);
-        toast.success("Crop created successfully!");
-=======
       const token = localStorage.getItem('authToken');
       const currentUser = authService.getCurrentUser();
       console.log('🔍 Auth debug:', {
@@ -273,7 +247,6 @@ const CropFormComponent = () => {
       } else {
         await cropService.create(submitData);
         toast.success('Crop created successfully!');
->>>>>>> parent of 9f60f9a (Refactor crop, farm, and landing page components)
       }
 
       navigate("/user-dashboard/my-crops");
