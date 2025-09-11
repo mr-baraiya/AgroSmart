@@ -21,14 +21,6 @@ It allows users to fetch **current weather** and **5-day forecast** based on cit
 
 ---
 
-### 4. Run the Project
-
-```bash
-npm run dev
-```
-
----
-
 ## 🌐 API Endpoints Used
 
 ### Current Weather (by city)
@@ -47,8 +39,4 @@ https://api.openweathermap.org/data/2.5/forecast?q={CITY_NAME}&appid={API_KEY}&u
 
 ```
 https://api.openweathermap.org/data/2.5/weather?lat={LAT}&lon={LON}&appid={API_KEY}&units=metric
-```
-```
-
-Would you like me to extend this README to also include **One Call API 3.0 (current + forecast + alerts in one request)**, since that may suit your AgroSmart project better than hitting multiple endpoints?
 ```
