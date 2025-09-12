@@ -9,5 +9,12 @@ namespace AgroSmartBeackend.Controllers
     {
         [HttpGet]
         public IActionResult Get() => Ok("OK");
+
+        [HttpGet("/")]
+        public IActionResult Home()
+        {
+            return Ok("Welcome to AgroSmart Backend 🚀");
+        }
+
     }
 }

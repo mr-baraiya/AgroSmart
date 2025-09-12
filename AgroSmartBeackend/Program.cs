@@ -13,7 +13,15 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // ------------------------------------------------------------
-// Load JWT settings from configuration (appsettings.json)
+// Add Environment Variables to configuration
+// ------------------------------------------------------------
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
+// ------------------------------------------------------------
+// Load JWT settings (from appsettings.json or environment vars)
 // ------------------------------------------------------------
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSettings["Key"];
@@ -42,15 +50,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // ------------------------------------------------------------
 // Register essential ASP.NET Core services
 // ------------------------------------------------------------
-builder.Services.AddControllers();                      // Add controller support
-builder.Services.AddEndpointsApiExplorer();             // Enable minimal API explorer
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
 // ------------------------------------------------------------
 // Swagger configuration with JWT Authentication support
 // ------------------------------------------------------------
 builder.Services.AddSwaggerGen(options =>
 {
-    // Register the Swagger document (API metadata)
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "AgroSmart API",
@@ -58,18 +65,16 @@ builder.Services.AddSwaggerGen(options =>
         Description = "AgroSmart Backend API with JWT Authentication support"
     });
 
-    // Define the JWT Bearer scheme for Swagger
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
-        Name = "Authorization",                         // Header name
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http, // Type: HTTP scheme
-        Scheme = "Bearer",                              // Scheme keyword
-        BearerFormat = "JWT",                           // Token format
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header, // Token passed in headers
-        Description = "Enter 'Bearer {your JWT token}'" // Helper text in Swagger UI
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter 'Bearer {your JWT token}'"
     });
 
-    // Apply JWT Bearer scheme as a global requirement
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
         {
@@ -81,10 +86,11 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[] {} // No specific scopes required
+            new string[] {}
         }
     });
 });
+
 // ------------------------------------------------------------
 // Enable CORS for both development and production frontends
 // ------------------------------------------------------------
@@ -161,16 +167,9 @@ if (!app.Environment.IsDevelopment())
 // Middleware order is important!
 // ------------------------------------------------------------
 app.UseRouting();
-
-// ------------------------------------------------------------
-// Enable serving of static files (wwwroot or custom path)
-// ------------------------------------------------------------
-
 app.UseStaticFiles();
-
 app.UseCors("AllowFrontendOrigins");
-
-app.UseAuthentication(); // Add Authentication before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
