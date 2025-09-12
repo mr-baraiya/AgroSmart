@@ -1,13 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/AgroSmartLogo2.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="google-site-verification" content="PgGdovPTxJDBzl_GZ3ifwUTyrLCfQ7hkWBCJWImidIQ" />
-    <meta name="description" content="AgroSmart provides real-time farm insights, crop planning, and weather monitoring for smart agriculture.">
-    <meta name="keywords" content="agriculture, smart farming, crops, weather, farm management">
+    <meta
+      name="google-site-verification"
+      content="PgGdovPTxJDBzl_GZ3ifwUTyrLCfQ7hkWBCJWImidIQ"
+    />
+    <meta
+      name="description"
+      content="AgroSmart provides real-time farm insights, crop planning, and weather monitoring for smart agriculture."
+    />
+    <meta
+      name="keywords"
+      content="agriculture, smart farming, crops, weather, farm management"
+    />
     <title>AgroSmart - Smart Farming Dashboard</title>
+    <script>
+      // Set max wait time in milliseconds (e.g., 4000 = 4 seconds)
+      const timeout = 4000;
+
+      // If page takes too long, redirect to Netlify
+      window.onload = function () {
+        let pageLoadTime =
+          performance.timing.loadEventEnd - performance.timing.navigationStart;
+        if (pageLoadTime > timeout) {
+          window.location.href = "https://ecoagrosmart.netlify.app";
+        }
+      };
+
+      // Extra fallback if load event never fires
+      setTimeout(() => {
+        if (document.readyState !== "complete") {
+          window.location.href = "https://ecoagrosmart.netlify.app";
+        }
+      }, timeout);
+    </script>
   </head>
   <body>
     <div id="root"></div>
