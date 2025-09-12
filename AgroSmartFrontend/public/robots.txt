@@ -3,7 +3,6 @@
 User-agent: *
 Allow: /
 
-# Block Netlify domain from being indexed
-Disallow: https://ecoagrosmart.netlify.app/
-
+# Sitemaps for both domains
 Sitemap: https://agrosmart.me/sitemap.xml
+Sitemap: https://ecoagrosmart.netlify.app/sitemap.xml
