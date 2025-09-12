@@ -17,26 +17,35 @@
       content="agriculture, smart farming, crops, weather, farm management"
     />
     <title>AgroSmart - Smart Farming Dashboard</title>
-    <!-- Canonical for main domain -->
     <link rel="canonical" href="https://agrosmart.me/" />
-    <script>
-      // Set max wait time in milliseconds (e.g., 4000 = 4 seconds)
-      const timeout = 10000;
 
-      // If page takes too long, redirect to Netlify
-      window.onload = function () {
-        let pageLoadTime =
-          performance.timing.loadEventEnd - performance.timing.navigationStart;
-        if (pageLoadTime > timeout) {
-          window.location.href = "https://ecoagrosmart.netlify.app";
-        }
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1GBF8K601K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1GBF8K601K');
+    </script>
+
+    <!-- Page load redirect fallback -->
+    <script>
+      const timeout = 10000; // 10 seconds
+
+      // Redirect if page takes too long to load
+      const redirectToNetlify = () => {
+        window.location.href = "https://ecoagrosmart.netlify.app";
       };
 
-      // Extra fallback if load event never fires
+      // If load event fires, check load time
+      window.addEventListener("load", () => {
+        const loadTime = performance.now();
+        if (loadTime > timeout) redirectToNetlify();
+      });
+
+      // Fallback after timeout if page hasn't fully loaded
       setTimeout(() => {
-        if (document.readyState !== "complete") {
-          window.location.href = "https://ecoagrosmart.netlify.app";
-        }
+        if (document.readyState !== "complete") redirectToNetlify();
       }, timeout);
     </script>
   </head>
