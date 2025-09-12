@@ -1,4 +1,9 @@
+# Robots.txt for AgroSmart
+
 User-agent: *
 Allow: /
+
+# Block Netlify domain from being indexed
+Disallow: https://ecoagrosmart.netlify.app/
 
 Sitemap: https://agrosmart.me/sitemap.xml
