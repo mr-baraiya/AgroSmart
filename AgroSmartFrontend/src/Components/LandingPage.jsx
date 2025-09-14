@@ -25,7 +25,8 @@ import {
   TrendingUp,
   Cloud,
   QrCode,
-  Smartphone
+  Smartphone,
+  BookOpen
 } from 'lucide-react';
 
 // Custom hook for responsive canvas settings
@@ -644,18 +645,26 @@ const LandingPage = () => {
                 Features
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <a href="#about" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
-                About
+              <a href="#testimonials" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
+                Testimonials
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
               </a>
               <Link to="/weather" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
                 Weather
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <a href="#testimonials" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
-                Testimonials
+              <Link to="/mandi-prices" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
+                Mandi Prices
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
-              </a>
+              </Link>
+              <Link to="/learn-more" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
+                Learn More
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link to="/about" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
+                About
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
+              </Link>
               <Link to="/contact" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
                 Contact
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
@@ -716,8 +725,10 @@ const LandingPage = () => {
                 <div className="flex flex-col space-y-4">
                   {[
                     { to: "/features", label: "Features", icon: <Sparkles className="w-4 h-4" /> },
-                    { href: "#about", label: "About", icon: <Eye className="w-4 h-4" /> },
                     { to: "/weather", label: "Weather", icon: <Cloud className="w-4 h-4" /> },
+                    { to: "/mandi-prices", label: "Mandi Prices", icon: <TrendingUp className="w-4 h-4" /> },
+                    { to: "/learn-more", label: "Learn More", icon: <BookOpen className="w-4 h-4" /> },
+                    { to: "/about", label: "About", icon: <Star className="w-4 h-4" /> },
                     { href: "#testimonials", label: "Testimonials", icon: <Star className="w-4 h-4" /> },
                     { to: "/contact", label: "Contact", icon: <Mail className="w-4 h-4" /> }
                   ].map((item, index) => (

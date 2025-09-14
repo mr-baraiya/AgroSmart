@@ -4,19 +4,25 @@
   <!-- Homepage & Marketing -->
   <url>
     <loc>https://agrosmart.me/</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/features</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/learn-more</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://agrosmart.me/about</loc>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -24,31 +30,31 @@
   <!-- Authentication Pages -->
   <url>
     <loc>https://agrosmart.me/login</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/register</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/auth/login</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/auth/register</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/auth/forgot-password</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -56,27 +62,34 @@
   <!-- Guest Services -->
   <url>
     <loc>https://agrosmart.me/weather</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://agrosmart.me/mandi-prices</loc>
+    <lastmod>2025-09-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <!-- Legal & Info -->
   <url>
     <loc>https://agrosmart.me/privacy-policy</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/terms-of-service</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://agrosmart.me/contact</loc>
-    <lastmod>2025-09-11</lastmod>
+    <lastmod>2025-09-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

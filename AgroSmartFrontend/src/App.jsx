@@ -17,6 +17,8 @@ import ContactUs from "./Components/legal/ContactUs";
 import GuestWeatherPage from "./pages/guest/WeatherPage";
 import FeaturesPage from "./pages/guest/FeaturesPage";
 import LearnMorePage from "./pages/guest/LearnMorePage";
+import AboutPage from "./pages/guest/AboutPage";
+import MandiPricesPage from "./pages/guest/MandiPricesPage";
 import CropsView from "./Components/crop/CropsView";
 import CropDetail from "./Components/crop/CropDetail";
 import CropFormPage from "./Components/crop/CropFormPage";
@@ -74,8 +76,10 @@ function App() {
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
             <Route path="/weather" element={<GuestWeatherPage />} />
+            <Route path="/mandi-prices" element={<MandiPricesPage />} />
             <Route path="/features" element={<FeaturesPage />} />
             <Route path="/learn-more" element={<LearnMorePage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/contact" element={<ContactUs />} />

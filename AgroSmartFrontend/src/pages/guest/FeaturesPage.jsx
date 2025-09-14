@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import Header from '../../Components/common/Header';
 import { 
   Cloud,
   Cpu,
@@ -25,8 +26,6 @@ import {
   Sun,
   CloudRain,
   Zap,
-  Menu,
-  X,
   Sparkles,
   Eye,
   Star,
@@ -39,7 +38,6 @@ import {
 
 const FeaturesPage = () => {
   const [activeFeature, setActiveFeature] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
   const interactiveRef = useRef(null);
@@ -142,126 +140,8 @@ const FeaturesPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
-      {/* Enhanced Navigation */}
-      <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100 transition-all duration-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <motion.div 
-              className="flex items-center space-x-2"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <Link to="/" className="flex items-center space-x-2">
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg flex items-center justify-center"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                >
-                  <Leaf className="w-6 h-6 text-white" />
-                </motion.div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  AgroSmart
-                </span>
-              </Link>
-            </motion.div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
-                Home
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-              <Link to="/features" className="text-green-600 font-semibold relative group">
-                Features
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-green-600 to-blue-600"></span>
-              </Link>
-              <Link to="/weather" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
-                Weather
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-              <Link to="/contact" className="text-gray-700 hover:text-green-600 transition-colors duration-200 relative group">
-                Contact
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-green-600 to-blue-600 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-              
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link 
-                  to="/auth/login" 
-                  className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 relative overflow-hidden group"
-                >
-                  <span className="relative z-10">Get Started</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-blue-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></div>
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="flex items-center space-x-2 md:hidden">
-              <button
-                className="text-gray-700"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Enhanced Mobile Navigation */}
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="md:hidden py-4 border-t border-gray-100"
-              >
-                <div className="flex flex-col space-y-4">
-                  {[
-                    { to: "/", label: "Home", icon: <Leaf className="w-4 h-4" /> },
-                    { to: "/features", label: "Features", icon: <Sparkles className="w-4 h-4" /> },
-                    { to: "/weather", label: "Weather", icon: <Cloud className="w-4 h-4" /> },
-                    { to: "/contact", label: "Contact", icon: <Mail className="w-4 h-4" /> }
-                  ].map((item, index) => (
-                    <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Link 
-                        to={item.to} 
-                        className="flex items-center space-x-2 text-gray-700 hover:text-green-600 transition-colors duration-200"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <Link 
-                      to="/auth/login" 
-                      className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-200 text-center flex items-center justify-center space-x-2"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Zap className="w-4 h-4" />
-                      <span>Get Started</span>
-                    </Link>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </nav>
+      {/* Header */}
+      <Header />
 
       {/* Add top padding to account for fixed header */}
       <div className="pt-20"></div>
@@ -456,8 +336,9 @@ const FeaturesPage = () => {
           </motion.div>
 
           {/* Interactive Flow Diagram */}
-          <div className="relative max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
+          <div className="relative max-w-7xl mx-auto">
+            {/* Main Grid Container */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 items-center relative z-10">
               {interactiveElements.map((element, index) => (
                 <motion.div
                   key={index}
@@ -466,13 +347,13 @@ const FeaturesPage = () => {
                   transition={{ duration: 0.6, delay: element.delay }}
                   className="text-center relative"
                 >
-                  {/* Connection Line */}
+                  {/* Connection Line - Only show on larger screens */}
                   {index < interactiveElements.length - 1 && (
                     <motion.div
                       initial={{ scaleX: 0 }}
                       animate={isInteractiveInView ? { scaleX: 1 } : {}}
                       transition={{ duration: 0.8, delay: element.delay + 0.3 }}
-                      className="hidden md:block absolute top-1/2 left-full w-8 h-0.5 bg-gradient-to-r from-blue-400 to-green-400 transform -translate-y-1/2 origin-left"
+                      className="hidden lg:block absolute top-1/2 left-full w-12 h-0.5 bg-gradient-to-r from-blue-400 to-green-400 transform -translate-y-1/2 origin-left z-0"
                     />
                   )}
 
@@ -487,14 +368,14 @@ const FeaturesPage = () => {
                       repeat: Infinity,
                       delay: element.delay
                     }}
-                    className="inline-flex flex-col items-center"
+                    className="inline-flex flex-col items-center relative z-10"
                   >
-                    <div className="p-6 bg-white/10 backdrop-blur-md rounded-full mb-4 border border-white/20">
+                    <div className="p-6 bg-white/10 backdrop-blur-md rounded-full mb-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
                       <div className="text-white">
                         {element.icon}
                       </div>
                     </div>
-                    <h3 className="text-white font-semibold">
+                    <h3 className="text-white font-semibold text-lg">
                       {element.label}
                     </h3>
                   </motion.div>
@@ -502,17 +383,17 @@ const FeaturesPage = () => {
               ))}
             </div>
 
-            {/* Central Processing Animation */}
+            {/* Central Processing Animation - Only on very large screens */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={isInteractiveInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 1, delay: 0.8 }}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block"
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden xl:block z-0"
             >
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-32 h-32 border-4 border-dashed border-green-400/50 rounded-full flex items-center justify-center"
+                className="w-24 h-24 border-2 border-dashed border-green-400/30 rounded-full flex items-center justify-center"
               >
                 <motion.div
                   animate={{ 
@@ -524,9 +405,9 @@ const FeaturesPage = () => {
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="p-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-full"
+                  className="p-3 bg-gradient-to-r from-green-500/80 to-blue-500/80 rounded-full"
                 >
-                  <Zap className="w-8 h-8 text-white" />
+                  <Zap className="w-6 h-6 text-white" />
                 </motion.div>
               </motion.div>
             </motion.div>

@@ -1,37 +1,40 @@
-# Profile Image Configuration
+# Profile Image Setup Instructions
 
-## Default Profile Image
+## Steps to add Vishal Baraiya's profile image:
 
-All new users will now display a default profile image located at `/public/default-profile.png` instead of showing only initials.
+### Method 1: Manual Copy
+1. Copy your profile image from:
+   `C:\Users\ASUS\Downloads\dempo.jpg`
 
-### Implementation Details
+2. Rename it to: `vishal-baraiya-profile.jpg`
 
-- **Location**: `/public/default-profile.png`
-- **Size**: 416KB
-- **Fallback**: User initials with gradient background (if default image fails to load)
+3. Place it in the public folder:
+   `d:\VS_CODES\.NET_Project\AgroSmart\AgroSmartFrontend\public\vishal-baraiya-profile.jpg`
 
-### Components Updated
-
-1. **ProfileImageUpload.jsx**: Main component for profile image upload/display with editing capabilities
-2. **ProfileImage.jsx**: Read-only profile image display component
-
-### Changes Made
-
-- Modified `imageUrl` construction to use default image when no profile image is set
-- Updated image loading with error handling to gracefully fallback to initials
-- Both components now display the default image for new users
-
-### Usage
-
-```jsx
-// Will automatically show default image for users without profileImage
-<ProfileImageUpload user={user} size="lg" />
-<ProfileImageDisplay user={user} size="md" />
+### Method 2: Command Line Copy
+Open PowerShell and run:
+```powershell
+copy "C:\Users\ASUS\Downloads\dempo.jpg" "d:\VS_CODES\.NET_Project\AgroSmart\AgroSmartFrontend\public\vishal-baraiya-profile.jpg"
 ```
 
-### Benefits
+## Alternative: Using the existing image
+If you prefer to keep using the placeholder icon, you can update the team member data to use "/default-profile.png" instead.
 
-- Better user experience for new users
-- Consistent visual appearance
-- Professional look for the application
-- Graceful degradation with fallback to initials
+## What has been updated:
+- ✅ Updated name to: "Vishal Baraiya"
+- ✅ Updated image path to: "vishal-baraiya-profile.jpg" 
+- ✅ LinkedIn profile link: https://www.linkedin.com/in/baraiya-vishalbhai/
+- ✅ Enhanced image handling with better fallback
+- ✅ Added proper error handling for missing images
+- ✅ Improved image styling with rounded corners
+
+The About page now displays:
+- Your name: "Vishal Baraiya" 
+- Your role: "Founder & CEO"
+- Your LinkedIn profile link with a clickable button
+- Professional profile image (once you copy the file as instructed above)
+
+## Troubleshooting:
+- If image doesn't show: Check if the file exists in the public folder
+- If image is distorted: The code uses `object-cover` to maintain aspect ratio
+- If fallback icon shows: The image file wasn't found or failed to load

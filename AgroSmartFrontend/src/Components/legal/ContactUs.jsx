@@ -4,6 +4,7 @@ import { ArrowLeft, Mail, Phone, MapPin, Clock, Send, AlertTriangle } from 'luci
 import Swal from 'sweetalert2';
 import emailjs from '@emailjs/browser';
 import { EMAIL_CONFIG } from '../../config/emailConfig';
+import Header from '../common/Header';
 
 export default function ContactUs() {
   const location = useLocation();
@@ -186,25 +187,27 @@ export default function ContactUs() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <Link 
-              to="/" 
-              className="flex items-center text-green-600 hover:text-green-700 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Home
-            </Link>
-            <div className="flex items-center">
-              <Mail className="w-6 h-6 text-green-600 mr-2" />
-              <h1 className="text-2xl font-bold text-gray-900">Contact Us</h1>
-            </div>
+      <Header />
+      
+      {/* Add top padding to account for fixed header */}
+      <div className="pt-20"></div>
+      
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-16 bg-gradient-to-r from-green-600 to-blue-600">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center mb-4">
+            <Mail className="w-12 h-12 text-white mr-4" />
+            <h1 className="text-4xl md:text-5xl font-bold text-white">Contact Us</h1>
           </div>
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            Have questions about AgroSmart? We'd love to hear from you. 
+            Send us a message and we'll respond as soon as possible.
+          </p>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -233,65 +236,98 @@ export default function ContactUs() {
         )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+              <MapPin className="w-8 h-8 text-green-600 mr-3" />
+              Get in Touch
+            </h2>
             <p className="text-gray-600 text-lg mb-8">
-              Have questions about AgroSmart? We'd love to hear from you. 
-              Send us a message and we'll respond as soon as possible.
+              Connect with our team for support, partnerships, or any questions about AgroSmart.
             </p>
 
-            <div className="space-y-6">
-              <div className="flex items-start">
-                <Mail className="w-6 h-6 text-green-600 mt-1 mr-4" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Email</h3>
-                  <p className="text-gray-600">vvbaraiya32@gmail.com</p>
-                  <p className="text-gray-600">support@agrosmart.com</p>
+            <div className="space-y-8">
+              <div className="group hover:bg-green-50 rounded-xl p-4 transition-all duration-300">
+                <div className="flex items-start">
+                  <div className="bg-green-100 rounded-full p-3 group-hover:bg-green-200 transition-colors">
+                    <Mail className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="font-semibold text-gray-900 text-lg">Email</h3>
+                    <div className="space-y-1 mt-2">
+                      <p className="text-green-600 font-medium hover:text-green-700 cursor-pointer">
+                        vvbaraiya32@gmail.com
+                      </p>
+                      <p className="text-green-600 font-medium hover:text-green-700 cursor-pointer">
+                        support@agrosmart.com
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start">
-                <Phone className="w-6 h-6 text-green-600 mt-1 mr-4" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Phone</h3>
-                  <p className="text-gray-600">+91 73833 59679</p>
-                  <p className="text-gray-600">+91 12345 67890</p>
+              <div className="group hover:bg-blue-50 rounded-xl p-4 transition-all duration-300">
+                <div className="flex items-start">
+                  <div className="bg-blue-100 rounded-full p-3 group-hover:bg-blue-200 transition-colors">
+                    <Phone className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="font-semibold text-gray-900 text-lg">Phone</h3>
+                    <div className="space-y-1 mt-2">
+                      <p className="text-blue-600 font-medium hover:text-blue-700 cursor-pointer">
+                        +91 73833 59679
+                      </p>
+                      <p className="text-blue-600 font-medium hover:text-blue-700 cursor-pointer">
+                        +91 12345 67890
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start">
-                <MapPin className="w-6 h-6 text-green-600 mt-1 mr-4" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Address</h3>
-                  <p className="text-gray-600">
-                    123 Farm Tech Lane<br />
-                    Agricultural Valley, Kaniyad<br />
-                    Botad, Gujarat, India 364710
-                  </p>
+              <div className="group hover:bg-purple-50 rounded-xl p-4 transition-all duration-300">
+                <div className="flex items-start">
+                  <div className="bg-purple-100 rounded-full p-3 group-hover:bg-purple-200 transition-colors">
+                    <MapPin className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="font-semibold text-gray-900 text-lg">Address</h3>
+                    <div className="text-purple-600 font-medium mt-2">
+                      <p>123 Farm Tech Lane</p>
+                      <p>Agricultural Valley, Kaniyad</p>
+                      <p>Botad, Gujarat, India 364710</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start">
-                <Clock className="w-6 h-6 text-green-600 mt-1 mr-4" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Business Hours (IST)</h3>
-                  <p className="text-gray-600">Monday - Friday: 9:00 AM - 7:00 PM</p>
-                  <p className="text-gray-600">Saturday: 10:00 AM - 5:00 PM</p>
-                  <p className="text-gray-600">Sunday: Closed</p>
+              <div className="group hover:bg-orange-50 rounded-xl p-4 transition-all duration-300">
+                <div className="flex items-start">
+                  <div className="bg-orange-100 rounded-full p-3 group-hover:bg-orange-200 transition-colors">
+                    <Clock className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="font-semibold text-gray-900 text-lg">Business Hours (IST)</h3>
+                    <div className="text-orange-600 font-medium mt-2 space-y-1">
+                      <p>Monday - Friday: 9:00 AM - 7:00 PM</p>
+                      <p>Saturday: 10:00 AM - 5:00 PM</p>
+                      <p>Sunday: Closed</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <Send className="w-7 h-7 text-green-600 mr-3" />
               {isInactiveAccountRequest ? 'Request Account Activation' : 'Send us a Message'}
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
                   Your Name
                 </label>
                 <input
@@ -300,13 +336,13 @@ export default function ContactUs() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/80 backdrop-blur-sm"
                   placeholder="Enter your full name"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                   Email Address
                 </label>
                 <input
@@ -315,14 +351,14 @@ export default function ContactUs() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/80 backdrop-blur-sm"
                   placeholder="Enter your email address"
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number <span className="text-gray-500 text-sm">(Optional)</span>
+                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Phone Number <span className="text-gray-500 text-sm font-normal">(Optional)</span>
                 </label>
                 <input
                   type="tel"
@@ -330,13 +366,13 @@ export default function ContactUs() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/80 backdrop-blur-sm"
                   placeholder="Enter your phone number"
                 />
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
                   Subject
                 </label>
                 <input
@@ -345,13 +381,13 @@ export default function ContactUs() {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/80 backdrop-blur-sm"
                   placeholder="What is this regarding?"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
                   Message
                 </label>
                 <textarea
@@ -360,14 +396,14 @@ export default function ContactUs() {
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/80 backdrop-blur-sm resize-none"
                   placeholder="Tell us how we can help you..."
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-700 transition-all duration-300 flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-green-700 hover:to-blue-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <Send className="w-5 h-5 mr-2" />
                 {isInactiveAccountRequest ? 'Request Account Activation' : 'Send Message'}
