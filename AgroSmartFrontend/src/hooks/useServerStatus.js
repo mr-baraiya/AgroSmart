@@ -1,86 +1,67 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import API_BASE_URL from '../config.js';
 
 const useServerStatus = () => {
-  const [isServerOnline, setIsServerOnline] = useState(null); // Start with null to indicate "checking"
+  const [isServerOnline, setIsServerOnline] = useState(null);
   const [lastChecked, setLastChecked] = useState(new Date());
   const [retryCount, setRetryCount] = useState(0);
   const [isInitialCheck, setIsInitialCheck] = useState(true);
 
   const checkServerStatus = useCallback(async () => {
     try {
-      console.log('🔍 Checking server status at:', API_BASE_URL);
-      
-      // First try a simple GET request to see if server responds
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       
       const response = await fetch(`${API_BASE_URL}/Farm/All`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         signal: controller.signal
       });
       
       clearTimeout(timeoutId);
-      console.log('✅ Server response status:', response.status);
       
-      // Consider server online if we get any response (even 401, 403, 404, etc.)
-      // Only consider it offline if we can't connect at all
-      if (response.status < 500) { // Any 1xx, 2xx, 3xx, 4xx response means server is reachable
-        console.log('✅ Server is online (status:', response.status, ')');
+      if (response.status < 500) {
+        if (!isServerOnline) {
+          console.log('🟢 SERVER CONNECTED: Connection restored successfully');
+        }
         setIsServerOnline(true);
         setRetryCount(0);
       } else {
-        console.log('⚠️ Server returned 5xx error:', response.status);
+        if (isServerOnline !== false) {
+          console.log('🔴 SERVER DISCONNECTED: Server returned error status:', response.status);
+        }
         setIsServerOnline(false);
       }
     } catch (error) {
-      console.error('❌ Server connectivity check failed:', error);
-      
-      // Only set offline if it's actually a connection error
       const isConnectionError = 
         error.name === 'AbortError' ||
         error.message.includes('Failed to fetch') ||
-        error.message.includes('Network Error') ||
-        error.message.includes('ERR_NETWORK') ||
-        error.message.includes('ERR_CONNECTION_REFUSED');
+        error.message.includes('Network Error');
         
-      if (isConnectionError) {
-        console.log('❌ Setting server offline due to connection error');
+      if (isConnectionError && !isInitialCheck) {
+        if (isServerOnline !== false) {
+          console.log('🔴 SERVER DISCONNECTED: Network connection error -', error.message);
+        }
         setIsServerOnline(false);
-      } else {
-        console.log('⚠️ Non-connection error, keeping server status as online');
-        setIsServerOnline(true); // Don't mark offline for other types of errors
       }
     }
     
     setLastChecked(new Date());
-    // Only set initial check to false after we have a definitive result
     if (isInitialCheck) {
       setIsInitialCheck(false);
     }
   }, [isInitialCheck]);
 
   const handleApiError = useCallback((error) => {
-    // Check if error indicates server is down
     const serverDownIndicators = [
-      'Network Error',
-      'fetch failed',
-      'Failed to fetch',
-      'ERR_NETWORK',
-      'ERR_INTERNET_DISCONNECTED',
-      'ERR_CONNECTION_REFUSED',
-      'ECONNREFUSED',
-      'ENOTFOUND',
-      'ETIMEDOUT'
+      'Network Error', 'fetch failed', 'Failed to fetch',
+      'ERR_NETWORK', 'ERR_CONNECTION_REFUSED'
     ];
 
-    const errorMessage = error?.message || error?.toString() || '';
+    const errorMessage = error?.message || '';
     const isServerDown = serverDownIndicators.some(indicator => 
       errorMessage.includes(indicator)
-    ) || error?.code === 'NETWORK_ERROR' || !navigator.onLine;
+    );
 
     if (isServerDown) {
       setIsServerOnline(false);
@@ -94,45 +75,22 @@ const useServerStatus = () => {
     checkServerStatus();
   }, [checkServerStatus]);
 
-  // Periodic health check
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isServerOnline) {
-        console.log('🔄 Retrying server connection check...');
+      if (!isServerOnline && !isInitialCheck) {
         checkServerStatus();
       }
-    }, 30000); // Check every 30 seconds when server is down (less aggressive)
+    }, 120000); // Check every 2 minutes when server is down (less aggressive)
 
     return () => clearInterval(interval);
-  }, [isServerOnline, checkServerStatus]);
+  }, [isServerOnline, isInitialCheck, checkServerStatus]);
 
-  // Initial check - but delay it slightly to let the app initialize
   useEffect(() => {
     const timer = setTimeout(() => {
       checkServerStatus();
-    }, 100); // Reduced delay to 100ms
+    }, 3000); // 3 second delay to avoid startup issues
 
     return () => clearTimeout(timer);
-  }, [checkServerStatus]);
-
-  // Listen for online/offline events
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsServerOnline(true);
-      checkServerStatus();
-    };
-
-    const handleOffline = () => {
-      setIsServerOnline(false);
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
   }, [checkServerStatus]);
 
   return {

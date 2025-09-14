@@ -19,7 +19,13 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
       console.log('🔑 Auth token added to request:', config.url);
     } else {
-      console.warn('⚠️ No auth token found for request:', config.url);
+      // Only warn for protected endpoints that likely need authentication
+      const protectedEndpoints = ['/User/', '/Admin/', '/Farm/', '/Field/', '/Crop/', '/Schedule/', '/SmartInsight/'];
+      const needsAuth = protectedEndpoints.some(endpoint => config.url?.includes(endpoint));
+      
+      if (needsAuth && !config.url?.includes('CountAllUsers') && !config.url?.includes('TotalAcres')) {
+        console.warn('⚠️ No auth token found for protected request:', config.url);
+      }
     }
     return config;
   },

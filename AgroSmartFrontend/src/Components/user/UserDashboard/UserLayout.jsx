@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import UserHeader from './UserHeader';
 import UserSidebar from './UserSidebar';
-import ServerStatusBanner from '../../common/ServerStatusBanner';
 
 const UserLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -17,9 +16,6 @@ const UserLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Server Status Banner */}
-      <ServerStatusBanner />
-      
       <div className="flex h-screen pt-0">
         {/* Sidebar */}
         <UserSidebar isOpen={sidebarOpen} onClose={closeSidebar} />

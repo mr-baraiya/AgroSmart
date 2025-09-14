@@ -17,6 +17,7 @@ const MandiPricesPage = () => {
   const [locationPermission, setLocationPermission] = useState('pending'); // 'pending', 'granted', 'denied'
   const [sortBy, setSortBy] = useState('location'); // 'location', 'price', 'commodity'
   const [nearbyStatesBasedOnLocation, setNearbyStatesBasedOnLocation] = useState([]);
+  const [showAutoSelectNotification, setShowAutoSelectNotification] = useState(false);
 
   // Popular cities/states for prioritized display
   const popularLocations = [
@@ -175,7 +176,7 @@ const MandiPricesPage = () => {
     if (navigator.geolocation) {
       setLocationPermission('pending');
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const userLat = position.coords.latitude;
           const userLng = position.coords.longitude;
           
@@ -188,6 +189,9 @@ const MandiPricesPage = () => {
           // Calculate nearby states based on user's actual location
           const nearbyStates = getNearbyStatesFromLocation(userLat, userLng);
           setNearbyStatesBasedOnLocation(nearbyStates);
+
+          // Get detailed location info and auto-select filters
+          await autoSelectLocationFilters(userLat, userLng);
         },
         (error) => {
           console.log('Location access denied:', error);
@@ -207,6 +211,105 @@ const MandiPricesPage = () => {
     }
   };
 
+  // Function to get state and district from coordinates using reverse geocoding
+  const autoSelectLocationFilters = async (lat, lng) => {
+    try {
+      // First try to detect state based on coordinates and state boundaries
+      const detectedState = getStateFromCoordinates(lat, lng);
+      
+      if (detectedState) {
+        console.log(`🎯 Auto-detected state: ${detectedState}`);
+        setSelectedState(detectedState);
+        setShowAutoSelectNotification(true);
+        
+        // Hide notification after 5 seconds
+        setTimeout(() => {
+          setShowAutoSelectNotification(false);
+        }, 5000);
+        
+        // Try to get district info using reverse geocoding API (free service)
+        try {
+          const response = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+          );
+          
+          if (response.ok) {
+            const locationData = await response.json();
+            const district = locationData.city || locationData.locality || locationData.principalSubdivision;
+            
+            if (district) {
+              console.log(`🎯 Auto-detected district: ${district}`);
+              // Check if this district/city appears in our mandi data
+              const matchingMarket = mandiData.find(item => 
+                item.district?.toLowerCase().includes(district.toLowerCase()) ||
+                item.market?.toLowerCase().includes(district.toLowerCase())
+              );
+              
+              if (matchingMarket) {
+                setSelectedMarket(matchingMarket.market);
+              }
+            }
+          }
+        } catch (geocodingError) {
+          console.log('Reverse geocoding failed, using state detection only:', geocodingError);
+        }
+      }
+    } catch (error) {
+      console.log('Auto-location detection failed:', error);
+    }
+  };
+
+  // Function to detect state from coordinates using approximate boundaries
+  const getStateFromCoordinates = (lat, lng) => {
+    // Gujarat boundaries (approximate)
+    if (lat >= 20.0 && lat <= 24.7 && lng >= 68.0 && lng <= 74.5) {
+      return 'Gujarat';
+    }
+    // Rajasthan boundaries (approximate)  
+    if (lat >= 23.0 && lat <= 30.2 && lng >= 69.5 && lng <= 78.5) {
+      return 'Rajasthan';
+    }
+    // Maharashtra boundaries (approximate)
+    if (lat >= 15.6 && lat <= 22.0 && lng >= 72.6 && lng <= 80.9) {
+      return 'Maharashtra';
+    }
+    // Haryana boundaries (approximate)
+    if (lat >= 27.6 && lat <= 30.9 && lng >= 74.4 && lng <= 77.4) {
+      return 'Haryana';
+    }
+    // Punjab boundaries (approximate)
+    if (lat >= 29.5 && lat <= 32.5 && lng >= 73.9 && lng <= 76.9) {
+      return 'Punjab';
+    }
+    // Uttar Pradesh boundaries (approximate)
+    if (lat >= 23.8 && lat <= 30.4 && lng >= 77.0 && lng <= 84.6) {
+      return 'Uttar Pradesh';
+    }
+    // Madhya Pradesh boundaries (approximate)
+    if (lat >= 21.1 && lat <= 26.9 && lng >= 74.0 && lng <= 82.8) {
+      return 'Madhya Pradesh';
+    }
+    // Karnataka boundaries (approximate)
+    if (lat >= 11.5 && lat <= 18.5 && lng >= 74.0 && lng <= 78.6) {
+      return 'Karnataka';
+    }
+    // Tamil Nadu boundaries (approximate)
+    if (lat >= 8.0 && lat <= 13.6 && lng >= 76.2 && lng <= 80.3) {
+      return 'Tamil Nadu';
+    }
+    // West Bengal boundaries (approximate)
+    if (lat >= 21.5 && lat <= 27.2 && lng >= 85.8 && lng <= 89.9) {
+      return 'West Bengal';
+    }
+    // Delhi boundaries (approximate)
+    if (lat >= 28.4 && lat <= 28.9 && lng >= 76.8 && lng <= 77.3) {
+      return 'Delhi';
+    }
+    
+    // Add more states as needed
+    return null;
+  };
+
   const fetchMandiPrices = async () => {
     try {
       setLoading(true);
@@ -218,9 +321,21 @@ const MandiPricesPage = () => {
         throw new Error('API key not configured. Please set VITE_AGMARKNET_API_KEY in your .env file.');
       }
 
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
       const response = await fetch(
-        `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${apiKey}&format=json&limit=50`
+        `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${apiKey}&format=json&limit=2000`,
+        {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+          }
+        }
       );
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -235,8 +350,16 @@ const MandiPricesPage = () => {
         throw new Error('Invalid data format received from API');
       }
     } catch (err) {
-      console.error('Error fetching mandi prices:', err);
-      setError(err.message);
+      if (err.name === 'AbortError') {
+        console.error('Mandi API request timed out');
+        setError('Request timed out. The government API is currently slow. Please try again later.');
+      } else if (err.message.includes('Failed to fetch')) {
+        console.error('Network error while fetching mandi prices');
+        setError('Network error. Please check your internet connection and try again.');
+      } else {
+        console.error('Error fetching mandi prices:', err);
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -386,6 +509,13 @@ const MandiPricesPage = () => {
               <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Getting your location...</span>
+              </div>
+            )}
+            
+            {showAutoSelectNotification && selectedState && (
+              <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                <MapPin className="w-4 h-4" />
+                <span>📍 Auto-selected: {selectedState}{selectedMarket && `, ${selectedMarket}`}</span>
               </div>
             )}
           </div>

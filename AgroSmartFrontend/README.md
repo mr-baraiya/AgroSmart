@@ -137,13 +137,11 @@ D:\VS_CODES\.NET_PROJECT\AGROSMART\AGROSMARTFRONTEND\SRC
 │   │       RoleBasedRedirect.jsx
 │   │
 │   ├───common
-│   │       AuthDebugComponent.jsx
 │   │       CustomAlert.jsx
+│   │       Header.jsx
 │   │       OfflineState.jsx
 │   │       ProfileImage.jsx
 │   │       ProfileImageUpload.jsx
-│   │       ServerStatusBanner.jsx
-│   │       UserDebug.jsx
 │   │
 │   ├───crop
 │   │       CropActionsDropdown.jsx
@@ -225,7 +223,6 @@ D:\VS_CODES\.NET_PROJECT\AGROSMART\AGROSMARTFRONTEND\SRC
 │   │
 │   └───weather
 │           DynamicWeatherWidget.jsx
-│           WeatherAPITest.jsx
 │           WeatherDashboard.jsx
 │           WeatherDetail.jsx
 │           WeatherFilter.jsx
