@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Shield, Eye, Lock, Users, Database } from "lucide-react";
 
 export default function PrivacyPolicy() {
@@ -18,15 +17,6 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* SEO */}
-      <Helmet>
-        <title>Privacy Policy | AgroSmart</title>
-        <meta
-          name="description"
-          content="Read the AgroSmart Privacy Policy. Learn how we collect, use, and protect your data to ensure a secure smart farming experience."
-        />
-      </Helmet>
-
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
