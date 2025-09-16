@@ -344,6 +344,17 @@ const MandiPricesPage = () => {
       const data = await response.json();
       
       if (data.records && Array.isArray(data.records)) {
+        // Debug: Log first few records to see date format (only first time)
+        if (mandiData.length === 0) {
+          console.log('📅 Sample mandi data records:', data.records.slice(0, 3));
+          console.log('📅 Sample arrival_date values:', 
+            data.records.slice(0, 5).map(r => ({ 
+              arrival_date: r.arrival_date, 
+              type: typeof r.arrival_date 
+            }))
+          );
+        }
+        
         setMandiData(data.records);
         setFilteredData(data.records);
       } else {
@@ -372,15 +383,64 @@ const MandiPricesPage = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
+    
+    // Handle various date formats that might come from the API
     try {
-      const date = new Date(dateString);
+      let processedDate = dateString;
+      
+      // Common Indian government API date formats:
+      // 1. DD/MM/YYYY
+      // 2. DD-MM-YYYY  
+      // 3. YYYY-MM-DD
+      // 4. DD.MM.YYYY
+      
+      if (typeof dateString === 'string') {
+        // Replace dots with slashes for consistency
+        processedDate = dateString.replace(/\./g, '/');
+        
+        // Handle DD/MM/YYYY or DD-MM-YYYY format
+        if (dateString.includes('/') || dateString.includes('-')) {
+          const separator = dateString.includes('/') ? '/' : '-';
+          const parts = dateString.split(separator);
+          
+          if (parts.length === 3) {
+            // Check if it's DD/MM/YYYY format (day first)
+            if (parts[0].length <= 2 && parts[2].length === 4) {
+              const day = parts[0].padStart(2, '0');
+              const month = parts[1].padStart(2, '0');
+              const year = parts[2];
+              processedDate = `${year}-${month}-${day}`;
+            }
+            // Check if it's YYYY-MM-DD format (already correct)
+            else if (parts[0].length === 4) {
+              processedDate = dateString;
+            }
+          }
+        }
+      }
+      
+      const date = new Date(processedDate);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        console.log('Invalid date detected:', { original: dateString, processed: processedDate });
+        // Return today's date as fallback instead of "Invalid Date"
+        const today = new Date();
+        return today.toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }) + ' (Today)';
+      }
+      
       return date.toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
       });
-    } catch {
-      return dateString;
+    } catch (error) {
+      console.log('Date formatting error:', error, { original: dateString });
+      return 'N/A';
     }
   };
 
@@ -708,7 +768,9 @@ const MandiPricesPage = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                           <div className="flex items-center">
                             <Calendar className="w-4 h-4 mr-1 text-gray-400" />
-                            {formatDate(item.arrival_date)}
+                            <span title={`Original: ${item.arrival_date || 'No date'}`}>
+                              {formatDate(item.arrival_date)}
+                            </span>
                           </div>
                         </td>
                       </tr>
