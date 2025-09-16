@@ -15,7 +15,6 @@ export const authService = {
       
       // Check if user is active
       if (response.data && response.data.isActive === false) {
-        // User is inactive - throw specific error
         const error = new Error('Account is inactive');
         error.isInactive = true;
         error.userData = response.data;
@@ -42,6 +41,21 @@ export const authService = {
         
         // Set default authorization header for future requests
         api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+        // 🔔 Notify n8n webhook
+        try {
+          await fetch("https://agrosmart-4ix0.onrender.com/webhook/agrosmart-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...userInfo,
+              loginTime: new Date().toISOString()
+            })
+          });
+          console.log("n8n webhook notified successfully");
+        } catch (err) {
+          console.error("Failed to notify n8n webhook:", err);
+        }
       }
       
       return response.data;
