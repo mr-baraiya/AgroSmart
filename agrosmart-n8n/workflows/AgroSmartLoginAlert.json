@@ -1,0 +1,70 @@
+{
+  "name": "AgroSmartLoginAlert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agrosmart-login",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6fbf0737-bfbc-45ce-98c1-814a48a9944a",
+      "name": "Webhook",
+      "webhookId": "e8d11165-7d7c-4431-9574-eed50db54bd4"
+    },
+    {
+      "parameters": {
+        "fromEmail": "vvbaraiya32@gmail.com",
+        "toEmail": "baraiyavishalbhai32@gmail.com",
+        "subject": "AgroSmart Login Alert",
+        "html": "=<h3>New Login Detected</h3>\n\n<p><b>User ID:</b> {{ $json.body.userId }}</p>\n<p><b>Name:</b> {{ $json.body.name }}</p>\n<p><b>Email:</b> {{ $json.body.email }}</p>\n<p><b>Phone:</b> {{ $json.body.phone }}</p>\n<p><b>Role:</b> {{ $json.body.role }}</p>\n<p><b>Active Status:</b> {{ $json.body.isActive }}</p>\n<p><b>Execution Mode:</b> {{ $json.executionMode }}</p>\n<p><b>Login Time:</b> {{ $now }}</p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3eba5e4a-6c43-4c62-9b38-6f07926c0e31",
+      "name": "Send email",
+      "webhookId": "b969056c-b97e-4f3f-bbb2-406ba9246ad9",
+      "credentials": {
+        "smtp": {
+          "id": "iqNIeDS4XZOUnL0b",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0f3d9ced-3a7c-4c56-989f-dadbbab3e246",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fa6de32b875b5cdb5a7ef0e674d6ac65be1f799d7eba9b4dfdadbe9d5aa168d5"
+  },
+  "id": "9v1UGPL1auguMM4I",
+  "tags": []
+}
