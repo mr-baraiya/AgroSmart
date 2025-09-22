@@ -1,3 +1,4 @@
+using AgroSmartBeackend.Middleware;
 using AgroSmartBeackend.Models;
 using AgroSmartBeackend.Services;
 using AgroSmartBeackend.Validators;
@@ -158,7 +159,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 // ------------------------------------------------------------
-// Middleware order is important!
+// Prerender.io should run before Routing
+// ------------------------------------------------------------
+var prerenderToken = builder.Configuration["Prerender:Token"];
+app.UseMiddleware<PrerenderMiddleware>(prerenderToken);
+
+// ------------------------------------------------------------
+//  UseRouting must come before Authentication and Authorization
 // ------------------------------------------------------------
 app.UseRouting();
 
