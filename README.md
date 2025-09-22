@@ -192,47 +192,61 @@ npm run preview
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "myConnectionString": "YOUR_CONNECTION_STRING_HERE"
+    "myConnectionString": "Server=YOUR_SQL_SERVER;Database=AgroSmart;User Id=USERNAME;Password=PASSWORD;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   },
+
   "Jwt": {
-    "Key": "YOUR_JWT_KEY",
+    "Key": "YOUR_SECRET_KEY_HERE",
     "Issuer": "https://localhost:7059",
     "Audience": "*",
     "TokenExpiryMinutes": 60
   },
+
   "SmtpSettings": {
     "Host": "smtp.gmail.com",
     "Port": "587",
-    "Username": "YOUR_EMAIL",
-    "Password": "YOUR_PASSWORD",
-    "FromEmail": "YOUR_EMAIL"
+    "Username": "your_email@gmail.com",
+    "Password": "your_app_password_here",
+    "FromEmail": "your_email@gmail.com"
+  },
+
+  "Prerender": {
+    "Token": "YOUR_PRERENDER_TOKEN_HERE"
   }
 }
 ```
 
 ### **Frontend Environment Variables**
 ```env
-# Frontend environment variables (Vite)
+# -------------------------------
+# API Configuration
+# -------------------------------
+# For development
+# VITE_API_BASE_URL=https://localhost:7059/api
+# VITE_IMAGE_BASE_URL=https://localhost:7059
 
-# API base URL for your backend
-VITE_API_BASE_URL=https://your-backend-url.com/api
+# For production (Render backend)
+VITE_API_BASE_URL=https://your-backend.onrender.com/api
+VITE_IMAGE_BASE_URL=https://your-backend.onrender.com
 
-# Base URL for images served by backend
-VITE_IMAGE_BASE_URL=https://your-backend-url.com
-
-# OpenWeatherMap API
-VITE_WEATHER_API_KEY=YOUR_OPENWEATHERMAP_API_KEY
+# -------------------------------
+# Weather API (OpenWeatherMap)
+# -------------------------------
+VITE_WEATHER_API_KEY=YOUR_WEATHER_API_KEY
 VITE_WEATHER_API_BASE_URL=https://api.openweathermap.org/data/2.5
 
-# EmailJS configuration
+# -------------------------------
+# EmailJS Configuration
+# -------------------------------
 VITE_EMAILJS_USER_ID=YOUR_EMAILJS_USER_ID
 VITE_EMAILJS_SERVICE_ID=YOUR_EMAILJS_SERVICE_ID
 VITE_EMAILJS_TEMPLATE_ID=YOUR_EMAILJS_TEMPLATE_ID
 
-# AGMARKNET API Configuration for Mandi Prices
-# Get your API key from: https://data.gov.in/
+# -------------------------------
+# AGMARKNET API (Mandi Prices)
+# -------------------------------
+# Get key from: https://data.gov.in/
 VITE_AGMARKNET_API_KEY=YOUR_AGMARKNET_API_KEY
-
 ```
 
 ## 📊 API Services
