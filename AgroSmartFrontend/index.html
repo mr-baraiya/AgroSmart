@@ -27,27 +27,6 @@
       gtag('js', new Date());
       gtag('config', 'G-1GBF8K601K');
     </script>
-
-    <!-- Page load redirect fallback -->
-    <script>
-      const timeout = 10000; // 10 seconds
-
-      // Redirect if page takes too long to load
-      const redirectToNetlify = () => {
-        window.location.href = "https://ecoagrosmart.netlify.app";
-      };
-
-      // If load event fires, check load time
-      window.addEventListener("load", () => {
-        const loadTime = performance.now();
-        if (loadTime > timeout) redirectToNetlify();
-      });
-
-      // Fallback after timeout if page hasn't fully loaded
-      setTimeout(() => {
-        if (document.readyState !== "complete") redirectToNetlify();
-      }, timeout);
-    </script>
   </head>
   <body>
     <div id="root"></div>
