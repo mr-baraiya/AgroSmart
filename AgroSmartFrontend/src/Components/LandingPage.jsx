@@ -1326,7 +1326,7 @@ const LandingPage = () => {
                 
                 <div className="bg-gray-50 rounded-xl p-4 mb-6">
                   <img 
-                    src="/AgrosmartQR.jpeg" 
+                    src="/AgrosmartQR.png" 
                     alt="QR Code for AgroSmart Mobile"
                     className="w-48 h-48 mx-auto rounded-lg"
                   />
