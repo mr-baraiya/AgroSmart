@@ -11,10 +11,10 @@ A comprehensive full-stack smart agriculture platform that empowers farmers and 
 
 Check out AgroSmart in action:
 
-- **Backend API**: [https://agrosmart-backend-7xdp.onrender.com/](https://agrosmart-backend-7xdp.onrender.com/)  
-- **Frontend (Custom Domain)**: [https://agrosmart.me/](https://agrosmart.me/)  
-- **Frontend (Netlify Preview)**: [https://ecoagrosmart.netlify.app/](https://ecoagrosmart.netlify.app/)  
-- **Frontend (Vercel Preview)**: [https://agro-smart-ctz4.vercel.app/](https://agro-smart-ctz4.vercel.app/)
+- **Backend API**: [https://agrosmart-backend-7xdp.onrender.com](https://agrosmart-backend-7xdp.onrender.com)  
+- **Frontend (Custom Domain)**: [https://agrosmart.me](https://agrosmart.me)  
+- **Frontend (Netlify Preview)**: [https://ecoagrosmart.netlify.app](https://ecoagrosmart.netlify.app)  
+- **Frontend (Vercel Preview)**: [https://agro-smart-ctz4.vercel.app](https://agro-smart-ctz4.vercel.app)
 
 ## 🚀 Features
 
