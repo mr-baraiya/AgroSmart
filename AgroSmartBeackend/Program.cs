@@ -162,8 +162,8 @@ if (!app.Environment.IsDevelopment())
 // ------------------------------------------------------------
 // Prerender.io should run before Routing
 // ------------------------------------------------------------
-var prerenderToken = builder.Configuration["Prerender:Token"];
-app.UseMiddleware<PrerenderMiddleware>(prerenderToken);
+//var prerenderToken = builder.Configuration["Prerender:Token"];
+//app.UseMiddleware<PrerenderMiddleware>(prerenderToken);
 
 // ------------------------------------------------------------
 //  UseRouting must come before Authentication and Authorization
