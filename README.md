@@ -7,54 +7,64 @@ A comprehensive full-stack smart agriculture platform that empowers farmers and 
 ![React](https://img.shields.io/badge/React-19.1.0-blue.svg)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-red.svg)
 
-## 🌐 Live Demo
+## Live Demo
 
 Check out AgroSmart in action:
 
-- **Backend API**: [https://agrosmart-backend-7xdp.onrender.com](https://agrosmart-backend-7xdp.onrender.com)  
-- **Frontend (Custom Domain)**: [https://agrosmart.me](https://agrosmart.me)  
-- **Frontend (Netlify Preview)**: [https://ecoagrosmart.netlify.app](https://ecoagrosmart.netlify.app)  
-- **Frontend (Vercel Preview)**: [https://agro-smart-ctz4.vercel.app](https://agro-smart-ctz4.vercel.app)
+- **Backend API (Production - SmarterASP)**:  
+  https://vishalbaraiya-001-site1.site4future.com/api  
 
-## 🚀 Features
+- **Swagger API Docs**:  
+  https://vishalbaraiya-001-site1.site4future.com/swagger  
 
-### 🏠 **Smart Dashboard**
+- **Frontend (Custom Domain)**:  
+  https://agrosmart.me  
+
+- **Frontend (Netlify Preview)**:  
+  https://ecoagrosmart.netlify.app  
+
+- **Frontend (Vercel Preview)**:  
+  https://agro-smart-ctz4.vercel.app
+
+## Features
+
+### **Smart Dashboard**
 - **Admin Dashboard** - Complete farm management system for administrators
 - **User Dashboard** - Personal farm management for individual farmers
 - **Real-time Analytics** - Live data visualization and insights
 - **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
 
-### 🚜 **Farm Management**
+### **Farm Management**
 - **Multi-Farm Operations** - Create, manage, and monitor multiple farms
 - **Field Management** - Organize fields within farms with detailed tracking
 - **Crop Planning** - Plan and track crop rotations and growing cycles
 - **Resource Optimization** - Intelligent resource usage recommendations
 
-### 📊 **IoT & Sensor Integration**
+### **IoT & Sensor Integration**
 - **Real-time Sensor Data** - Collect soil moisture, temperature, humidity data
 - **Automated Monitoring** - Continuous monitoring of farm conditions
 - **Smart Alerts** - Automated notifications for critical events
 - **Historical Data Analysis** - Track trends and patterns over time
 
-### 🌤️ **Weather Intelligence**
+### **Weather Intelligence**
 - **Real-time Weather Data** - Current weather conditions and forecasts
 - **Weather-based Recommendations** - Smart farming suggestions based on weather
 - **Climate Analytics** - Long-term climate data for better planning
 - **Weather Alerts** - Early warning system for weather risks
 
-### 💡 **AI-Powered Insights**
+### **AI-Powered Insights**
 - **Smart Recommendations** - AI-driven farming suggestions
 - **Yield Predictions** - Data-driven crop yield forecasting
 - **Trend Analysis** - Historical data analysis and future predictions
 - **Performance Analytics** - Farm productivity insights
 
-### 🔔 **Advanced Features**
+### **Advanced Features**
 - **Interactive Calendar** - Visual scheduling with color-coded activities
 - **Task Management** - Create and track farming tasks with progress indicators
 - **Knowledge Badges** - Gamification system for learning achievements
 - **Multi-channel Notifications** - Email, SMS, and in-app alerts
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### **Backend**
 - **ASP.NET Core 8** - High-performance web API
@@ -83,7 +93,7 @@ Check out AgroSmart in action:
 - **Three.js** - 3D graphics and visualization
 - **Moment.js** - Date and time manipulation
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 AgroSmart/
@@ -111,7 +121,7 @@ AgroSmart/
 └── README.md
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### **Prerequisites**
 - [.NET 8 SDK](https://dotnet.microsoft.com/download) or later
@@ -281,7 +291,7 @@ The application includes 21 comprehensive API services:
 - Authentication Service
 - Health Monitoring Service
 
-## 🌟 Key Features in Detail
+## Key Features in Detail
 
 ### **Dashboard Analytics**
 - Real-time farm performance metrics
@@ -310,7 +320,7 @@ The application includes 21 comprehensive API services:
 - Offline capability
 - Progressive Web App features
 
-## 📚 Documentation
+## Documentation
 
 Comprehensive documentation is available:
 
@@ -319,7 +329,7 @@ Comprehensive documentation is available:
 - **[Database Schema](Database/)** - Database structure and relationships
 - **[Deployment Guide](Materials/)** - Production deployment instructions
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
@@ -327,22 +337,22 @@ Comprehensive documentation is available:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## Author
 
 **Mr. Baraiya** - [GitHub Profile](https://github.com/mr-baraiya)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with modern .NET and React technologies
 - Designed for farmers and agricultural professionals
 - Inspired by the need for smart, data-driven farming solutions
 - Thanks to all contributors and the open-source community
 
-## 📞 Support
+## Support
 
 For support and questions:
 - Open an issue on [GitHub Issues](https://github.com/mr-baraiya/AgroSmart/issues)
