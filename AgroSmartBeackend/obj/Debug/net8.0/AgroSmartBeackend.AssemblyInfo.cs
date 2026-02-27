@@ -11,11 +11,10 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("5466c8fc-574e-42ff-8c7d-cb7cedcf927b")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("AgroSmartBeackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2f561c177416c57ab508f00c1db4ca50288b368b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+526ad6f049e8e6ff30accdf4b60d54dee6f0a7e1")]
 [assembly: System.Reflection.AssemblyProductAttribute("AgroSmartBeackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AgroSmartBeackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
