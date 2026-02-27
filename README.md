@@ -15,9 +15,6 @@ Check out AgroSmart in action:
 
 ### Backend APIs
 
-- **Backend API (Production - SmarterASP)**  
-  https://vishalbaraiya-001-site1.site4future.com/api  
-
 - **Swagger API Docs (SmarterASP Production)**  
   [https://vishalbaraiya-001-site1.site4future.com/swagger  ](https://vishalbaraiya-001-site1.site4future.com/swagger/index.html)
 
