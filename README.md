@@ -9,22 +9,34 @@ A comprehensive full-stack smart agriculture platform that empowers farmers and 
 
 ## Live Demo
 
+## Live Demo
+
 Check out AgroSmart in action:
 
-- **Backend API (Production - SmarterASP)**:  
+### Backend APIs
+
+- **Backend API (Production - SmarterASP)**  
   https://vishalbaraiya-001-site1.site4future.com/api  
 
-- **Swagger API Docs**:  
-  https://vishalbaraiya-001-site1.site4future.com/swagger  
+- **Swagger API Docs (SmarterASP Production)**  
+  [https://vishalbaraiya-001-site1.site4future.com/swagger  ](https://vishalbaraiya-001-site1.site4future.com/swagger/index.html)
 
-- **Frontend (Custom Domain)**:  
+- **Swagger API Docs (Render Deployment - Backup)**
+-  [https://agrosmart-backend-7xdp.onrender.com/swagger  ](https://agrosmart-backend-7xdp.onrender.com/swagger/index.html)
+  
+
+---
+
+### Frontend Deployments
+
+- **Frontend (Custom Domain)**  
   https://agrosmart.me  
 
-- **Frontend (Netlify Preview)**:  
+- **Frontend (Netlify Preview)**  
   https://ecoagrosmart.netlify.app  
 
-- **Frontend (Vercel Preview)**:  
-  https://agro-smart-ctz4.vercel.app
+- **Frontend (Vercel Preview)**  
+  https://agro-smart-ctz4.vercel.app  
 
 ## Features
 
