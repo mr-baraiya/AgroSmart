@@ -271,7 +271,7 @@ VITE_EMAILJS_TEMPLATE_ID=YOUR_EMAILJS_TEMPLATE_ID
 VITE_AGMARKNET_API_KEY=YOUR_AGMARKNET_API_KEY
 ```
 
-## 📊 API Services
+## API Services
 
 The application includes 21 comprehensive API services:
 
