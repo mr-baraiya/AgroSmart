@@ -98,7 +98,8 @@ builder.Services.AddCors(options =>
                 "https://ecoagrosmart.netlify.app",
                 "https://agrosmart.me",
                 "https://www.agrosmart.me",
-                "https://agro-smart-ctz4.vercel.app"
+                "https://agro-smart-ctz4.vercel.app",
+                "https://agrosmart.pages.dev"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
