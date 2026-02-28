@@ -20,20 +20,24 @@ Check out AgroSmart in action:
 
 - **Swagger API Docs (Render Deployment - Backup)**
 -  [https://agrosmart-backend-7xdp.onrender.com/swagger  ](https://agrosmart-backend-7xdp.onrender.com/swagger/index.html)
-  
 
 ---
 
-### Frontend Deployments
+## Frontend Deployments
 
-- **Frontend (Custom Domain)**  
-  https://agrosmart.me  
+* **Frontend (Custom Domain – Production)**
+  [https://agrosmart.me](https://agrosmart.me)
 
-- **Frontend (Netlify Preview)**  
-  https://ecoagrosmart.netlify.app  
+* **Frontend (Cloudflare Pages URL)**
+  [https://agrosmart.pages.dev](https://agrosmart.pages.dev)
 
-- **Frontend (Vercel Preview)**  
-  https://agro-smart-ctz4.vercel.app  
+* **Frontend (Netlify Preview)**
+  [https://ecoagrosmart.netlify.app](https://ecoagrosmart.netlify.app)
+
+* **Frontend (Vercel Preview)**
+  [https://agro-smart-ctz4.vercel.app](https://agro-smart-ctz4.vercel.app)
+
+---
 
 ## Features
 
