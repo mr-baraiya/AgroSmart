@@ -9,8 +9,6 @@ A comprehensive full-stack smart agriculture platform that empowers farmers and 
 
 ## Live Demo
 
-## Live Demo
-
 Check out AgroSmart in action:
 
 ### Backend APIs
