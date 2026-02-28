@@ -1,6 +1,8 @@
 ﻿using AgroSmartBeackend.Dtos;
 using AgroSmartBeackend.Models;
 using AgroSmartBeackend.Services;
+using Microsoft.Extensions.Options;
+using AgroSmartBeackend.Configurations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -13,22 +15,68 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ForgotPasswordRequest = AgroSmartBeackend.Dtos.ForgotPasswordRequest;
 using ResetPasswordRequest = AgroSmartBeackend.Dtos.ResetPasswordRequest;
+using System.Text.Json;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+
+    #region Fields
+
     private readonly AgroSmartContext _context;
     private readonly IConfiguration _configuration;
     private readonly IEmailService _emailService;
+    private readonly string _webhookUrl;
+    private readonly string _secretKey;
+
+    #endregion
 
     #region Constructor
-    public AuthController(AgroSmartContext context, IConfiguration configuration, IEmailService emailService)
+    public AuthController(AgroSmartContext context,IConfiguration configuration,IEmailService emailService)
     {
         _context = context;
         _configuration = configuration;
         _emailService = emailService;
+
+        _webhookUrl = _configuration["AutomationSettings:WebhookUrl"];
+        _secretKey = _configuration["AutomationSettings:SecretKey"];
     }
+    #endregion
+
+    #region Automation - Send Login Email
+
+    private async Task SendLoginEmailAsync(User user)
+    {
+        try
+        {
+            using var client = new HttpClient();
+
+            var payload = new
+            {
+                userId = user.UserId,
+                name = user.FullName,
+                email = user.Email,
+                role = user.Role,
+                isActive = user.IsActive
+            };
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(payload),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            client.DefaultRequestHeaders.Add("x-agrosmart-secret", _secretKey);
+
+            await client.PostAsync(_webhookUrl, content);
+        }
+        catch
+        {
+            // Do not break login flow if automation fails
+        }
+    }
+
     #endregion
 
     #region Login
@@ -50,6 +98,9 @@ public class AuthController : ControllerBase
 
             var token = GenerateJwtToken(user);
 
+            // Trigger email in background (Non-blocking)
+            _ = Task.Run(() => SendLoginEmailAsync(user));
+
             return Ok(new
             {
                 message = "Login successfully",
@@ -59,8 +110,8 @@ public class AuthController : ControllerBase
                 userId = user.UserId,
                 name = user.FullName,
                 role = user.Role,
-                profileImage = user.ProfileImage, // path from DB
-                isActive = user.IsActive          // ✅ added this
+                profileImage = user.ProfileImage,
+                isActive = user.IsActive
             });
         }
         catch (Exception ex)

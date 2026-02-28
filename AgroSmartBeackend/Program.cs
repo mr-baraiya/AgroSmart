@@ -1,6 +1,7 @@
 using AgroSmartBeackend.Middleware;
 using AgroSmartBeackend.Models;
 using AgroSmartBeackend.Services;
+using AgroSmartBeackend.Configurations;
 using AgroSmartBeackend.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -112,6 +113,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AgroSmartContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("myConnectionString"))
 );
+
+// ------------------------------------------------------------
+// Register AutomationSettings from appsettings.json
+// ------------------------------------------------------------
+builder.Services.Configure<AutomationSettings>(
+    builder.Configuration.GetSection("AutomationSettings"));
 
 // ------------------------------------------------------------
 // Register FluentValidation services
