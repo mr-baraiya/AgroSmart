@@ -671,21 +671,7 @@ const LandingPage = () => {
               </Link>
               
               {/* QR Code button - only show on desktop */}
-              {isDesktop && (
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <button
-                    onClick={() => setShowQRCode(true)}
-                    className="flex items-center space-x-2 bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-300 hover:border-green-600 hover:text-green-600 transition-all duration-200"
-                    title="Open on Mobile"
-                  >
-                    <Smartphone className="w-4 h-4" />
-                    <span className="text-sm">Mobile</span>
-                  </button>
-                </motion.div>
-              )}
+              {/* Removed Mobile button */}
               
               <motion.div
                 whileHover={{ scale: 1.05 }}
