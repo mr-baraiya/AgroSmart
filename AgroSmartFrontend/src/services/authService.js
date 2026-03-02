@@ -68,18 +68,17 @@ export const authService = {
   // Register new user
   register: async (userData) => {
     try {
-      // Transform userData to match new API structure
+      // Transform userData to match API structure
       const registerData = {
         userId: 0,
-        fullName: userData.fullName || userData.name,
+        fullName: userData.fullName,
         email: userData.email,
-        passwordHash: userData.passwordHash || userData.password, // Handle both field names
+        passwordHash: userData.passwordHash, // Backend expects passwordHash
         role: 'User', // Always register as User
         phone: userData.phone || '', // Phone should be provided from form
         address: userData.address || '',
-        isActive: userData.isActive !== undefined ? userData.isActive : true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        isActive: userData.isActive !== undefined ? userData.isActive : true
+        // Let backend handle createdAt and updatedAt
       };
       
       const response = await api.post('/Auth/Register', registerData);

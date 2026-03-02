@@ -55,15 +55,17 @@ const Register = () => {
     // Email validation
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email.trim())) {
       errors.email = 'Please enter a valid email address';
     }
 
-    // Password validation
+    // Password validation - must match backend requirements
     if (!formData.passwordHash) {
       errors.passwordHash = 'Password is required';
     } else if (formData.passwordHash.length < 6) {
       errors.passwordHash = 'Password must be at least 6 characters';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.passwordHash)) {
+      errors.passwordHash = 'Password must contain at least one uppercase letter, one lowercase letter, and one digit';
     }
 
     // Confirm password validation
@@ -76,8 +78,11 @@ const Register = () => {
     // Phone validation (required)
     if (!formData.phone.trim()) {
       errors.phone = 'Phone number is required';
-    } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
-      errors.phone = 'Phone must be a 10-digit number';
+    } else {
+      const cleanPhone = formData.phone.replace(/\D/g, '');
+      if (cleanPhone.length !== 10) {
+        errors.phone = 'Phone must be a 10-digit number';
+      }
     }
 
     setValidationErrors(errors);
@@ -102,13 +107,12 @@ const Register = () => {
       const registrationData = {
         fullName: formData.fullName.trim(),
         email: formData.email.trim().toLowerCase(),
-        passwordHash: formData.passwordHash,
-        role: formData.role,
-        phone: formData.phone.replace(/\D/g, '') || null, // Extract only digits
-        address: formData.address.trim() || null,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        passwordHash: formData.passwordHash, // Backend expects passwordHash
+        role: 'User', // Explicitly set to 'User' as expected by backend
+        phone: formData.phone.replace(/\D/g, ''), // Remove non-digits but don't make it null
+        address: formData.address.trim() || '', // Use empty string instead of null
+        isActive: true
+        // Removed createdAt and updatedAt - let backend handle these
       };
 
       console.log('Sending registration data:', registrationData);
@@ -127,8 +131,18 @@ const Register = () => {
       let errorMessage = 'Registration failed. Please try again.';
       
       if (err.response?.status === 409) {
-        errorMessage = 'An account with this email already exists';
-      } else if (err.response?.status === 400) {
+        errorMessage = 'An account with this email already exists';      } else if (err.response?.status === 400 && err.response.data?.errors) {
+        // Handle backend validation errors
+        const backendErrors = err.response.data.errors;
+        const errorMessages = [];
+        
+        Object.keys(backendErrors).forEach(field => {
+          if (Array.isArray(backendErrors[field])) {
+            errorMessages.push(...backendErrors[field]);
+          }
+        });
+        
+        errorMessage = errorMessages.length > 0 ? errorMessages.join('; ') : 'Invalid registration data';      } else if (err.response?.status === 400) {
         errorMessage = err.response?.data?.message || 
                       err.response?.data?.title || 
                       'Registration failed. Please check your information.';
