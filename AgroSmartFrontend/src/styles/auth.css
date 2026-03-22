@@ -1,0 +1,222 @@
+/* ============================================
+   AgroSmart Auth Pages — Premium Styles
+   ============================================ */
+
+/* Glassmorphism Card */
+.auth-glass-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 0 80px rgba(34, 197, 94, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Input with glass feel */
+.auth-input {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-input:focus {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(34, 197, 94, 0.6);
+  box-shadow:
+    0 0 0 3px rgba(34, 197, 94, 0.15),
+    0 0 20px rgba(34, 197, 94, 0.1);
+}
+
+.auth-input::placeholder {
+  color: rgba(6, 78, 59, 0.65); /* text-emerald-900 with high opacity */
+  font-weight: 600;
+}
+
+/* Green glow button */
+.auth-btn-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #064e3b, #065f46, #022c22);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.auth-btn-glow:hover:not(:disabled) {
+  box-shadow:
+    0 0 20px rgba(6, 78, 59, 0.4),
+    0 0 40px rgba(6, 78, 59, 0.2),
+    0 4px 16px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+.auth-btn-glow:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.auth-btn-glow:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Tab toggle pill */
+.auth-tab-bg {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.auth-tab-active {
+  background: rgba(6, 78, 59, 0.95); /* text-emerald-900 */
+  box-shadow:
+    0 2px 12px rgba(6, 78, 59, 0.35),
+    0 0 20px rgba(6, 78, 59, 0.15);
+}
+
+/* Floating farming icons */
+@keyframes float-drift-1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.15; }
+  25% { transform: translate(15px, -20px) rotate(10deg); opacity: 0.25; }
+  50% { transform: translate(-10px, -35px) rotate(-5deg); opacity: 0.2; }
+  75% { transform: translate(20px, -15px) rotate(8deg); opacity: 0.18; }
+}
+
+@keyframes float-drift-2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.12; }
+  33% { transform: translate(-20px, -25px) rotate(-12deg); opacity: 0.22; }
+  66% { transform: translate(12px, -40px) rotate(6deg); opacity: 0.16; }
+}
+
+@keyframes float-drift-3 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.1; }
+  40% { transform: translate(18px, -30px) rotate(15deg); opacity: 0.2; }
+  80% { transform: translate(-15px, -18px) rotate(-8deg); opacity: 0.14; }
+}
+
+.auth-float-icon-1 { animation: float-drift-1 8s ease-in-out infinite; }
+.auth-float-icon-2 { animation: float-drift-2 10s ease-in-out infinite; }
+.auth-float-icon-3 { animation: float-drift-3 12s ease-in-out infinite; }
+
+/* Shimmer effect for branding */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.auth-brand-shimmer {
+  background: linear-gradient(
+    90deg,
+    #166534 0%,
+    #22c55e 25%,
+    #86efac 50%,
+    #22c55e 75%,
+    #166534 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Subtle pulse for the leaf icon */
+@keyframes leaf-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.3)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(34, 197, 94, 0.5)); }
+}
+
+.auth-leaf-pulse {
+  animation: leaf-pulse 3s ease-in-out infinite;
+}
+
+/* Radio button custom styling */
+.auth-radio:checked {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+
+/* Password strength bar */
+.auth-strength-bar {
+  height: 3px;
+  border-radius: 3px;
+  transition: all 0.4s ease;
+}
+
+/* Scrollbar styling for the auth card on mobile */
+.auth-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.auth-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.auth-scroll::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.3);
+  border-radius: 4px;
+}
+
+/* Canvas container */
+.auth-canvas-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.auth-canvas-container canvas {
+  display: block;
+}
+
+/* Overlay gradient on top of canvas */
+.auth-canvas-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 20, 0, 0.08) 50%,
+    rgba(0, 30, 0, 0.15) 100%
+  );
+  pointer-events: none;
+}
+
+/* Content layer above canvas */
+.auth-content-layer {
+  position: relative;
+  z-index: 10;
+}
+
+/* Success checkmark animation */
+@keyframes check-bounce {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.auth-check-animate {
+  animation: check-bounce 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .auth-glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .auth-input {
+    background: rgba(255, 255, 255, 0.75);
+  }
+}

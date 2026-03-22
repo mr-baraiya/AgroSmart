@@ -3,11 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from "./contexts/AuthProvider";
 import ServerStatusProvider from "./contexts/ServerStatusProvider";
+import GlobalLoader from "./Components/GlobalLoader";
 import ProtectedRoute from "./Components/auth/ProtectedRoute";
 import Login from "./Components/auth/Login";
 import Register from "./Components/auth/Register";
 import Profile from "./Components/auth/Profile";
 import ForgotPassword from "./Components/auth/ForgotPassword";
+import AuthPage from "./Components/auth/AuthPage";
+import AuthForgotReset from "./Components/auth/AuthForgotReset";
 import Layout from "./Components/DashBoard/Layout";
 import Dashboard from "./Components/DashBoard/Dashboard";
 import LandingPage from "./Components/LandingPage";
@@ -66,14 +69,15 @@ function App() {
     <AuthProvider>
       <ServerStatusProvider>
         <Router>
+          <GlobalLoader />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/auth/login" element={<Login />} />
-            <Route path="/auth/register" element={<Register />} />
-            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+            <Route path="/login" element={<AuthPage defaultMode="login" />} />
+            <Route path="/register" element={<AuthPage defaultMode="register" />} />
+            <Route path="/auth/login" element={<AuthPage defaultMode="login" />} />
+            <Route path="/auth/register" element={<AuthPage defaultMode="register" />} />
+            <Route path="/auth/forgot-password" element={<AuthForgotReset />} />
             <Route path="/weather" element={<GuestWeatherPage />} />
             <Route path="/mandi-prices" element={<MandiPricesPage />} />
             <Route path="/features" element={<FeaturesPage />} />

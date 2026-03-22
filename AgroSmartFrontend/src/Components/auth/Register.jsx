@@ -223,6 +223,7 @@ const Register = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
+                  autoComplete="username"
                   className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                     validationErrors.email ? 'border-red-300' : 'border-gray-300'
                   }`}
@@ -249,6 +250,7 @@ const Register = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.passwordHash}
                   onChange={handleChange}
+                  autoComplete="new-password"
                   className={`block w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                     validationErrors.passwordHash ? 'border-red-300' : 'border-gray-300'
                   }`}
@@ -286,6 +288,7 @@ const Register = () => {
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  autoComplete="new-password"
                   className={`block w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                     validationErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                   }`}
