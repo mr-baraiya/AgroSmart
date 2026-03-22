@@ -183,11 +183,11 @@ const AuthForgotReset = () => {
                   exit="exit"
                   className="text-center"
                 >
-                  <div className="auth-check-animate w-16 h-16 bg-green-500/20 border border-green-400/30 rounded-full flex items-center justify-center mx-auto mb-5">
-                    <ShieldCheck className="w-8 h-8 text-green-400" />
+                  <div className="auth-check-animate w-16 h-16 bg-emerald-500/20 border border-emerald-400/40 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-500/10">
+                    <ShieldCheck className="w-8 h-8 text-emerald-600" />
                   </div>
                   <h2 className="text-xl font-extrabold text-emerald-950 mb-3">Password Reset Successful!</h2>
-                  <p className="text-emerald-900 font-bold text-sm mb-6">
+                  <p className="text-emerald-900 font-bold text-sm mb-6 bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/10">
                     Your password has been updated. You can now login with your new password.
                   </p>
                   <Link
@@ -210,16 +210,16 @@ const AuthForgotReset = () => {
                   exit="exit"
                   className="text-center"
                 >
-                  <div className="auth-check-animate w-16 h-16 bg-green-500/20 border border-green-400/30 rounded-full flex items-center justify-center mx-auto mb-5">
-                    <CheckCircle className="w-8 h-8 text-green-400" />
+                  <div className="auth-check-animate w-16 h-16 bg-emerald-500/20 border border-emerald-400/40 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-500/10">
+                    <CheckCircle className="w-8 h-8 text-emerald-600" />
                   </div>
                   <h2 className="text-xl font-extrabold text-emerald-950 mb-3">Check Your Email</h2>
-                  <p className="text-emerald-950 font-medium text-sm mb-4">
-                    We've sent a reset link to <strong className="font-bold">{email}</strong>
+                  <p className="text-emerald-950 font-bold text-sm mb-4">
+                    We've sent a reset link to <strong className="text-emerald-900 font-black">{email}</strong>
                   </p>
-                  <div className="bg-blue-500/10 border border-blue-400/20 rounded-xl p-4 mb-6">
-                    <p className="text-xs text-blue-900 font-medium">
-                      <strong>Important:</strong> The reset link will expire in 15 minutes. Check your spam folder if you don't see the email.
+                  <div className="bg-blue-500/15 border border-blue-400/30 backdrop-blur-md rounded-xl p-4 mb-6 shadow-lg shadow-blue-500/5">
+                    <p className="text-xs text-blue-950 font-bold leading-relaxed">
+                      <strong className="text-blue-900">Important:</strong> The reset link will expire in 15 minutes. Check your spam folder if you don't see the email.
                     </p>
                   </div>
                   <button
@@ -386,9 +386,9 @@ const AuthForgotReset = () => {
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-1.5"
+                        className="bg-black/5 border border-white/20 backdrop-blur-md rounded-xl p-4 space-y-1.5 shadow-inner"
                       >
-                        <p className="text-white/50 text-xs font-semibold uppercase tracking-wider mb-2">Requirements</p>
+                        <p className="text-emerald-950/50 text-xs font-bold uppercase tracking-wider mb-2">Requirements</p>
                         <ReqRow met={passwordValidation.minLength} text="At least 8 characters" />
                         <ReqRow met={passwordValidation.hasUpperCase} text="One uppercase letter" />
                         <ReqRow met={passwordValidation.hasLowerCase} text="One lowercase letter" />
@@ -399,7 +399,7 @@ const AuthForgotReset = () => {
 
                     {/* Match indicator */}
                     {formData.confirmPassword && (
-                      <div className={`text-xs font-medium ${formData.newPassword === formData.confirmPassword ? 'text-green-300' : 'text-red-300'}`}>
+                      <div className={`text-xs font-bold tracking-wide uppercase px-3 py-2 rounded-lg border backdrop-blur-sm ${formData.newPassword === formData.confirmPassword ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950' : 'bg-red-500/10 border-red-500/30 text-red-950'}`}>
                         {formData.newPassword === formData.confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
                       </div>
                     )}

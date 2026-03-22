@@ -208,6 +208,25 @@
   animation: check-bounce 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Glass Error and Success Boxes */
+.auth-error-box {
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #7f1d1d; /* text-red-950 */
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.1);
+}
+
+.auth-success-box {
+  background: rgba(21, 128, 61, 0.12);
+  border: 1px solid rgba(21, 128, 61, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #064e3b; /* text-emerald-950 */
+  box-shadow: 0 4px 15px rgba(21, 128, 61, 0.1);
+}
+
 /* Mobile responsive adjustments */
 @media (max-width: 640px) {
   .auth-glass-card {

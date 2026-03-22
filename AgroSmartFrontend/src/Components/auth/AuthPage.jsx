@@ -313,18 +313,18 @@ const AuthPage = ({ defaultMode = 'login' }) => {
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="bg-red-500/20 border border-red-400/40 text-red-900 px-4 py-3 rounded-xl flex items-center gap-2 mb-5 backdrop-blur-md"
+                  className="auth-error-box px-4 py-3 rounded-xl flex items-center gap-2 mb-5"
                 >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span className="text-sm">{error}</span>
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
+                  <span className="text-sm font-bold tracking-wide uppercase">{error}</span>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Success Message (from registration redirect) */}
             {location.state?.message && (
-              <div className="bg-green-500/20 border border-green-400/40 text-green-950 px-4 py-3 rounded-xl mb-5 backdrop-blur-md">
-                <span className="text-sm font-medium">{location.state.message}</span>
+              <div className="auth-success-box px-4 py-3 rounded-xl mb-5">
+                <span className="text-sm font-bold tracking-wide uppercase">{location.state.message}</span>
               </div>
             )}
 

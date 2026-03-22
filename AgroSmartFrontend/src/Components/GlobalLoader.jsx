@@ -11,16 +11,13 @@ const GlobalLoader = () => {
     const currentPath = location.pathname;
     const previousPath = prevPath.current;
     
-    // Only Login and Register share the direct card-flip seamless animation.
     const seamlessRoutes = ['/login', '/register', '/auth/login', '/auth/register'];
-    
-    // Check if we are shifting between seamless routes
-    const isSeamlessTransition = 
-      currentPath !== previousPath && 
-      seamlessRoutes.includes(currentPath) && 
-      seamlessRoutes.includes(previousPath);
+    const goingToAuth = seamlessRoutes.includes(currentPath);
+    const comingFromAuth = seamlessRoutes.includes(previousPath);
 
-    if (isSeamlessTransition) {
+    // If we're moving between Login and Register, keep it seamless.
+    // If ANY other route is involved (like Forgot Password or Dashboard), show the loader.
+    if (goingToAuth && comingFromAuth && currentPath !== previousPath) {
       prevPath.current = currentPath;
       return; 
     }
